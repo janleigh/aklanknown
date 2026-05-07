@@ -17,7 +17,8 @@
 				"backgroundImage": "./assets/images/android-icon-background.png",
 				"monochromeImage": "./assets/images/android-icon-monochrome.png"
 			},
-			"predictiveBackGestureEnabled": false
+			"predictiveBackGestureEnabled": false,
+			"package": "com.janleigh.aklanknown"
 		},
 		"web": {
 			"output": "static",
@@ -40,6 +41,12 @@
 		"experiments": {
 			"typedRoutes": true,
 			"reactCompiler": true
+		},
+		"extra": {
+			"router": {},
+			"eas": {
+				"projectId": "6aa64f75-ec05-4386-a3e7-d99b85e0dd59"
+			}
 		}
 	}
 }
