@@ -67,7 +67,11 @@ const buildCrudController = <T extends BaseRecord>(tableName: string): CrudContr
 		return data as T;
 	},
 	create: async (payload) => {
-		const { data, error } = await supabase.from(tableName).insert(payload).select("*").single();
+		const { data, error } = await supabase
+			.from(tableName)
+			.insert(payload as never)
+			.select("*")
+			.single();
 
 		if (error) {
 			throw error;
@@ -78,7 +82,7 @@ const buildCrudController = <T extends BaseRecord>(tableName: string): CrudContr
 	update: async (id, payload) => {
 		const { data, error } = await supabase
 			.from(tableName)
-			.update(payload)
+			.update(payload as never)
 			.eq("id", id)
 			.select("*")
 			.single();
