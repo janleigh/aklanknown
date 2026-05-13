@@ -90,7 +90,12 @@ const buildCrudController = <T extends BaseRecord>(tableName: string): CrudContr
 		return data as T;
 	},
 	remove: async (id) => {
-		const { data, error } = await supabase.from(tableName).delete().eq("id", id).select("*").single();
+		const { data, error } = await supabase
+			.from(tableName)
+			.delete()
+			.eq("id", id)
+			.select("*")
+			.single();
 
 		if (error) {
 			throw error;
