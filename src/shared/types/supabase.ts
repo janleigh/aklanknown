@@ -16,16 +16,6 @@ export interface CachedRoute {
 	cached_at: string;
 }
 
-export interface Event {
-	id: number;
-	name: string;
-	event_date: string | null;
-	event_time: string | null;
-	location: string | null;
-	banner_image_url: string;
-	created_at: string;
-}
-
 export interface LocationImage {
 	id: string;
 	location_id: string | null;
@@ -46,25 +36,6 @@ export interface Location {
 	longitude: number | null;
 	banner_image_url: string;
 	panorama_image: string;
-	created_at: string;
-}
-
-export interface ProductImage {
-	id: string;
-	product_id: string | null;
-	image_url: string;
-	sort_order: number | null;
-}
-
-export interface Product {
-	id: string;
-	name: string;
-	description_en: string | null;
-	description_tl: string | null;
-	description_akl: string | null;
-	barangay: string;
-	is_available: boolean | null;
-	main_image_url: string;
 	created_at: string;
 }
 
