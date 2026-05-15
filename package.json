@@ -4,11 +4,12 @@
 	"version": "1.0.0",
 	"scripts": {
 		"start": "expo start",
-		"start:tunnel": "expo start --tunnel",
+		"start:tunnel": "EXPO_TUNNEL_SUBDOMAIN='dfjdgd-natlan-jnlgh-8081' expo start --tunnel",
 		"android": "expo start --android",
 		"ios": "expo start --ios",
 		"web": "expo start --web",
 		"fmt": "biome format .",
+		"fmt:tailwind": "biome-tailwind-sorter --write src/",
 		"fmt:fix": "biome format . --write",
 		"lint": "biome lint .",
 		"lint:fix": "biome lint . --write",
@@ -59,6 +60,7 @@
 		"@commitlint/cli": "^20.5.3",
 		"@commitlint/config-conventional": "^20.5.3",
 		"@types/react": "~19.2.2",
+		"biome-tailwind-sorter": "^0.2.11",
 		"expo-module-scripts": "^55.0.2",
 		"husky": "^9.1.7",
 		"typescript": "~5.9.2"

@@ -47,6 +47,7 @@
         "@commitlint/cli": "^20.5.3",
         "@commitlint/config-conventional": "^20.5.3",
         "@types/react": "~19.2.2",
+        "biome-tailwind-sorter": "^0.2.11",
         "expo-module-scripts": "^55.0.2",
         "husky": "^9.1.7",
         "typescript": "~5.9.2",
@@ -813,6 +814,8 @@
     "big-integer": ["big-integer@1.6.52", "", {}, "sha512-QxD8cf2eVqJOOz63z6JIN9BzvVs/dlySa5HGSBH5xtR8dPteIRQnBxxKqkNTiT6jbDTF6jAfrd4oMcND9RGbQg=="],
 
     "binary-extensions": ["binary-extensions@2.3.0", "", {}, "sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw=="],
+
+    "biome-tailwind-sorter": ["biome-tailwind-sorter@0.2.11", "", { "bin": { "biome-tailwind-sorter": "target/release/biome-tailwind-sorter" } }, "sha512-dfUPxBDVA7If9Ln8GbnQ//rxuxphEvMbryBLXTetuRklNxZQxyyPR+/PxS0G91pcrs6s42Vj0SSIo3jnHseDZg=="],
 
     "bplist-creator": ["bplist-creator@0.1.0", "", { "dependencies": { "stream-buffers": "2.2.x" } }, "sha512-sXaHZicyEEmY86WyueLTQesbeoH/mquvarJaQNbjuOQO+7gbFcDEWqKmcWA4cOTLzFlfgvkiVxolk1k5bBIpmg=="],
 

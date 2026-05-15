@@ -11,41 +11,41 @@ export default function LandingPage() {
 			contentContainerClassName="grow justify-center px-6"
 			showsVerticalScrollIndicator={false}
 		>
-			<View className="w-full max-w-100 mx-auto">
-				<View className="space-y-3 mb-12">
+			<View className="mx-auto max-w-100 w-full">
+				<View className="mb-12 space-y-3">
 					<Text
-						className="text-4xl text-gray-900 tracking-tight text-center"
+						className="text-4xl text-center text-gray-900 tracking-tight"
 						fontName="PlusJakartaSans_700Bold"
 					>
 						AklanKnown
 					</Text>
-					<Text className="text-lg text-gray-600 text-center" fontName="PlusJakartaSans_400Regular">
+					<Text className="text-center text-gray-600 text-lg" fontName="PlusJakartaSans_400Regular">
 						Discover the untold beauty of Aklan.
 					</Text>
 				</View>
 
 				{/* SSO */}
 				{/* TODO!: Use icons */}
-				<View className="space-y-3 mb-12">
-					<Pressable className="w-full h-11 bg-primary hover:bg-primary-active rounded-lg active:scale-98 flex-row items-center justify-center space-x-2 mb-2 shadow-sm">
+				<View className="mb-12 space-y-3">
+					<Pressable className="flex-row items-center justify-center mb-2 space-x-2 h-11 w-full bg-primary hover:bg-primary-active rounded-lg shadow-sm active:scale-98">
 						<AntDesign name="google" size={20} color="white" />
-						<Text className="ml-2 text-white text-base" fontName="PlusJakartaSans_600SemiBold">
+						<Text className="ml-2 text-base text-white" fontName="PlusJakartaSans_600SemiBold">
 							Continue with Google
 						</Text>
 					</Pressable>
 
-					<Pressable className="w-full h-11 bg-white border border-gray-200 hover:bg-gray-100 rounded-lg active:scale-98 flex-row items-center justify-center space-x-2">
+					<Pressable className="flex-row items-center justify-center space-x-2 h-11 w-full bg-white hover:bg-gray-100 border border-gray-200 rounded-lg active:scale-98">
 						<Entypo name="facebook" size={20} color="black" />
-						<Text className="ml-2 text-gray-900 text-base" fontName="PlusJakartaSans_600SemiBold">
+						<Text className="ml-2 text-base text-gray-900" fontName="PlusJakartaSans_600SemiBold">
 							Continue with Facebook
 						</Text>
 					</Pressable>
 
 					{/* Guest */}
-					<View className="pt-2 flex justify-center">
+					<View className="flex justify-center pt-4">
 						<Pressable>
 							<Text
-								className="text-gray-600 hover:text-gray-900 text-sm text-center"
+								className="text-center text-gray-600 text-sm hover:text-gray-900"
 								fontName="PlusJakartaSans_400Regular"
 							>
 								Continue as Guest
@@ -55,10 +55,10 @@ export default function LandingPage() {
 				</View>
 
 				{/* Legal / Footer */}
-				<View className="space-y-4 pt-8">
-					<Text className="text-sm text-gray-600 text-center leading-relaxed">
+				<View className="pt-8 space-y-4">
+					<Text className="leading-relaxed text-center text-gray-600 text-sm">
 						By signing up, you agree to our{" "}
-						<Link href="/" asChild>
+						<Link href="vnd.youtube://watch?v=dQw4w9WgXcQ" asChild>
 							<Pressable>
 								<Text className="text-gray-900 underline" fontName="PlusJakartaSans_600SemiBold">
 									Terms of Service
@@ -67,7 +67,7 @@ export default function LandingPage() {
 						</Link>
 						{"    "}
 						and{" "}
-						<Link href="/" asChild>
+						<Link href="vnd.youtube://watch?v=dQw4w9WgXcQ" asChild>
 							<Pressable>
 								<Text className="text-gray-900 underline" fontName="PlusJakartaSans_600SemiBold">
 									Privacy Policy
