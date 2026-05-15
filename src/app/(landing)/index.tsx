@@ -1,5 +1,4 @@
-// biome-ignore assist/source/organizeImports: bugged
-import { Text } from "@/components/Text";
+import { Text } from "@components/Text";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Entypo from "@expo/vector-icons/Entypo";
 import { Link } from "expo-router";
