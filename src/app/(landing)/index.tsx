@@ -15,11 +15,11 @@ export default function LandingPage() {
 				<View className="space-y-3 mb-12">
 					<Text
 						className="text-4xl text-gray-900 tracking-tight text-center"
-						fontName="Geist_700Bold"
+						fontName="PlusJakartaSans_700Bold"
 					>
 						AklanKnown
 					</Text>
-					<Text className="text-lg text-gray-600 text-center" fontName="Geist_400Regular">
+					<Text className="text-lg text-gray-600 text-center" fontName="PlusJakartaSans_400Regular">
 						Discover the untold beauty of Aklan.
 					</Text>
 				</View>
@@ -29,14 +29,14 @@ export default function LandingPage() {
 				<View className="space-y-3 mb-12">
 					<Pressable className="w-full h-11 bg-primary hover:bg-primary-active rounded-lg active:scale-98 flex-row items-center justify-center space-x-2 mb-2 shadow-sm">
 						<AntDesign name="google" size={20} color="white" />
-						<Text className="ml-2 text-white text-base" fontName="Geist_600SemiBold">
+						<Text className="ml-2 text-white text-base" fontName="PlusJakartaSans_600SemiBold">
 							Continue with Google
 						</Text>
 					</Pressable>
 
 					<Pressable className="w-full h-11 bg-white border border-gray-200 hover:bg-gray-100 rounded-lg active:scale-98 flex-row items-center justify-center space-x-2">
 						<Entypo name="facebook" size={20} color="black" />
-						<Text className="ml-2 text-gray-900 text-base" fontName="Geist_600SemiBold">
+						<Text className="ml-2 text-gray-900 text-base" fontName="PlusJakartaSans_600SemiBold">
 							Continue with Facebook
 						</Text>
 					</Pressable>
@@ -46,7 +46,7 @@ export default function LandingPage() {
 						<Pressable>
 							<Text
 								className="text-gray-600 hover:text-gray-900 text-sm text-center"
-								fontName="Geist_400Regular"
+								fontName="PlusJakartaSans_400Regular"
 							>
 								Continue as Guest
 							</Text>
@@ -60,7 +60,7 @@ export default function LandingPage() {
 						By signing up, you agree to our{" "}
 						<Link href="/" asChild>
 							<Pressable>
-								<Text className="text-gray-900 underline" fontName="Geist_600SemiBold">
+								<Text className="text-gray-900 underline" fontName="PlusJakartaSans_600SemiBold">
 									Terms of Service
 								</Text>
 							</Pressable>
@@ -69,7 +69,7 @@ export default function LandingPage() {
 						and{" "}
 						<Link href="/" asChild>
 							<Pressable>
-								<Text className="text-gray-900 underline" fontName="Geist_600SemiBold">
+								<Text className="text-gray-900 underline" fontName="PlusJakartaSans_600SemiBold">
 									Privacy Policy
 								</Text>
 							</Pressable>

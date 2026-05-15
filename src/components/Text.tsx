@@ -2,7 +2,15 @@ import type { PropsWithChildren } from "react";
 import type { TextProps as BaseTP } from "react-native";
 import { Text as BaseT } from "react-native";
 
-type FontNames = "Geist_400Regular" | "Geist_500Medium" | "Geist_600SemiBold" | "Geist_700Bold";
+type FontNames =
+	| "Geist_400Regular"
+	| "Geist_500Medium"
+	| "Geist_600SemiBold"
+	| "Geist_700Bold"
+	| "PlusJakartaSans_400Regular"
+	| "PlusJakartaSans_500Medium"
+	| "PlusJakartaSans_600SemiBold"
+	| "PlusJakartaSans_700Bold";
 
 type TextProps = PropsWithChildren<
 	BaseTP & {

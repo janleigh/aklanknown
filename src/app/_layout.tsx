@@ -4,6 +4,12 @@ import {
 	Geist_600SemiBold,
 	Geist_700Bold,
 } from "@expo-google-fonts/geist";
+import {
+	PlusJakartaSans_400Regular,
+	PlusJakartaSans_500Medium,
+	PlusJakartaSans_600SemiBold,
+	PlusJakartaSans_700Bold,
+} from "@expo-google-fonts/plus-jakarta-sans";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -22,6 +28,10 @@ export default function RootLayout() {
 		Geist_500Medium,
 		Geist_600SemiBold,
 		Geist_700Bold,
+		PlusJakartaSans_400Regular,
+		PlusJakartaSans_500Medium,
+		PlusJakartaSans_600SemiBold,
+		PlusJakartaSans_700Bold,
 	});
 
 	useEffect(() => {

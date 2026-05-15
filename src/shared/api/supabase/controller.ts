@@ -27,7 +27,7 @@ export type ListOptions<T extends BaseRecord> = {
 	limit?: number;
 };
 
-export type CrudController<T extends BaseRecord> = {
+export type Controller<T extends BaseRecord> = {
 	list: (options?: ListOptions<T>) => Promise<T[]>;
 	getById: (id: T["id"]) => Promise<T>;
 	create: (payload: CreatePayload<T>) => Promise<T>;
@@ -35,7 +35,7 @@ export type CrudController<T extends BaseRecord> = {
 	remove: (id: T["id"]) => Promise<T>;
 };
 
-const buildCrudController = <T extends BaseRecord>(tableName: string): CrudController<T> => ({
+const buildController = <T extends BaseRecord>(tableName: string): Controller<T> => ({
 	list: async (options) => {
 		let query = supabase.from(tableName).select("*");
 
@@ -109,15 +109,15 @@ const buildCrudController = <T extends BaseRecord>(tableName: string): CrudContr
 	},
 });
 
-export const bookmarkController = buildCrudController<Bookmark>("bookmarks");
-export const cachedRouteController = buildCrudController<CachedRoute>("cached_routes");
-export const eventController = buildCrudController<Event>("events");
-export const locationController = buildCrudController<Location>("locations");
-export const locationImageController = buildCrudController<LocationImage>("location_images");
-export const productController = buildCrudController<Product>("products");
-export const productImageController = buildCrudController<ProductImage>("product_images");
-export const reviewController = buildCrudController<Review>("reviews");
-export const userProfileController = buildCrudController<UserProfile>("user_profiles");
+export const bookmarkController = buildController<Bookmark>("bookmarks");
+export const cachedRouteController = buildController<CachedRoute>("cached_routes");
+export const eventController = buildController<Event>("events");
+export const locationController = buildController<Location>("locations");
+export const locationImageController = buildController<LocationImage>("location_images");
+export const productController = buildController<Product>("products");
+export const productImageController = buildController<ProductImage>("product_images");
+export const reviewController = buildController<Review>("reviews");
+export const userProfileController = buildController<UserProfile>("user_profiles");
 
 export const controllers = {
 	bookmark: bookmarkController,

@@ -1,3 +1,5 @@
+type Role = "user" | "admin";
+
 export interface Bookmark {
 	id: string;
 	created_at: string;
@@ -82,6 +84,6 @@ export interface UserProfile {
 	name: string;
 	email: string;
 	avatar_url: string;
-	role: "user" | "admin";
+	role: Role;
 	created_at: string | null;
 }
