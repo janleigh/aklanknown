@@ -2,11 +2,8 @@ import { supabase } from "@/shared/api/supabase/supabase";
 import type {
 	Bookmark,
 	CachedRoute,
-	Event,
 	Location,
 	LocationImage,
-	Product,
-	ProductImage,
 	Review,
 	UserProfile,
 } from "@/shared/types/supabase";
@@ -111,22 +108,16 @@ const buildController = <T extends BaseRecord>(tableName: string): Controller<T>
 
 export const bookmarkController = buildController<Bookmark>("bookmarks");
 export const cachedRouteController = buildController<CachedRoute>("cached_routes");
-export const eventController = buildController<Event>("events");
 export const locationController = buildController<Location>("locations");
 export const locationImageController = buildController<LocationImage>("location_images");
-export const productController = buildController<Product>("products");
-export const productImageController = buildController<ProductImage>("product_images");
 export const reviewController = buildController<Review>("reviews");
 export const userProfileController = buildController<UserProfile>("user_profiles");
 
 export const controllers = {
 	bookmark: bookmarkController,
 	cachedRoute: cachedRouteController,
-	event: eventController,
 	location: locationController,
 	locationImage: locationImageController,
-	product: productController,
-	productImage: productImageController,
 	review: reviewController,
 	userProfile: userProfileController,
 };
