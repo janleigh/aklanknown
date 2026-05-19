@@ -3,4 +3,5 @@ export const API_KEYS = {
 		url: process.env.EXPO_PUBLIC_SUPABASE_URL ?? "",
 		publishableKey: process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "",
 	},
+	mapbox: process.env.EXPO_PUBLIC_MAPBOX_APIKEY ?? "",
 };

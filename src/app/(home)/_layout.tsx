@@ -1,9 +1,19 @@
-import { Text, View } from "react-native";
+import { Stack } from "expo-router";
 
 export default function HomeLayout() {
 	return (
-		<View>
-			<Text>HomeLayout</Text>
-		</View>
+		<Stack
+			screenOptions={{
+				headerShown: false,
+			}}
+		>
+			<Stack.Screen name="index" />
+			<Stack.Screen
+				name="location"
+				options={{
+					animationEnabled: true,
+				}}
+			/>
+		</Stack>
 	);
 }
