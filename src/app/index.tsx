@@ -1,12 +1,16 @@
-import { useRouter } from "expo-router";
-import { useEffect } from "react";
+import { useAuth } from "@clerk/expo";
+import { Redirect } from "expo-router";
 
 export default function RootScreen() {
-	const router = useRouter();
+	const { isSignedIn, isLoaded } = useAuth();
 
-	useEffect(() => {
-		router.replace("/(landing)");
-	}, [router]);
+	if (!isLoaded) {
+		return null;
+	}
 
-	return null;
+	if (isSignedIn) {
+		return <Redirect href="/(home)" />;
+	}
+
+	return <Redirect href="/(landing)" />;
 }

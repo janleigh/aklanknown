@@ -111,7 +111,7 @@ export const cachedRouteController = buildController<CachedRoute>("cached_routes
 export const locationController = buildController<Location>("locations");
 export const locationImageController = buildController<LocationImage>("location_images");
 export const reviewController = buildController<Review>("reviews");
-export const userProfileController = buildController<UserProfile>("user_profiles");
+export const userProfileController = buildController<UserProfile>("users");
 
 export const controllers = {
 	bookmark: bookmarkController,

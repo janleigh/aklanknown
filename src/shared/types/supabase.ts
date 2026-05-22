@@ -52,6 +52,7 @@ export interface Review {
 export interface UserProfile {
 	id: string;
 	google_id: string | null;
+	facebook_id: string | null;
 	name: string;
 	email: string;
 	avatar_url: string;

@@ -29,6 +29,7 @@
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"expo": "~55.0.24",
+		"expo-auth-session": "~55.0.16",
 		"expo-constants": "~55.0.16",
 		"expo-dev-client": "~55.0.33",
 		"expo-device": "~55.0.17",
