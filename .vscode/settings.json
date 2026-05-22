@@ -1,8 +1,5 @@
 {
-	"editor.codeActionsOnSave": {
-		"source.fixAll.biome": "explicit",
-		"source.organizeImports": "explicit",
-		"source.sortMembers": "explicit"
-	},
-	"typescript.tsserver.experimental.enableProjectDiagnostics": false
+  "css.lint.unknownAtRules": "ignore",
+  "scss.lint.unknownAtRules": "ignore",
+  "less.lint.unknownAtRules": "ignore"
 }

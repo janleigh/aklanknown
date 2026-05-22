@@ -1,0 +1,23 @@
+import { TextInput, View } from "react-native";
+import { Search } from "lucide-react-native";
+
+export interface SearchBarProps {
+	value: string;
+	onChangeText: (text: string) => void;
+	placeholder?: string;
+}
+
+export function SearchBar({ value, onChangeText, placeholder = "Where to in Aklan?" }: SearchBarProps) {
+	return (
+		<View className="flex-row items-center bg-canvas rounded-full px-4 py-3 shadow-sm border border-hairline">
+			<Search size={20} color="#929292" />
+			<TextInput
+				className="flex-1 ml-3 text-ink"
+				placeholder={placeholder}
+				placeholderTextColor="#929292"
+				value={value}
+				onChangeText={onChangeText}
+			/>
+		</View>
+	);
+}

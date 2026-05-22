@@ -1,43 +1,18 @@
-import type { PropsWithChildren } from "react";
-import type { TextProps as BaseTP } from "react-native";
-import { Text as BaseT } from "react-native";
+// src/components/Text.tsx
+import { Text as RNText, TextProps as RNTextProps } from "react-native";
 
-type FontNames =
-	| "Geist_400Regular"
-	| "Geist_500Medium"
-	| "Geist_600SemiBold"
-	| "Geist_700Bold"
-	| "PlusJakartaSans_400Regular"
-	| "PlusJakartaSans_500Medium"
-	| "PlusJakartaSans_600SemiBold"
-	| "PlusJakartaSans_700Bold";
+export interface TextProps extends RNTextProps {
+	fontName?: string;
+}
 
-type TextProps = PropsWithChildren<
-	BaseTP & {
-		className: string;
-		fontName?: FontNames;
-		fontStyle?: "regular" | "medium" | "bold" | "extrabold";
-	}
->;
-
-export const Text = ({
-	children,
-	className = "",
-	numberOfLines,
-	fontName,
-	fontStyle,
-	...rest
-}: TextProps) => {
-	fontName = fontName ?? "Geist_400Regular";
-	const weightClass = fontStyle ? `-${fontStyle}` : "";
+export function Text({ fontName, className, style, children, ...props }: TextProps) {
 	return (
-		<BaseT
-			className={`font-${weightClass} ${className}`.trim()}
-			numberOfLines={numberOfLines}
-			style={fontName ? { fontFamily: fontName } : {}}
-			{...rest}
+		<RNText
+			{...props}
+			className={className}
+			style={[fontName && { fontFamily: fontName }, style]}
 		>
 			{children}
-		</BaseT>
+		</RNText>
 	);
-};
+}

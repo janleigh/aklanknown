@@ -1,3 +1,4 @@
+/* ✅ Uniwind + Tailwind v4 Theme Configuration */
 @import "tailwindcss";
 @import "uniwind";
 
@@ -44,4 +45,14 @@
 		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
 	--font-rounded: "SF Pro Rounded", "Hiragino Maru Gothic ProN", Meiryo, "MS PGothic", sans-serif;
 	--font-serif: Georgia, "Times New Roman", serif;
+}
+
+/* ✅ Mobile Safe Area Support */
+/* This prevents bottom tabs from being hidden behind the iPhone Home Bar */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
 }
