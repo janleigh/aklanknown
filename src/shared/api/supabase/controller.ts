@@ -15,7 +15,7 @@ type BaseRecord = {
 	created_at?: string | null;
 };
 
-export type CreatePayload<T extends BaseRecord> = Omit<T, "id" | "created_at">;
+export type CreatePayload<T extends BaseRecord> = Omit<T, "created_at">;
 export type UpdatePayload<T extends BaseRecord> = Partial<CreatePayload<T>>;
 
 export type ListOptions<T extends BaseRecord> = {
@@ -111,7 +111,7 @@ export const cachedRouteController = buildController<CachedRoute>("cached_routes
 export const locationController = buildController<Location>("locations");
 export const locationImageController = buildController<LocationImage>("location_images");
 export const reviewController = buildController<Review>("reviews");
-export const userProfileController = buildController<UserProfile>("users");
+export const userController = buildController<UserProfile>("users");
 
 export const controllers = {
 	bookmark: bookmarkController,
@@ -119,5 +119,5 @@ export const controllers = {
 	location: locationController,
 	locationImage: locationImageController,
 	review: reviewController,
-	userProfile: userProfileController,
+	user: userController,
 };

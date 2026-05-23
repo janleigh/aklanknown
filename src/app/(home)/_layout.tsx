@@ -1,7 +1,7 @@
 import { useUser } from "@clerk/expo";
 import { Stack } from "expo-router";
 import { useEffect } from "react";
-import { userProfileController } from "@/shared/api/supabase/controller";
+import { userController } from "@/shared/api/supabase/controller";
 
 export default function HomeLayout() {
 	const { user } = useUser();
@@ -12,7 +12,7 @@ export default function HomeLayout() {
 		const syncSupabase = async () => {
 			try {
 				try {
-					await userProfileController.getById(user.id);
+					await userController.getById(user.id);
 				} catch (err) {
 					if (err) console.error(err);
 
@@ -23,7 +23,8 @@ export default function HomeLayout() {
 					const googleAccount = user.externalAccounts.find((ea) => ea.provider === "google");
 					const facebookAccount = user.externalAccounts.find((ea) => ea.provider === "facebook");
 
-					await userProfileController.create({
+					await userController.create({
+						id: user.id,
 						email,
 						name,
 						avatar_url: user.imageUrl ?? "",
