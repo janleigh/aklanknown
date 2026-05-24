@@ -190,7 +190,6 @@ export default function LocationDetailsScreen() {
 						<View className="absolute bottom-4 left-0 right-0 flex-row gap-2 justify-center">
 							{location.images.map((_: any, index: number) => (
 								<View
-									// biome-ignore lint/suspicious/noArrayIndexKey: expected
 									key={index}
 									className={`h-2 rounded-full ${
 										index === currentImageIndex ? "bg-canvas w-6" : "bg-canvas/50 w-2"
@@ -328,7 +327,6 @@ export default function LocationDetailsScreen() {
 									</Text>
 									<View className="flex-row gap-0.5">
 										{Array.from({ length: review.rating }).map((_, i) => (
-											// biome-ignore lint/suspicious/noArrayIndexKey: expected
 											<Star key={i} size={14} color="#FBBF24" fill="#FBBF24" />
 										))}
 									</View>

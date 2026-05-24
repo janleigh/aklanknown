@@ -190,7 +190,7 @@ export default function MapsScreen() {
 						</View>
 						<TouchableOpacity
 							className="px-4 py-2 bg-primary rounded-lg"
-							onPress={() => router.push(`/location/${selectedData.id}` as any)}
+							onPress={() => router.push(`/location/${selectedData.id}`)}
 							activeOpacity={0.8}
 						>
 							<Text

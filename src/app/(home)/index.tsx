@@ -112,7 +112,7 @@ export default function HomeScreen() {
 				renderItem={({ item }) => (
 					<TouchableOpacity
 						className="overflow-hidden mb-4 bg-canvas border border-hairline rounded-xl shadow-sm"
-						onPress={() => router.push(`/location/${item.id}` as any)}
+						onPress={() => router.push(`/location/${item.id}`)}
 						activeOpacity={0.9}
 					>
 						<View className="relative h-48">

@@ -16,9 +16,9 @@ export default function ProfileScreen() {
 
 	const menuItems = [
 		{ icon: User, label: "Edit Profile", action: () => {} },
-		{ icon: Settings, label: "App Settings", action: () => router.push("/404" as any) },
-		{ icon: Bell, label: "Notifications", action: () => router.push("/404" as any) },
-		{ icon: Shield, label: "Privacy & Security", action: () => router.push("/404" as any) },
+		{ icon: Settings, label: "App Settings", action: () => router.push("/404") },
+		{ icon: Bell, label: "Notifications", action: () => router.push("/404") },
+		{ icon: Shield, label: "Privacy & Security", action: () => router.push("/404") },
 	];
 
 	return (
