@@ -50,9 +50,9 @@
 /* ✅ Mobile Safe Area Support */
 /* This prevents bottom tabs from being hidden behind the iPhone Home Bar */
 .pb-safe {
-  padding-bottom: env(safe-area-inset-bottom);
+	padding-bottom: env(safe-area-inset-bottom);
 }
 
 .pt-safe {
-  padding-top: env(safe-area-inset-top);
+	padding-top: env(safe-area-inset-top);
 }

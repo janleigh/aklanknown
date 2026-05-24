@@ -1,6 +1,5 @@
-
-import { TouchableOpacity, TouchableOpacityProps, Animated } from "react-native";
 import { useRef } from "react";
+import { Animated, TouchableOpacity, type TouchableOpacityProps } from "react-native";
 
 export interface PressableScaleProps extends TouchableOpacityProps {
 	scaleValue?: number;

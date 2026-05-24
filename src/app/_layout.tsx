@@ -76,7 +76,7 @@ export default function RootLayout() {
 			<ClerkLoaded>
 				{/* Mobile-optimized status bar */}
 				<StatusBar style="auto" backgroundColor="transparent" translucent />
-				
+
 				<Stack screenOptions={{ headerShown: false }}>
 					<Stack.Screen name="index" />
 					<Stack.Screen name="(landing)" />

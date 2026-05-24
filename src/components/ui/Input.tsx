@@ -1,5 +1,4 @@
-
-import { TextInput, TextInputProps, View } from "react-native";
+import { TextInput, type TextInputProps, View } from "react-native";
 import { Text } from "../Text";
 
 export interface InputProps extends TextInputProps {
@@ -15,7 +14,9 @@ export function Input({ label, error, className, ...props }: InputProps) {
 					{label}
 				</Text>
 			)}
-			<View className={`bg-canvas border ${error ? "border-error" : "border-hairline"} rounded-lg px-4 py-3 flex-row items-center ${className || ""}`}>
+			<View
+				className={`bg-canvas border ${error ? "border-error" : "border-hairline"} rounded-lg px-4 py-3 flex-row items-center ${className || ""}`}
+			>
 				<TextInput
 					{...props}
 					className={`flex-1 text-ink ${props.placeholder ? "text-muted" : ""}`}

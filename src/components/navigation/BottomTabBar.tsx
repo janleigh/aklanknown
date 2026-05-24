@@ -1,7 +1,6 @@
-
-import { View, TouchableOpacity } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { Text } from "../Text";
-import { TabIcon, TabIconProps } from "./TabIcon";
+import { TabIcon, type TabIconProps } from "./TabIcon";
 
 export interface BottomTabBarProps {
 	tabs: Array<{
@@ -32,9 +31,7 @@ export function BottomTabBar({ tabs, activeTab }: BottomTabBarProps) {
 							fill={isActive ? "currentColor" : "none"}
 						/>
 						<Text
-							className={`text-xs mt-1 ${
-								isActive ? "text-primary font-semibold" : "text-muted"
-							}`}
+							className={`text-xs mt-1 ${isActive ? "text-primary font-semibold" : "text-muted"}`}
 							fontName="PlusJakartaSans_600SemiBold"
 						>
 							{tab.label}

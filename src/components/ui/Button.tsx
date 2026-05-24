@@ -1,5 +1,4 @@
-
-import { TouchableOpacity, TouchableOpacityProps } from "react-native";
+import { TouchableOpacity, type TouchableOpacityProps } from "react-native";
 import { Text } from "../Text";
 
 export interface ButtonProps extends TouchableOpacityProps {
@@ -39,7 +38,10 @@ export function Button({
 			className={`${variants[variant]} ${sizes[size]} rounded-lg flex-row items-center justify-center active:scale-98 ${disabled ? "opacity-50" : ""} ${className || ""}`}
 			disabled={disabled}
 		>
-			<Text className={`${textColors[variant]} font-semibold`} fontName="PlusJakartaSans_600SemiBold">
+			<Text
+				className={`${textColors[variant]} font-semibold`}
+				fontName="PlusJakartaSans_600SemiBold"
+			>
 				{label}
 			</Text>
 		</TouchableOpacity>

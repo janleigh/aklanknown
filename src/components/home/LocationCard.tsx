@@ -1,7 +1,7 @@
-import { TouchableOpacity, View, Image } from "react-native";
 import { Heart, MapPin, Star } from "lucide-react-native";
-import { Text } from "../Text";
+import { Image, TouchableOpacity, View } from "react-native";
 import type { Location } from "@/types";
+import { Text } from "../Text";
 
 export interface LocationCardProps {
 	location: Location;
@@ -57,7 +57,10 @@ export function LocationCard({
 					</View>
 					<View className="flex-row items-center px-2 py-1 bg-primary/10 rounded-full">
 						<Star size={12} color="#FBBF24" fill="#FBBF24" />
-						<Text className="ml-1 font-semibold text-ink text-sm" fontName="PlusJakartaSans_600SemiBold">
+						<Text
+							className="ml-1 font-semibold text-ink text-sm"
+							fontName="PlusJakartaSans_600SemiBold"
+						>
 							{location.rating}
 						</Text>
 					</View>

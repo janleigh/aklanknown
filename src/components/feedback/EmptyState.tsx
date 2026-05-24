@@ -1,6 +1,5 @@
-
-import { View } from "react-native";
 import { Search } from "lucide-react-native";
+import { View } from "react-native";
 import { Text } from "../Text";
 import { Button } from "../ui/Button";
 
@@ -23,7 +22,9 @@ export function EmptyState({ title, description, actionLabel, onAction }: EmptyS
 			<Text className="mb-6 text-center text-muted" fontName="PlusJakartaSans_400Regular">
 				{description}
 			</Text>
-			{actionLabel && onAction && <Button variant="primary" label={actionLabel} onPress={onAction} />}
+			{actionLabel && onAction && (
+				<Button variant="primary" label={actionLabel} onPress={onAction} />
+			)}
 		</View>
 	);
 }

@@ -1,5 +1,5 @@
-import { TextInput, View } from "react-native";
 import { Search } from "lucide-react-native";
+import { TextInput, View } from "react-native";
 
 export interface SearchBarProps {
 	value: string;
@@ -7,7 +7,11 @@ export interface SearchBarProps {
 	placeholder?: string;
 }
 
-export function SearchBar({ value, onChangeText, placeholder = "Where to in Aklan?" }: SearchBarProps) {
+export function SearchBar({
+	value,
+	onChangeText,
+	placeholder = "Where to in Aklan?",
+}: SearchBarProps) {
 	return (
 		<View className="flex-row items-center px-4 py-3 bg-canvas border border-hairline rounded-full shadow-sm">
 			<Search size={20} color="#929292" />

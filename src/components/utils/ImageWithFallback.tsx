@@ -1,6 +1,5 @@
-
-import { Image, ImageProps, View } from "react-native";
 import { useState } from "react";
+import { Image, type ImageProps } from "react-native";
 
 export interface ImageWithFallbackProps extends ImageProps {
 	fallbackSource?: number | { uri: string };

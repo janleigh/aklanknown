@@ -1,5 +1,5 @@
-import { View } from "react-native";
 import { Bookmark } from "lucide-react-native";
+import { View } from "react-native";
 import { Text } from "@/components/index";
 
 export default function BookmarksScreen() {

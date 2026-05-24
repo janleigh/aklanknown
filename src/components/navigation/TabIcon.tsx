@@ -1,6 +1,5 @@
-
+import type { LucideIcon } from "lucide-react-native";
 import { View } from "react-native";
-import { LucideIcon } from "lucide-react-native";
 
 export interface TabIconProps {
 	icon: LucideIcon;
