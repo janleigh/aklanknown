@@ -4,7 +4,7 @@
 	"version": "1.0.0",
 	"scripts": {
 		"start": "expo start",
-		"start:tunnel": "EXPO_TUNNEL_SUBDOMAIN='dfjdgd-natlan-jnlgh-8081' expo start --tunnel",
+		"start:tunnel": "EXPO_TUNNEL_SUBDOMAIN='dfjdgd-natlan-jnlgh-8081' expo start -c --tunnel",
 		"android": "expo start --android",
 		"ios": "expo start --ios",
 		"web": "expo start --web",
@@ -38,7 +38,7 @@
 		"expo-image": "~55.0.10",
 		"expo-linking": "~55.0.15",
 		"expo-router": "~55.0.14",
-		"expo-secure-store": "^56.0.4",
+		"expo-secure-store": "~55.0.14",
 		"expo-splash-screen": "~55.0.21",
 		"expo-status-bar": "~55.0.6",
 		"expo-symbols": "~55.0.8",

@@ -30,39 +30,39 @@ export default function MapsScreen() {
 	return (
 		<View className="flex-1 bg-canvas">
 			{/* Header */}
-			<View className="pt-12 pb-3 px-4 bg-canvas border-b border-hairline z-20">
-				<Text className="text-2xl text-ink mb-3" fontName="PlusJakartaSans_700Bold">Maps</Text>
+			<View className="z-20 pb-3 pt-12 px-4 bg-canvas border-b border-hairline">
+				<Text className="mb-3 text-2xl text-ink" fontName="PlusJakartaSans_700Bold">Maps</Text>
 
 				{/* Search & Filter */}
-				<View className="flex-row items-center gap-2 mb-3">
-					<View className="flex-1 flex-row items-center bg-surface-soft rounded-full px-4 py-2.5 border border-hairline">
+				<View className="flex-row gap-2 items-center mb-3">
+					<View className="flex-1 flex-row items-center px-4 py-2.5 bg-surface-soft border border-hairline rounded-full">
 						<Search size={18} color="#929292" />
 						<TextInput className="flex-1 ml-2 text-ink text-sm" placeholder="Where to in Aklan?" placeholderTextColor="#929292" />
 					</View>
-					<TouchableOpacity className="bg-primary/10 p-2.5 rounded-full" activeOpacity={0.7}>
+					<TouchableOpacity className="p-2.5 bg-primary/10 rounded-full" activeOpacity={0.7}>
 						<SlidersHorizontal size={18} color="#ff385c" />
 					</TouchableOpacity>
 				</View>
 
 				{/* Categories */}
-				<ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-1 px-1">
+				<ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-1 -mx-1">
 					{CATEGORIES.map((cat) => (
-						<TouchableOpacity key={cat} className="bg-surface-soft border border-hairline px-4 py-1.5 rounded-full mr-2" activeOpacity={0.7}>
-							<Text className="text-ink text-xs font-semibold" fontName="PlusJakartaSans_600SemiBold">{cat}</Text>
+						<TouchableOpacity key={cat} className="mr-2 px-4 py-1.5 bg-surface-soft border border-hairline rounded-full" activeOpacity={0.7}>
+							<Text className="font-semibold text-ink text-xs" fontName="PlusJakartaSans_600SemiBold">{cat}</Text>
 						</TouchableOpacity>
 					))}
 				</ScrollView>
 			</View>
 
 			{/* Map Area */}
-			<View className="flex-1 bg-[#E8F0FE] relative overflow-hidden">
+			<View className="overflow-hidden relative flex-1 bg-[#E8F0FE]">
 				{/* Subtle Map Grid Pattern */}
 				<View className="absolute inset-0 opacity-15">
 					{[...Array(8)].map((_, i) => (
-						<View key={`h-${i}`} className="absolute left-0 right-0 border-t border-blue-400" style={{ top: `${i * 12.5}%` }} />
+						<View key={`h-${i}`} className="absolute left-0 right-0 border-blue-400 border-t" style={{ top: `${i * 12.5}%` }} />
 					))}
 					{[...Array(8)].map((_, i) => (
-						<View key={`v-${i}`} className="absolute top-0 bottom-0 border-l border-blue-400" style={{ left: `${i * 12.5}%` }} />
+						<View key={`v-${i}`} className="absolute bottom-0 top-0 border-blue-400 border-l" style={{ left: `${i * 12.5}%` }} />
 					))}
 				</View>
 
@@ -82,29 +82,29 @@ export default function MapsScreen() {
 				))}
 
 				{/* My Location Button */}
-				<TouchableOpacity className="absolute bottom-4 right-4 bg-canvas p-3 rounded-full shadow-lg border border-hairline" activeOpacity={0.7}>
+				<TouchableOpacity className="absolute bottom-4 right-4 p-3 bg-canvas border border-hairline rounded-full shadow-lg" activeOpacity={0.7}>
 					<Navigation size={20} color="#ff385c" />
 				</TouchableOpacity>
 			</View>
 
 			{/* Bottom Details Card (Static) - Uses pb-safe to not overlap with tabs */}
-			<View className="bg-canvas border-t border-hairline px-4 py-3 pb-safe shadow-lg z-20">
+			<View className="z-20 pb-safe px-4 py-3 bg-canvas border-hairline border-t shadow-lg">
 				{selectedData ? (
-					<View className="flex-row items-center gap-3">
-						<View className="w-14 h-14 bg-surface-soft rounded-xl overflow-hidden border border-hairline">
-							<Image source={{ uri: selectedData.image }} className="w-full h-full" resizeMode="cover" />
+					<View className="flex-row gap-3 items-center">
+						<View className="overflow-hidden h-14 w-14 bg-surface-soft border border-hairline rounded-xl">
+							<Image source={{ uri: selectedData.image }} className="h-full w-full" resizeMode="cover" />
 						</View>
 						<View className="flex-1">
-							<Text className="text-base text-ink font-bold mb-0.5" fontName="PlusJakartaSans_700Bold">{selectedData.name}</Text>
-							<View className="flex-row items-center gap-1 mb-0.5">
+							<Text className="mb-0.5 font-bold text-base text-ink" fontName="PlusJakartaSans_700Bold">{selectedData.name}</Text>
+							<View className="flex-row gap-1 items-center mb-0.5">
 								<Star size={12} color="#FBBF24" fill="#FBBF24" />
-								<Text className="text-xs text-ink font-semibold" fontName="PlusJakartaSans_600SemiBold">{selectedData.rating}</Text>
-								<Text className="text-xs text-muted" fontName="PlusJakartaSans_400Regular">({selectedData.reviews})</Text>
+								<Text className="font-semibold text-ink text-xs" fontName="PlusJakartaSans_600SemiBold">{selectedData.rating}</Text>
+								<Text className="text-muted text-xs" fontName="PlusJakartaSans_400Regular">({selectedData.reviews})</Text>
 							</View>
-							<Text className="text-xs text-muted" fontName="PlusJakartaSans_400Regular">{selectedData.location}</Text>
+							<Text className="text-muted text-xs" fontName="PlusJakartaSans_400Regular">{selectedData.location}</Text>
 						</View>
-						<TouchableOpacity className="bg-primary px-4 py-2 rounded-lg" onPress={() => router.push(`/location/${selectedData.id}` as any)} activeOpacity={0.8}>
-							<Text className="text-white text-xs font-semibold" fontName="PlusJakartaSans_600SemiBold">View</Text>
+						<TouchableOpacity className="px-4 py-2 bg-primary rounded-lg" onPress={() => router.push(`/location/${selectedData.id}` as any)} activeOpacity={0.8}>
+							<Text className="font-semibold text-white text-xs" fontName="PlusJakartaSans_600SemiBold">View</Text>
 						</TouchableOpacity>
 					</View>
 				) : (

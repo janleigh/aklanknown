@@ -15,7 +15,7 @@ export interface BottomTabBarProps {
 
 export function BottomTabBar({ tabs, activeTab }: BottomTabBarProps) {
 	return (
-		<View className="flex-row bg-canvas border-t border-hairline pb-safe pt-2 px-2">
+		<View className="flex-row pb-safe pt-2 px-2 bg-canvas border-hairline border-t">
 			{tabs.map((tab) => {
 				const isActive = activeTab === tab.key;
 				return (

@@ -11,7 +11,7 @@ export function Input({ label, error, className, ...props }: InputProps) {
 	return (
 		<View className="w-full">
 			{label && (
-				<Text className="text-ink font-semibold mb-2 ml-1" fontName="PlusJakartaSans_600SemiBold">
+				<Text className="mb-2 ml-1 font-semibold text-ink" fontName="PlusJakartaSans_600SemiBold">
 					{label}
 				</Text>
 			)}
@@ -23,7 +23,7 @@ export function Input({ label, error, className, ...props }: InputProps) {
 				/>
 			</View>
 			{error && (
-				<Text className="text-error text-sm mt-1 ml-1" fontName="PlusJakartaSans_400Regular">
+				<Text className="ml-1 mt-1 text-error text-sm" fontName="PlusJakartaSans_400Regular">
 					{error}
 				</Text>
 			)}

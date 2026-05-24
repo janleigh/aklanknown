@@ -34,11 +34,11 @@ export default function HomeScreen() {
 	return (
 		<View className="flex-1 bg-surface-soft">
 			{/* Header */}
-			<View className="px-4 pt-12 pb-4 bg-canvas border-b border-hairline">
-				<Text className="text-2xl text-ink mb-4" fontName="PlusJakartaSans_700Bold">Explore Aklan</Text>
+			<View className="pb-4 pt-12 px-4 bg-canvas border-b border-hairline">
+				<Text className="mb-4 text-2xl text-ink" fontName="PlusJakartaSans_700Bold">Explore Aklan</Text>
 				
 				{/* Search */}
-				<View className="flex-row items-center bg-canvas rounded-full px-4 py-3 shadow-sm border border-hairline mb-4">
+				<View className="flex-row items-center mb-4 px-4 py-3 bg-canvas border border-hairline rounded-full shadow-sm">
 					<Search size={20} color="#929292" />
 					<TextInput
 						className="flex-1 ml-3 text-ink"
@@ -50,7 +50,7 @@ export default function HomeScreen() {
 				</View>
 
 				{/* Categories */}
-				<ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4">
+				<ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-4 -mx-4">
 					{CATEGORIES.map((cat) => (
 						<TouchableOpacity
 							key={cat}
@@ -74,17 +74,17 @@ export default function HomeScreen() {
 				showsVerticalScrollIndicator={false}
 				renderItem={({ item }) => (
 					<TouchableOpacity
-						className="bg-canvas rounded-xl overflow-hidden mb-4 shadow-sm border border-hairline"
+						className="overflow-hidden mb-4 bg-canvas border border-hairline rounded-xl shadow-sm"
 						onPress={() => router.push(`/location/${item.id}` as any)}
 						activeOpacity={0.9}
 					>
 						<View className="relative h-48">
-							<Image source={{ uri: item.image }} className="w-full h-full" resizeMode="cover" />
-							<View className="absolute top-3 left-3 bg-scrim/50 px-3 py-1 rounded-full">
-								<Text className="text-on-dark text-xs font-medium" fontName="PlusJakartaSans_500Medium">{item.distance}</Text>
+							<Image source={{ uri: item.image }} className="h-full w-full" resizeMode="cover" />
+							<View className="absolute left-3 top-3 px-3 py-1 bg-scrim/50 rounded-full">
+								<Text className="font-medium text-on-dark text-xs" fontName="PlusJakartaSans_500Medium">{item.distance}</Text>
 							</View>
 							<TouchableOpacity
-								className="absolute top-3 right-3 w-8 h-8 bg-canvas/90 rounded-full items-center justify-center"
+								className="absolute right-3 top-3 items-center justify-center h-8 w-8 bg-canvas/90 rounded-full"
 								onPress={(e) => { e.stopPropagation(); toggleBookmark(item.id); }}
 								activeOpacity={0.7}
 							>
@@ -92,24 +92,24 @@ export default function HomeScreen() {
 							</TouchableOpacity>
 						</View>
 						<View className="p-4">
-							<Text className="text-lg text-ink mb-1" fontName="PlusJakartaSans_700Bold">{item.name}</Text>
+							<Text className="mb-1 text-ink text-lg" fontName="PlusJakartaSans_700Bold">{item.name}</Text>
 							<View className="flex-row items-center justify-between">
 								<View className="flex-row items-center">
 									<MapPin size={14} color="#929292" />
-									<Text className="text-muted ml-1 text-sm" fontName="PlusJakartaSans_400Regular">{item.location}</Text>
+									<Text className="ml-1 text-muted text-sm" fontName="PlusJakartaSans_400Regular">{item.location}</Text>
 								</View>
-								<View className="flex-row items-center bg-primary/10 px-2 py-1 rounded-full">
+								<View className="flex-row items-center px-2 py-1 bg-primary/10 rounded-full">
 									<Star size={12} color="#FBBF24" fill="#FBBF24" />
-									<Text className="text-ink font-semibold text-sm ml-1" fontName="PlusJakartaSans_600SemiBold">{item.rating}</Text>
+									<Text className="ml-1 font-semibold text-ink text-sm" fontName="PlusJakartaSans_600SemiBold">{item.rating}</Text>
 								</View>
 							</View>
 						</View>
 					</TouchableOpacity>
 				)}
 				ListEmptyComponent={
-					<View className="items-center justify-center py-12 px-8">
-						<Text className="text-xl text-ink mb-2 text-center" fontName="PlusJakartaSans_700Bold">No locations found</Text>
-						<Text className="text-muted text-center" fontName="PlusJakartaSans_400Regular">Try adjusting your search or filters</Text>
+					<View className="items-center justify-center px-8 py-12">
+						<Text className="mb-2 text-center text-ink text-xl" fontName="PlusJakartaSans_700Bold">No locations found</Text>
+						<Text className="text-center text-muted" fontName="PlusJakartaSans_400Regular">Try adjusting your search or filters</Text>
 					</View>
 				}
 			/>

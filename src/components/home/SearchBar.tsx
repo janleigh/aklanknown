@@ -9,7 +9,7 @@ export interface SearchBarProps {
 
 export function SearchBar({ value, onChangeText, placeholder = "Where to in Aklan?" }: SearchBarProps) {
 	return (
-		<View className="flex-row items-center bg-canvas rounded-full px-4 py-3 shadow-sm border border-hairline">
+		<View className="flex-row items-center px-4 py-3 bg-canvas border border-hairline rounded-full shadow-sm">
 			<Search size={20} color="#929292" />
 			<TextInput
 				className="flex-1 ml-3 text-ink"

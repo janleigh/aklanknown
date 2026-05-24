@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { Home, Map, Bookmark, User } from "lucide-react-native";
+import { Bookmark, Home, Map as MapIcon, User } from "lucide-react-native";
 
 export default function HomeLayout() {
 	return (
@@ -34,7 +34,7 @@ export default function HomeLayout() {
 				options={{
 					title: "Maps",
 					tabBarIcon: ({ color, focused }) => (
-						<Map size={24} color={color} fill={focused ? "currentColor" : "none"} />
+						<MapIcon size={24} color={color} fill={focused ? "currentColor" : "none"} />
 					),
 				}}
 			/>

@@ -18,23 +18,23 @@ export default function SettingsScreen() {
 
 	return (
 		<ScrollView className="flex-1 bg-surface-soft">
-			<View className="px-4 pt-12 pb-6">
-				<Text className="text-2xl text-ink mb-1" fontName="PlusJakartaSans_700Bold">Settings</Text>
+			<View className="pb-6 pt-12 px-4">
+				<Text className="mb-1 text-2xl text-ink" fontName="PlusJakartaSans_700Bold">Settings</Text>
 				<Text className="text-muted" fontName="PlusJakartaSans_400Regular">Customize your experience</Text>
 			</View>
 
-			<View className="bg-canvas mx-4 rounded-xl overflow-hidden shadow-sm border border-hairline">
+			<View className="overflow-hidden mx-4 bg-canvas border border-hairline rounded-xl shadow-sm">
 				{items.map((item, i) => {
 					const Icon = item.icon;
 					const isClickable = !item.isSwitch && item.route;
 					
 					const content = (
 						<>
-							<View className="flex-row items-center flex-1">
-								<View className="w-10 h-10 rounded-full bg-primary/10 items-center justify-center mr-4">
+							<View className="flex-1 flex-row items-center">
+								<View className="items-center justify-center mr-4 h-10 w-10 bg-primary/10 rounded-full">
 									<Icon size={20} color="#ff385c" />
 								</View>
-								<Text className="font-semibold text-ink flex-1" fontName="PlusJakartaSans_600SemiBold">
+								<Text className="flex-1 font-semibold text-ink" fontName="PlusJakartaSans_600SemiBold">
 									{item.label}
 								</Text>
 							</View>
@@ -46,8 +46,8 @@ export default function SettingsScreen() {
 									thumbColor="#ffffff"
 								/>
 							) : (
-								<View className="flex-row items-center gap-1">
-									<Text className="text-muted-soft mr-1" fontName="PlusJakartaSans_400Regular">
+								<View className="flex-row gap-1 items-center">
+									<Text className="mr-1 text-muted-soft" fontName="PlusJakartaSans_400Regular">
 										{item.value as string}
 									</Text>
 									<ChevronRight size={20} color="#929292" />
@@ -65,7 +65,7 @@ export default function SettingsScreen() {
 						>
 							{isClickable ? (
 								<TouchableOpacity
-									className="flex-row items-center justify-between flex-1"
+									className="flex-1 flex-row items-center justify-between"
 									onPress={() => console.log("Navigate:", item.route)}
 									activeOpacity={0.7}
 								>
