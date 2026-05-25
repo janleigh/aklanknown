@@ -7,6 +7,8 @@ export interface Location {
 	rating: number;
 	image: string;
 	category: string;
+	latitude?: number;
+	longitude?: number;
 	description?: string;
 }
 export interface Event {

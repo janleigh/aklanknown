@@ -1,66 +1,88 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { MapPin, Navigation, Search, SlidersHorizontal, Star } from "lucide-react-native";
-import { useEffect, useState } from "react";
-import { Image, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import {
+	Image,
+	NativeModules,
+	Platform,
+	ScrollView,
+	TextInput,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import { Text } from "@/components/Text";
+import { API_KEYS } from "@/config";
+import { DEFAULT_MAP_LOCATION, LOCATION_LIST } from "@/shared/data/locations";
 
 const CATEGORIES = ["Beaches", "Parks", "Churches", "Historical", "Hotels"];
-
-const LOCATIONS = [
-	{
-		id: "1",
-		name: "Boracay White Beach",
-		location: "Malay, Aklan",
-		rating: 4.9,
-		reviews: 1245,
-		image: "https://picsum.photos/seed/boracay/400/300",
-		x: 20,
-		y: 30,
-	},
-	{
-		id: "2",
-		name: "Jawili Falls",
-		location: "Tangalan, Aklan",
-		rating: 4.7,
-		reviews: 328,
-		image: "https://picsum.photos/seed/jawili/400/300",
-		x: 45,
-		y: 25,
-	},
-	{
-		id: "3",
-		name: "Hinugtan Beach",
-		location: "Buruanga, Aklan",
-		rating: 4.8,
-		reviews: 156,
-		image: "https://picsum.photos/seed/hinugtan/400/300",
-		x: 70,
-		y: 40,
-	},
-	{
-		id: "4",
-		name: "Bakhawan Eco-Park",
-		location: "Kalibo, Aklan",
-		rating: 4.6,
-		reviews: 89,
-		image: "https://picsum.photos/seed/bakhawan/400/300",
-		x: 30,
-		y: 60,
-	},
-];
 
 export default function MapsScreen() {
 	const router = useRouter();
 	const params = useLocalSearchParams();
-	const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+	const initialLocationId =
+		typeof params.locationId === "string" ? params.locationId : DEFAULT_MAP_LOCATION.id;
+	const [selectedLocation, setSelectedLocation] = useState<string>(initialLocationId);
+	const [Mapbox, setMapbox] = useState<any>(null);
+	const hasMapboxNative = Platform.OS === "android" && Boolean(NativeModules.RNMBXModule);
 
 	useEffect(() => {
-		if (params.locationId) {
-			setSelectedLocation(params.locationId as string);
+		if (typeof params.locationId === "string") {
+			setSelectedLocation(params.locationId);
 		}
-	}, [params]);
+	}, [params.locationId]);
 
-	const selectedData = LOCATIONS.find((l) => l.id === selectedLocation);
+	useEffect(() => {
+		if (!hasMapboxNative) {
+			return;
+		}
+
+		let isMounted = true;
+
+		try {
+			const loadedMapbox = require("@rnmapbox/maps");
+			const resolvedMapbox = loadedMapbox.default ?? loadedMapbox;
+
+			if (API_KEYS.mapbox) {
+				resolvedMapbox.setAccessToken(API_KEYS.mapbox);
+			}
+
+			if (isMounted) {
+				setMapbox(resolvedMapbox);
+			}
+		} catch (error) {
+			console.warn("Mapbox native module is unavailable in this build:", error);
+		}
+
+		return () => {
+			isMounted = false;
+		};
+	}, [hasMapboxNative]);
+
+	const selectedData = useMemo(() => {
+		return (
+			LOCATION_LIST.find((location) => location.id === selectedLocation) ?? DEFAULT_MAP_LOCATION
+		);
+	}, [selectedLocation]);
+
+	if (Platform.OS !== "android") {
+		return (
+			<View className="flex-1 items-center justify-center bg-canvas px-6">
+				<Text className="text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
+					Mapbox map preview is available on Android only.
+				</Text>
+			</View>
+		);
+	}
+
+	if (!hasMapboxNative || !Mapbox) {
+		return (
+			<View className="flex-1 items-center justify-center bg-canvas px-6">
+				<Text className="text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
+					Mapbox native code is not available in this build. Rebuild with a dev client.
+				</Text>
+			</View>
+		);
+	}
 
 	return (
 		<View className="flex-1 bg-canvas">
@@ -106,49 +128,39 @@ export default function MapsScreen() {
 
 			{/* Map Area */}
 			<View className="overflow-hidden relative flex-1 bg-[#E8F0FE]">
-				{/* Subtle Map Grid Pattern */}
-				<View className="absolute inset-0 opacity-15">
-					{[...Array(8)].map((_, i) => (
-						<View
-							key={`h-${i}`}
-							className="absolute left-0 right-0 border-blue-400 border-t"
-							style={{ top: `${i * 12.5}%` }}
-						/>
-					))}
-					{[...Array(8)].map((_, i) => (
-						<View
-							key={`v-${i}`}
-							className="absolute bottom-0 top-0 border-blue-400 border-l"
-							style={{ left: `${i * 12.5}%` }}
-						/>
-					))}
-				</View>
-
-				{/* Location Pins */}
-				{LOCATIONS.map((loc) => (
-					<TouchableOpacity
-						key={loc.id}
-						className="absolute"
-						style={{
-							left: `${loc.x}%`,
-							top: `${loc.y}%`,
-							transform: [{ translateX: -14 }, { translateY: -28 }],
+				<Mapbox.MapView style={{ flex: 1 }} styleURL={Mapbox.StyleURL.Street}>
+					<Mapbox.Camera
+						defaultSettings={{
+							centerCoordinate: [selectedData.longitude, selectedData.latitude],
+							zoomLevel: 10,
 						}}
-						onPress={() => setSelectedLocation(loc.id)}
-						activeOpacity={0.8}
-					>
-						<View
-							className={`w-7 h-7 rounded-full items-center justify-center shadow-md border-2 ${selectedLocation === loc.id ? "bg-primary border-white" : "bg-canvas border-primary/30"}`}
-						>
-							<MapPin size={14} color={selectedLocation === loc.id ? "#fff" : "#ff385c"} />
-						</View>
-					</TouchableOpacity>
-				))}
+						centerCoordinate={[selectedData.longitude, selectedData.latitude]}
+						zoomLevel={10.5}
+						animationMode="flyTo"
+						animationDuration={800}
+					/>
 
-				{/* My Location Button */}
+					{LOCATION_LIST.map((loc) => (
+						<Mapbox.MarkerView key={loc.id} coordinate={[loc.longitude, loc.latitude]} allowOverlap>
+							<TouchableOpacity
+								className="items-center justify-center"
+								onPress={() => setSelectedLocation(loc.id)}
+								activeOpacity={0.85}
+							>
+								<View
+									className={`w-8 h-8 rounded-full items-center justify-center shadow-md border-2 ${selectedLocation === loc.id ? "bg-primary border-white" : "bg-canvas border-primary/30"}`}
+								>
+									<MapPin size={14} color={selectedLocation === loc.id ? "#fff" : "#ff385c"} />
+								</View>
+							</TouchableOpacity>
+						</Mapbox.MarkerView>
+					))}
+				</Mapbox.MapView>
+
 				<TouchableOpacity
 					className="absolute bottom-4 right-4 p-3 bg-canvas border border-hairline rounded-full shadow-lg"
 					activeOpacity={0.7}
+					onPress={() => setSelectedLocation(DEFAULT_MAP_LOCATION.id)}
 				>
 					<Navigation size={20} color="#ff385c" />
 				</TouchableOpacity>

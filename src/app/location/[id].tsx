@@ -246,10 +246,7 @@ export default function LocationDetailsScreen() {
 							className="flex-1 flex-row gap-2 items-center justify-center py-3 bg-primary rounded-xl"
 							activeOpacity={0.8}
 							onPress={() => {
-								router.push({
-									pathname: "/(home)/maps",
-									params: { locationId: locationId, locationName: location.name, focus: "true" },
-								} as any);
+								router.push(`/location/${locationId}/map` as any);
 							}}
 						>
 							<MapIcon size={18} color="#ffffff" />
