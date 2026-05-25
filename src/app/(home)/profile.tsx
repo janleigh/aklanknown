@@ -12,6 +12,10 @@ export default function ProfileScreen() {
 	const router = useRouter();
 	const [isAdmin, setIsAdmin] = useState(false);
 
+	const goToNotFound = () => {
+		router.push("/404" as never);
+	};
+
 	useEffect(() => {
 		if (!user) return;
 
@@ -48,9 +52,9 @@ export default function ProfileScreen() {
 		...(isAdmin
 			? [{ icon: Shield, label: "Admin Panel", action: () => router.push("/(admin)") }]
 			: []),
-		{ icon: Settings, label: "App Settings", action: () => router.push("/(home)/settings") },
-		{ icon: Bell, label: "Notifications", action: () => router.push("/(home)/settings") },
-		{ icon: Shield, label: "Privacy & Security", action: () => router.push("/(home)/settings") },
+		{ icon: Settings, label: "App Settings", action: goToNotFound },
+		{ icon: Bell, label: "Notifications", action: goToNotFound },
+		{ icon: Shield, label: "Privacy & Security", action: goToNotFound },
 	];
 
 	return (
