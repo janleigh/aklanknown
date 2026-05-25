@@ -1,6 +1,6 @@
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { Heart, MapPin, Search } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FlatList, Image, TextInput, TouchableOpacity, View } from "react-native";
 import { Text } from "@/components/Text";
 import { LoadingSpinner } from "@/components/index";
@@ -14,29 +14,31 @@ export default function HomeScreen() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [bookmarkedIds, setBookmarkedIds] = useState<string[]>([]);
 
-	useEffect(() => {
-		let isMounted = true;
-		const loadLocations = async () => {
-			setIsLoading(true);
-			try {
-				const data = await controllers.location.list({ orderBy: "created_at" });
-				if (isMounted) {
-					setLocations(data);
+	useFocusEffect(
+		useCallback(() => {
+			let isMounted = true;
+			const loadLocations = async () => {
+				setIsLoading(true);
+				try {
+					const data = await controllers.location.list({ orderBy: "created_at" });
+					if (isMounted) {
+						setLocations(data);
+					}
+				} catch (error) {
+					console.error("[Home] Error loading locations:", error);
+				} finally {
+					if (isMounted) {
+						setIsLoading(false);
+					}
 				}
-			} catch (error) {
-				console.error("[Home] Error loading locations:", error);
-			} finally {
-				if (isMounted) {
-					setIsLoading(false);
-				}
-			}
-		};
-		loadLocations();
+			};
+			loadLocations();
 
-		return () => {
-			isMounted = false;
-		};
-	}, []);
+			return () => {
+				isMounted = false;
+			};
+		}, [])
+	);
 
 	const filteredLocations = locations.filter((loc) => {
 		const matchesSearch =

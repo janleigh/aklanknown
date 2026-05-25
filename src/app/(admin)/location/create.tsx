@@ -1,10 +1,14 @@
+import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
-import { ArrowLeft } from "lucide-react-native";
+import { ArrowLeft, Image as ImageIcon } from "lucide-react-native";
 import { useState } from "react";
-import { ScrollView, TouchableOpacity, View, Alert } from "react-native";
+import { ScrollView, TouchableOpacity, View, Alert, Image } from "react-native";
 import { Button, Card, Input } from "@/components/index";
 import { Text } from "@/components/Text";
 import { controllers } from "@/shared/api/supabase/controller";
+import { supabase } from "@/shared/api/supabase/supabase";
+import * as FileSystem from "expo-file-system/legacy";
+import { decode } from "base64-arraybuffer";
 
 export default function CreateLocationScreen() {
 	const router = useRouter();
@@ -16,10 +20,46 @@ export default function CreateLocationScreen() {
 		barangay: "",
 		town: "",
 		description_en: "",
-		banner_image_url: "",
 		latitude: "",
 		longitude: "",
 	});
+	
+	const [bannerImage, setBannerImage] = useState<string | null>(null);
+	const [panoramaImage, setPanoramaImage] = useState<string | null>(null);
+
+	const pickImage = async (setImage: (uri: string) => void) => {
+		const result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ["images"],
+			allowsEditing: true,
+			quality: 0.8,
+		});
+
+		if (!result.canceled) {
+			setImage(result.assets[0].uri);
+		}
+	};
+
+	const uploadImageAsync = async (uri: string, pathPrefix: string) => {
+		try {
+			const base64 = await FileSystem.readAsStringAsync(uri, { encoding: "base64" });
+			const fileExt = uri.split('.').pop() || 'jpeg';
+			const fileName = `${pathPrefix}-${Date.now()}.${fileExt}`;
+			
+			const { error } = await supabase.storage
+				.from("locations")
+				.upload(fileName, decode(base64), {
+					contentType: `image/${fileExt === 'jpg' ? 'jpeg' : fileExt}`
+				});
+			
+			if (error) throw error;
+			
+			const { data } = supabase.storage.from("locations").getPublicUrl(fileName);
+			return data.publicUrl;
+		} catch (error) {
+			console.error("Upload error:", error);
+			throw error;
+		}
+	};
 
 	const handleCreate = async () => {
 		if (!form.name || !form.street || !form.town || !form.barangay) {
@@ -29,7 +69,17 @@ export default function CreateLocationScreen() {
 
 		setIsLoading(true);
 		try {
-			await controllers.location.create({
+			let banner_url = "";
+			let panorama_url = "";
+
+			if (bannerImage) {
+				banner_url = await uploadImageAsync(bannerImage, "banner");
+			}
+			if (panoramaImage) {
+				panorama_url = await uploadImageAsync(panoramaImage, "panorama");
+			}
+
+			const payload: any = {
 				name: form.name,
 				street: form.street,
 				barangay: form.barangay,
@@ -37,11 +87,13 @@ export default function CreateLocationScreen() {
 				description_en: form.description_en,
 				description_tl: null,
 				description_akl: null,
-				banner_image_url: form.banner_image_url,
-				panorama_image: "",
+				banner_image_url: banner_url,
+				panorama_image_url: panorama_url,
 				latitude: Number.parseFloat(form.latitude) || null,
 				longitude: Number.parseFloat(form.longitude) || null,
-			});
+			};
+
+			await controllers.location.create(payload);
 			router.back();
 		} catch (error) {
 			console.error("[Create Location] Error:", error);
@@ -116,13 +168,46 @@ export default function CreateLocationScreen() {
 					<Text className="mb-4 text-lg text-ink" fontName="PlusJakartaSans_700Bold">
 						Media & Map
 					</Text>
-					<Input
-						label="Image URL"
-						placeholder="https://..."
-						value={form.banner_image_url}
-						onChangeText={(text) => setForm({ ...form, banner_image_url: text })}
-					/>
-					<View className="flex-row gap-3">
+
+					<Text className="mb-2 ml-1 font-semibold text-ink" fontName="PlusJakartaSans_600SemiBold">
+						Banner Image
+					</Text>
+					<TouchableOpacity
+						onPress={() => pickImage(setBannerImage)}
+						className="mb-4 h-40 items-center justify-center rounded-xl border-2 border-dashed border-hairline bg-surface-soft overflow-hidden"
+					>
+						{bannerImage ? (
+							<Image source={{ uri: bannerImage }} className="h-full w-full" resizeMode="cover" />
+						) : (
+							<View className="items-center">
+								<ImageIcon size={28} color="#929292" />
+								<Text className="mt-2 text-muted" fontName="PlusJakartaSans_500Medium">
+									Tap to upload banner
+								</Text>
+							</View>
+						)}
+					</TouchableOpacity>
+
+					<Text className="mb-2 ml-1 font-semibold text-ink" fontName="PlusJakartaSans_600SemiBold">
+						Panorama Image
+					</Text>
+					<TouchableOpacity
+						onPress={() => pickImage(setPanoramaImage)}
+						className="mb-4 h-40 items-center justify-center rounded-xl border-2 border-dashed border-hairline bg-surface-soft overflow-hidden"
+					>
+						{panoramaImage ? (
+							<Image source={{ uri: panoramaImage }} className="h-full w-full" resizeMode="cover" />
+						) : (
+							<View className="items-center">
+								<ImageIcon size={28} color="#929292" />
+								<Text className="mt-2 text-muted" fontName="PlusJakartaSans_500Medium">
+									Tap to upload panorama
+								</Text>
+							</View>
+						)}
+					</TouchableOpacity>
+
+					<View className="flex-row gap-3 mt-2">
 						<View className="flex-1">
 							<Input
 								label="Latitude"
