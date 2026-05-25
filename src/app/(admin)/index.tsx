@@ -228,6 +228,7 @@ export default function AdminDashboardScreen() {
 						<AdminAction
 							label="Manage locations"
 							description="Keep place data accurate and current."
+							onPress={() => router.push("/(admin)/location" as any)}
 						/>
 						<AdminAction label="Inspect users" description="Track accounts and role assignments." />
 					</View>
@@ -371,9 +372,20 @@ function AdminMetric({
 	);
 }
 
-function AdminAction({ label, description }: { label: string; description: string }) {
+function AdminAction({
+	label,
+	description,
+	onPress,
+}: {
+	label: string;
+	description: string;
+	onPress?: () => void;
+}) {
 	return (
-		<Pressable className="flex-row items-center justify-between rounded-xl border border-hairline bg-surface-soft px-4 py-4">
+		<Pressable
+			onPress={onPress}
+			className="flex-row items-center justify-between rounded-xl border border-hairline bg-surface-soft px-4 py-4"
+		>
 			<View className="flex-1 pr-3">
 				<Text className="text-ink" fontName="PlusJakartaSans_600SemiBold">
 					{label}
