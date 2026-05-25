@@ -1,4 +1,4 @@
-import { useOAuth, useSSO } from "@clerk/expo";
+import { useOAuth } from "@clerk/expo";
 import { Text } from "@components/Text";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Entypo from "@expo/vector-icons/Entypo";

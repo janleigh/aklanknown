@@ -1,4 +1,5 @@
 export const API_KEYS = {
+	mapbox: process.env.EXPO_PUBLIC_MAPBOX_APIKEY ?? "",
 	clerk: {
 		publishableKey: process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY ?? "",
 	},
