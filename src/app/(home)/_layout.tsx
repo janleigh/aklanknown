@@ -29,7 +29,7 @@ export default function HomeLayout() {
 					options={{
 						title: screen.label,
 						tabBarIcon: HOME_TAB_ICONS[screen.name as keyof typeof HOME_TAB_ICONS],
-						...(screen.hidden && { href: null }),
+						...("hidden" in screen && screen.hidden && { href: null }),
 					}}
 				/>
 			))}

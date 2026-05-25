@@ -35,7 +35,7 @@ export interface Location {
 	latitude: number | null;
 	longitude: number | null;
 	banner_image_url: string;
-	panorama_image: string;
+	panorama_image_url: string;
 	created_at: string;
 }
 
