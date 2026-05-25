@@ -15,8 +15,8 @@ type BaseRecord = {
 	created_at?: string | null;
 };
 
-export type CreatePayload<T extends BaseRecord> = Omit<T, "created_at">;
-export type UpdatePayload<T extends BaseRecord> = Partial<CreatePayload<T>>;
+export type CreatePayload<T extends BaseRecord> = Omit<T, "created_at" | "id"> & { id?: T["id"] };
+export type UpdatePayload<T extends BaseRecord> = Partial<Omit<T, "created_at" | "id">>;
 
 export type ListOptions<T extends BaseRecord> = {
 	orderBy?: Extract<keyof T, string>;

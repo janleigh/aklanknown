@@ -1,13 +1,46 @@
 import { useAuth, useUser } from "@clerk/expo";
 import { useRouter } from "expo-router";
 import { Bell, LogOut, Settings, Shield, User } from "lucide-react-native";
+import { useEffect, useState } from "react";
 import { Image, Pressable, ScrollView, View } from "react-native";
 import { Text } from "@/components/index";
+import { userController } from "@/shared/api/supabase/controller";
 
 export default function ProfileScreen() {
 	const { signOut } = useAuth();
 	const { user } = useUser();
 	const router = useRouter();
+	const [isAdmin, setIsAdmin] = useState(false);
+
+	const goToNotFound = () => {
+		router.push("/404" as never);
+	};
+
+	useEffect(() => {
+		if (!user) return;
+
+		let isMounted = true;
+
+		const loadRole = async () => {
+			try {
+				const profile = await userController.getById(user.id);
+				if (isMounted) {
+					setIsAdmin(profile.role === "admin");
+				}
+			} catch (error) {
+				console.error("[Profile] Failed to load user role:", error);
+				if (isMounted) {
+					setIsAdmin(false);
+				}
+			}
+		};
+
+		loadRole();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [user]);
 
 	const handleLogout = async () => {
 		await signOut();
@@ -16,9 +49,12 @@ export default function ProfileScreen() {
 
 	const menuItems = [
 		{ icon: User, label: "Edit Profile", action: () => {} },
-		{ icon: Settings, label: "App Settings", action: () => router.push("/404") },
-		{ icon: Bell, label: "Notifications", action: () => router.push("/404") },
-		{ icon: Shield, label: "Privacy & Security", action: () => router.push("/404") },
+		...(isAdmin
+			? [{ icon: Shield, label: "Admin Panel", action: () => router.push("/(admin)") }]
+			: []),
+		{ icon: Settings, label: "App Settings", action: goToNotFound },
+		{ icon: Bell, label: "Notifications", action: goToNotFound },
+		{ icon: Shield, label: "Privacy & Security", action: goToNotFound },
 	];
 
 	return (
