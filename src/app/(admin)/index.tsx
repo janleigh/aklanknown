@@ -228,7 +228,7 @@ export default function AdminDashboardScreen() {
 						<AdminAction
 							label="Manage locations"
 							description="Keep place data accurate and current."
-							onPress={() => router.push("/(admin)/location" as any)}
+							onPress={() => router.push("/(admin)/location")}
 						/>
 						<AdminAction label="Inspect users" description="Track accounts and role assignments." />
 					</View>

@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { Plus, Building2, MapPin } from "lucide-react-native";
+import { Building2, MapPin, Plus } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { FlatList, TouchableOpacity, View } from "react-native";
 import { Card, LoadingSpinner } from "@/components/index";

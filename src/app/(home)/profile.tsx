@@ -13,7 +13,7 @@ export default function ProfileScreen() {
 	const [isAdmin, setIsAdmin] = useState(false);
 
 	const goToNotFound = () => {
-		router.push("/404" as never);
+		router.push("/+not-found");
 	};
 
 	useEffect(() => {

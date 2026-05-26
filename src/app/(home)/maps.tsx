@@ -1,3 +1,4 @@
+import type * as TMapbox from "@rnmapbox/maps";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { MapPin, Navigation, Search, SlidersHorizontal, Star } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
@@ -22,7 +23,7 @@ export default function MapsScreen() {
 	const initialLocationId =
 		typeof params.locationId === "string" ? params.locationId : DEFAULT_MAP_LOCATION.id;
 	const [selectedLocation, setSelectedLocation] = useState<string>(initialLocationId);
-	const [Mapbox, setMapbox] = useState<any>(null);
+	const [Mapbox, setMapbox] = useState<typeof TMapbox | null>(null);
 	const hasMapboxNative = Platform.OS === "android" && Boolean(NativeModules.RNMBXModule);
 
 	useEffect(() => {

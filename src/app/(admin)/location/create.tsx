@@ -1,14 +1,15 @@
+import { decode } from "base64-arraybuffer";
+import * as FileSystem from "expo-file-system/legacy";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { ArrowLeft, Image as ImageIcon } from "lucide-react-native";
 import { useState } from "react";
-import { ScrollView, TouchableOpacity, View, Alert, Image } from "react-native";
+import { Alert, Image, ScrollView, TouchableOpacity, View } from "react-native";
 import { Button, Card, Input } from "@/components/index";
 import { Text } from "@/components/Text";
 import { controllers } from "@/shared/api/supabase/controller";
 import { supabase } from "@/shared/api/supabase/supabase";
-import * as FileSystem from "expo-file-system/legacy";
-import { decode } from "base64-arraybuffer";
+import type { Location } from "@/types";
 
 export default function CreateLocationScreen() {
 	const router = useRouter();
@@ -23,7 +24,7 @@ export default function CreateLocationScreen() {
 		latitude: "",
 		longitude: "",
 	});
-	
+
 	const [bannerImage, setBannerImage] = useState<string | null>(null);
 	const [panoramaImage, setPanoramaImage] = useState<string | null>(null);
 
@@ -42,17 +43,15 @@ export default function CreateLocationScreen() {
 	const uploadImageAsync = async (uri: string, pathPrefix: string) => {
 		try {
 			const base64 = await FileSystem.readAsStringAsync(uri, { encoding: "base64" });
-			const fileExt = uri.split('.').pop() || 'jpeg';
+			const fileExt = uri.split(".").pop() || "jpeg";
 			const fileName = `${pathPrefix}-${Date.now()}.${fileExt}`;
-			
-			const { error } = await supabase.storage
-				.from("locations")
-				.upload(fileName, decode(base64), {
-					contentType: `image/${fileExt === 'jpg' ? 'jpeg' : fileExt}`
-				});
-			
+
+			const { error } = await supabase.storage.from("locations").upload(fileName, decode(base64), {
+				contentType: `image/${fileExt === "jpg" ? "jpeg" : fileExt}`,
+			});
+
 			if (error) throw error;
-			
+
 			const { data } = supabase.storage.from("locations").getPublicUrl(fileName);
 			return data.publicUrl;
 		} catch (error) {
@@ -79,7 +78,7 @@ export default function CreateLocationScreen() {
 				panorama_url = await uploadImageAsync(panoramaImage, "panorama");
 			}
 
-			const payload: any = {
+			const payload: Omit<Location, "id" | "created_at"> = {
 				name: form.name,
 				street: form.street,
 				barangay: form.barangay,

@@ -1,9 +1,9 @@
 import { useFocusEffect, useRouter } from "expo-router";
 import { Heart, MapPin, Search } from "lucide-react-native";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { FlatList, Image, TextInput, TouchableOpacity, View } from "react-native";
-import { Text } from "@/components/Text";
 import { LoadingSpinner } from "@/components/index";
+import { Text } from "@/components/Text";
 import { controllers } from "@/shared/api/supabase/controller";
 import type { Location as LocationRecord } from "@/shared/types/supabase";
 
@@ -37,7 +37,7 @@ export default function HomeScreen() {
 			return () => {
 				isMounted = false;
 			};
-		}, [])
+		}, []),
 	);
 
 	const filteredLocations = locations.filter((loc) => {
@@ -82,57 +82,64 @@ export default function HomeScreen() {
 					keyExtractor={(item) => item.id}
 					contentContainerStyle={{ padding: 16 }}
 					showsVerticalScrollIndicator={false}
-				renderItem={({ item }) => (
-					<TouchableOpacity
-						className="overflow-hidden mb-4 bg-canvas border border-hairline rounded-xl shadow-sm"
-						onPress={() => router.push(`/location/${item.id}`)}
-						activeOpacity={0.9}
-					>
-						<View className="relative h-48 bg-surface-soft">
-							{item.banner_image_url ? (
-								<Image source={{ uri: item.banner_image_url }} className="h-full w-full" resizeMode="cover" />
-							) : null}
-							<TouchableOpacity
-								className="absolute right-3 top-3 items-center justify-center h-8 w-8 bg-canvas/90 rounded-full"
-								onPress={(e) => {
-									e.stopPropagation();
-									toggleBookmark(item.id);
-								}}
-								activeOpacity={0.7}
-							>
-								<Heart
-									size={16}
-									color={bookmarkedIds.includes(item.id) ? "#ff385c" : "#929292"}
-									fill={bookmarkedIds.includes(item.id) ? "currentColor" : "none"}
-								/>
-							</TouchableOpacity>
-						</View>
-						<View className="p-4">
-							<Text className="mb-1 text-ink text-lg" fontName="PlusJakartaSans_700Bold">
-								{item.name}
-							</Text>
-							<View className="flex-row items-center justify-between">
-								<View className="flex-row items-center">
-									<MapPin size={14} color="#929292" />
-									<Text className="ml-1 text-muted text-sm" fontName="PlusJakartaSans_400Regular">
-										{item.street}, {item.town}
-									</Text>
+					renderItem={({ item }) => (
+						<TouchableOpacity
+							className="overflow-hidden mb-4 bg-canvas border border-hairline rounded-xl shadow-sm"
+							onPress={() => router.push(`/location/${item.id}`)}
+							activeOpacity={0.9}
+						>
+							<View className="relative h-48 bg-surface-soft">
+								{item.banner_image_url ? (
+									<Image
+										source={{ uri: item.banner_image_url }}
+										className="h-full w-full"
+										resizeMode="cover"
+									/>
+								) : null}
+								<TouchableOpacity
+									className="absolute right-3 top-3 items-center justify-center h-8 w-8 bg-canvas/90 rounded-full"
+									onPress={(e) => {
+										e.stopPropagation();
+										toggleBookmark(item.id);
+									}}
+									activeOpacity={0.7}
+								>
+									<Heart
+										size={16}
+										color={bookmarkedIds.includes(item.id) ? "#ff385c" : "#929292"}
+										fill={bookmarkedIds.includes(item.id) ? "currentColor" : "none"}
+									/>
+								</TouchableOpacity>
+							</View>
+							<View className="p-4">
+								<Text className="mb-1 text-ink text-lg" fontName="PlusJakartaSans_700Bold">
+									{item.name}
+								</Text>
+								<View className="flex-row items-center justify-between">
+									<View className="flex-row items-center">
+										<MapPin size={14} color="#929292" />
+										<Text className="ml-1 text-muted text-sm" fontName="PlusJakartaSans_400Regular">
+											{item.street}, {item.town}
+										</Text>
+									</View>
 								</View>
 							</View>
+						</TouchableOpacity>
+					)}
+					ListEmptyComponent={
+						<View className="items-center justify-center px-8 py-12">
+							<Text
+								className="mb-2 text-center text-ink text-xl"
+								fontName="PlusJakartaSans_700Bold"
+							>
+								No locations found
+							</Text>
+							<Text className="text-center text-muted" fontName="PlusJakartaSans_400Regular">
+								Try adjusting your search or filters
+							</Text>
 						</View>
-					</TouchableOpacity>
-				)}
-				ListEmptyComponent={
-					<View className="items-center justify-center px-8 py-12">
-						<Text className="mb-2 text-center text-ink text-xl" fontName="PlusJakartaSans_700Bold">
-							No locations found
-						</Text>
-						<Text className="text-center text-muted" fontName="PlusJakartaSans_400Regular">
-							Try adjusting your search or filters
-						</Text>
-					</View>
-				}
-			/>
+					}
+				/>
 			)}
 		</View>
 	);
