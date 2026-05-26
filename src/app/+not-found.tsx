@@ -1,7 +1,7 @@
+import { Text } from "@components/index";
 import { useRouter } from "expo-router";
 import { AlertCircle } from "lucide-react-native";
 import { Pressable, ScrollView, View } from "react-native";
-import { Text } from "@/components/index";
 
 export default function NotFoundScreen() {
 	const router = useRouter();

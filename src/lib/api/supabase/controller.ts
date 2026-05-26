@@ -1,4 +1,4 @@
-import { supabase } from "@/shared/api/supabase/supabase";
+import { supabase } from "@/lib/api/supabase/supabase";
 import type {
 	Bookmark,
 	CachedRoute,
@@ -6,7 +6,7 @@ import type {
 	LocationImage,
 	Review,
 	UserProfile,
-} from "@/shared/types/supabase";
+} from "@/lib/types/supabase";
 
 type Identifier = string | number;
 

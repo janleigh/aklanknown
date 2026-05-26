@@ -1,11 +1,11 @@
+import { Text } from "@components/Text";
+import { controllers } from "@lib/api/supabase/controller";
+import type { Location as LocationRecord } from "@lib/types/supabase";
 import { useRouter } from "expo-router";
 import { Building2, MapPin, Plus } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { FlatList, TouchableOpacity, View } from "react-native";
 import { Card, LoadingSpinner } from "@/components/index";
-import { Text } from "@/components/Text";
-import { controllers } from "@/shared/api/supabase/controller";
-import type { Location as LocationRecord } from "@/shared/types/supabase";
 
 export default function AdminLocationsScreen() {
 	const router = useRouter();

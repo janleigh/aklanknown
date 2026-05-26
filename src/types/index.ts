@@ -1,4 +1,4 @@
-import type { Review } from "@/shared/types/supabase";
+import type { Review } from "@/lib/types/supabase";
 
 export type {
 	Bookmark,
@@ -7,7 +7,7 @@ export type {
 	LocationImage,
 	Review,
 	UserProfile,
-} from "@/shared/types/supabase";
+} from "@/lib/types/supabase";
 
 export interface LocationCardData {
 	id: string;

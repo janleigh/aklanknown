@@ -1,4 +1,11 @@
 import { useAuth, useUser } from "@clerk/expo";
+import { Text } from "@components/Text";
+import { controllers } from "@lib/api/supabase/controller";
+import type {
+	Location as LocationRecord,
+	Review as ReviewRecord,
+	UserProfile,
+} from "@lib/types/supabase";
 import { useRouter } from "expo-router";
 import {
 	ArrowRight,
@@ -12,13 +19,6 @@ import {
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { Button, Card, LoadingSpinner } from "@/components/index";
-import { Text } from "@/components/Text";
-import { controllers } from "@/shared/api/supabase/controller";
-import type {
-	Location as LocationRecord,
-	Review as ReviewRecord,
-	UserProfile,
-} from "@/shared/types/supabase";
 
 type AdminStats = {
 	users: number;

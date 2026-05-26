@@ -2,7 +2,7 @@ import { useUser } from "@clerk/expo";
 import { Tabs } from "expo-router";
 import { useEffect } from "react";
 import { HOME_TAB_ICONS, HOME_TAB_SCREEN_OPTIONS } from "@/components/navigation/HomeTabBar";
-import { userController } from "@/shared/api/supabase/controller";
+import { userController } from "@/lib/api/supabase/controller";
 
 const TAB_SCREENS = [
 	{ name: "index", label: "Home" },

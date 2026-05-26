@@ -1,11 +1,11 @@
+import { Text } from "@components/Text";
+import { LOCATION_DETAILS_BY_ID } from "@lib/data/locations";
 import type * as TMapbox from "@rnmapbox/maps";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ArrowLeft, MapPin, Star } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { NativeModules, Platform, TouchableOpacity, View } from "react-native";
-import { Text } from "@/components/Text";
 import { API_KEYS } from "@/config";
-import { LOCATION_DETAILS_BY_ID } from "@/shared/data/locations";
 
 export default function LocationMapScreen() {
 	const router = useRouter();

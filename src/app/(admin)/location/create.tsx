@@ -1,3 +1,6 @@
+import { Text } from "@components/Text";
+import { controllers } from "@lib/api/supabase/controller";
+import { supabase } from "@lib/api/supabase/supabase";
 import { decode } from "base64-arraybuffer";
 import * as FileSystem from "expo-file-system/legacy";
 import * as ImagePicker from "expo-image-picker";
@@ -6,9 +9,6 @@ import { ArrowLeft, Image as ImageIcon } from "lucide-react-native";
 import { useState } from "react";
 import { Alert, Image, ScrollView, TouchableOpacity, View } from "react-native";
 import { Button, Card, Input } from "@/components/index";
-import { Text } from "@/components/Text";
-import { controllers } from "@/shared/api/supabase/controller";
-import { supabase } from "@/shared/api/supabase/supabase";
 import type { Location } from "@/types";
 
 export default function CreateLocationScreen() {

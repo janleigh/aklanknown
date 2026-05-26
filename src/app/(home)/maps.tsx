@@ -1,3 +1,5 @@
+import { Text } from "@components/Text";
+import { DEFAULT_MAP_LOCATION, LOCATION_LIST } from "@lib/data/locations";
 import type * as TMapbox from "@rnmapbox/maps";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { MapPin, Navigation, Search, SlidersHorizontal, Star } from "lucide-react-native";
@@ -11,9 +13,7 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import { Text } from "@/components/Text";
 import { API_KEYS } from "@/config";
-import { DEFAULT_MAP_LOCATION, LOCATION_LIST } from "@/shared/data/locations";
 
 const CATEGORIES = ["Beaches", "Parks", "Churches", "Historical", "Hotels"];
 
@@ -173,7 +173,7 @@ export default function MapsScreen() {
 					<View className="flex-row gap-3 items-center">
 						<View className="overflow-hidden h-14 w-14 bg-surface-soft border border-hairline rounded-xl">
 							<Image
-								source={{ uri: selectedData.image }}
+								source={{ uri: selectedData.images[0] }}
 								className="h-full w-full"
 								resizeMode="cover"
 							/>

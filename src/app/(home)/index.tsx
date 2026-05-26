@@ -1,11 +1,11 @@
+import { LoadingSpinner } from "@components/index";
+import { Text } from "@components/Text";
+import { controllers } from "@lib/api/supabase/controller";
+import type { Location as LocationRecord } from "@lib/types/supabase";
 import { useFocusEffect, useRouter } from "expo-router";
 import { Heart, MapPin, Search } from "lucide-react-native";
 import { useCallback, useState } from "react";
 import { FlatList, Image, TextInput, TouchableOpacity, View } from "react-native";
-import { LoadingSpinner } from "@/components/index";
-import { Text } from "@/components/Text";
-import { controllers } from "@/shared/api/supabase/controller";
-import type { Location as LocationRecord } from "@/shared/types/supabase";
 
 export default function HomeScreen() {
 	const router = useRouter();
