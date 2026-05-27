@@ -240,7 +240,8 @@ export default function LocationDetailsScreen() {
 
 	return (
 		<View className="flex-1 bg-canvas">
-			<ScrollView showsVerticalScrollIndicator={false}>
+			{/* ✅ BOTTOM NAVBAR FIX: Added pb-20 so content doesn't hide behind layout tab bar */}
+			<ScrollView showsVerticalScrollIndicator={false} className="pb-20">
 				{/* Image Carousel */}
 				<View className="relative h-72 bg-surface-soft">
 					<Image
@@ -313,7 +314,7 @@ export default function LocationDetailsScreen() {
 				</View>
 
 				{/* Content */}
-				<View className="pb-32 pt-6 px-5">
+				<View className="pt-6 px-5">
 					<Text className="mb-2 text-2xl text-ink" fontName="PlusJakartaSans_700Bold">
 						{location.name}
 					</Text>
@@ -451,32 +452,7 @@ export default function LocationDetailsScreen() {
 					))}
 				</View>
 			</ScrollView>
-
-			{/* Bottom Tab Bar */}
-			<View className="absolute bottom-0 left-0 right-0 z-50 flex-row pb-safe pt-2 px-2 bg-canvas border-hairline border-t">
-				{[
-					{ key: "index", label: "Home", route: "/(home)" },
-					{ key: "maps", label: "Maps", route: "/(home)/maps" },
-					{ key: "bookmarks", label: "Saved", route: "/(home)/bookmarks" },
-					{ key: "profile", label: "Profile", route: "/(home)/profile" },
-				].map((tab) => (
-					<TouchableOpacity
-						key={tab.key}
-						className="flex-1 items-center justify-center py-2"
-						onPress={() => router.push(tab.route as any)}
-						activeOpacity={0.7}
-					>
-						<Text
-							className={`text-xs ${
-								tab.key === "index" ? "text-primary font-semibold" : "text-muted"
-							}`}
-							fontName="PlusJakartaSans_600SemiBold"
-						>
-							{tab.label}
-						</Text>
-					</TouchableOpacity>
-				))}
-			</View>
+			{/* ✅ REMOVED: Hardcoded bottom tab bar (now handled by your layout) */}
 		</View>
 	);
 }

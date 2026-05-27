@@ -14,6 +14,7 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { API_KEYS } from "@/config";
 
 type MapLocationCardData = {
@@ -262,42 +263,44 @@ export default function MapsScreen() {
 				</TouchableOpacity>
 			</View>
 
-			{/* Bottom Details Card */}
-			<View className="z-20 pb-safe px-4 py-3 bg-canvas border-hairline border-t shadow-lg">
-				<View className="flex-row gap-3 items-center">
-					<View className="overflow-hidden h-14 w-14 bg-surface-soft border border-hairline rounded-xl">
-						{selectedData.image ? (
-							<Image source={{ uri: selectedData.image }} className="h-full w-full" resizeMode="cover" />
-						) : null}
-					</View>
-					<View className="flex-1">
-						<Text className="mb-0.5 font-bold text-base text-ink" fontName="PlusJakartaSans_700Bold">
-							{selectedData.name}
-						</Text>
-						<View className="flex-row gap-1 items-center mb-0.5">
-							<Star size={12} color="#FBBF24" fill="#FBBF24" />
-							<Text className="font-semibold text-ink text-xs" fontName="PlusJakartaSans_600SemiBold">
-								{selectedData.rating}
+			{/* ✅ BOTTOM NAVBAR FIX: Wrapped in SafeAreaView, removed pb-safe */}
+			<SafeAreaView edges={["bottom"]} className="bg-canvas border-hairline border-t shadow-lg">
+				<View className="px-4 py-3">
+					<View className="flex-row gap-3 items-center">
+						<View className="overflow-hidden h-14 w-14 bg-surface-soft border border-hairline rounded-xl">
+							{selectedData.image ? (
+								<Image source={{ uri: selectedData.image }} className="h-full w-full" resizeMode="cover" />
+							) : null}
+						</View>
+						<View className="flex-1">
+							<Text className="mb-0.5 font-bold text-base text-ink" fontName="PlusJakartaSans_700Bold">
+								{selectedData.name}
 							</Text>
+							<View className="flex-row gap-1 items-center mb-0.5">
+								<Star size={12} color="#FBBF24" fill="#FBBF24" />
+								<Text className="font-semibold text-ink text-xs" fontName="PlusJakartaSans_600SemiBold">
+									{selectedData.rating}
+								</Text>
+								<Text className="text-muted text-xs" fontName="PlusJakartaSans_400Regular">
+									({selectedData.reviews})
+								</Text>
+							</View>
 							<Text className="text-muted text-xs" fontName="PlusJakartaSans_400Regular">
-								({selectedData.reviews})
+								{selectedData.location}
 							</Text>
 						</View>
-						<Text className="text-muted text-xs" fontName="PlusJakartaSans_400Regular">
-							{selectedData.location}
-						</Text>
+						<TouchableOpacity
+							className="px-4 py-2 bg-primary rounded-lg"
+							onPress={() => router.push(`/location/${selectedData.id}`)}
+							activeOpacity={0.8}
+						>
+							<Text className="font-semibold text-white text-xs" fontName="PlusJakartaSans_600SemiBold">
+								View
+							</Text>
+						</TouchableOpacity>
 					</View>
-					<TouchableOpacity
-						className="px-4 py-2 bg-primary rounded-lg"
-						onPress={() => router.push(`/location/${selectedData.id}`)}
-						activeOpacity={0.8}
-					>
-						<Text className="font-semibold text-white text-xs" fontName="PlusJakartaSans_600SemiBold">
-							View
-						</Text>
-					</TouchableOpacity>
 				</View>
-			</View>
+			</SafeAreaView>
 		</View>
 	);
 }
