@@ -2,9 +2,10 @@ import { LoadingSpinner } from "@components/index";
 import { Text } from "@components/Text";
 import { controllers } from "@lib/api/supabase/controller";
 import type { Location as LocationRecord } from "@lib/types/supabase";
+import { addBookmark, getBookmarkedIds, removeBookmark, subscribeBookmarks } from "@lib/storage/bookmarks";
 import { useFocusEffect, useRouter } from "expo-router";
 import { Heart, MapPin, Search } from "lucide-react-native";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FlatList, Image, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function HomeScreen() {
@@ -20,9 +21,13 @@ export default function HomeScreen() {
 			const loadLocations = async () => {
 				setIsLoading(true);
 				try {
-					const data = await controllers.location.list({ orderBy: "created_at" });
+					const [data, bookmarked] = await Promise.all([
+						controllers.location.list({ orderBy: "created_at" }),
+						getBookmarkedIds(),
+					]);
 					if (isMounted) {
 						setLocations(data);
+						setBookmarkedIds(bookmarked);
 					}
 				} catch (error) {
 					console.error("[Home] Error loading locations:", error);
@@ -40,6 +45,14 @@ export default function HomeScreen() {
 		}, []),
 	);
 
+	useEffect(() => {
+		const unsubscribe = subscribeBookmarks(() => {
+			void getBookmarkedIds().then((ids) => setBookmarkedIds(ids));
+		});
+
+		return unsubscribe;
+	}, []);
+
 	const filteredLocations = locations.filter((loc) => {
 		const matchesSearch =
 			loc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -47,8 +60,21 @@ export default function HomeScreen() {
 		return matchesSearch;
 	});
 
-	const toggleBookmark = (id: string) => {
-		setBookmarkedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+	const toggleBookmark = async (id: string) => {
+		const previous = bookmarkedIds;
+		const next = previous.includes(id) ? previous.filter((x) => x !== id) : [...previous, id];
+		setBookmarkedIds(next);
+
+		try {
+			if (previous.includes(id)) {
+				await removeBookmark(id);
+			} else {
+				await addBookmark(id);
+			}
+		} catch (error) {
+			console.error("[Home] Failed to toggle bookmark:", error);
+			setBookmarkedIds(previous);
+		}
 	};
 
 	return (
@@ -100,7 +126,7 @@ export default function HomeScreen() {
 									className="absolute right-3 top-3 items-center justify-center h-8 w-8 bg-canvas/90 rounded-full"
 									onPress={(e) => {
 										e.stopPropagation();
-										toggleBookmark(item.id);
+										void toggleBookmark(item.id);
 									}}
 									activeOpacity={0.7}
 								>

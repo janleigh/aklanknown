@@ -17,6 +17,7 @@ import {
 import { useEffect, useState } from "react";
 import { Alert, Image, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 import { Text } from "@/components/Text";
+import { addBookmark, isBookmarked, removeBookmark, subscribeBookmarks } from "@lib/storage/bookmarks";
 
 type LocationDetails = {
 	id: string;
@@ -86,8 +87,8 @@ export default function LocationDetailsScreen() {
 	const [userRating, setUserRating] = useState(0);
 	const [reviewText, setReviewText] = useState("");
 	const [isFavorite, setIsFavorite] = useState(false);
-	const [reviews, setReviews] = useState<ReviewItem[]>([]);
 	const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+	const [reviews, setReviews] = useState<ReviewItem[]>([]);
 
 	useEffect(() => {
 		let isMounted = true;
@@ -202,6 +203,48 @@ export default function LocationDetailsScreen() {
 		};
 	}, [locationId]);
 
+	useEffect(() => {
+		const refreshBookmarkState = async () => {
+			if (!locationId) return;
+			const bookmarked = await isBookmarked(locationId);
+			setIsFavorite(bookmarked);
+		};
+
+		const unsubscribe = subscribeBookmarks(() => {
+			void refreshBookmarkState();
+		});
+
+		return unsubscribe;
+	}, [locationId]);
+
+	useEffect(() => {
+		let isMounted = true;
+
+		const loadBookmarkState = async () => {
+			if (!locationId) {
+				if (isMounted) {
+					setIsFavorite(false);
+				}
+				return;
+			}
+
+			try {
+				const bookmarked = await isBookmarked(locationId);
+				if (isMounted) {
+					setIsFavorite(bookmarked);
+				}
+			} catch (error) {
+				console.error("[LocationDetails] Failed to load bookmark state:", error);
+			}
+		};
+
+		void loadBookmarkState();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [locationId]);
+
 	const handleSubmitReview = async () => {
 		if (!reviewText.trim() || userRating === 0) {
 			Alert.alert("Missing Info", "Please select a rating and write your review.");
@@ -258,6 +301,27 @@ export default function LocationDetailsScreen() {
 			}
 		} finally {
 			setIsSubmittingReview(false);
+		}
+	};
+
+	const toggleBookmark = async () => {
+		if (!locationId) {
+			return;
+		}
+
+		const nextValue = !isFavorite;
+		setIsFavorite(nextValue);
+
+		try {
+			if (nextValue) {
+				await addBookmark(locationId);
+			} else {
+				await removeBookmark(locationId);
+			}
+		} catch (error) {
+			console.error("[LocationDetails] Failed to toggle bookmark:", error);
+			setIsFavorite(!nextValue);
+			Alert.alert("Bookmark Failed", "We couldn't save this bookmark right now.");
 		}
 	};
 
@@ -340,7 +404,7 @@ export default function LocationDetailsScreen() {
 						<View className="flex-row gap-2">
 							<TouchableOpacity
 								className="items-center justify-center h-10 w-10 bg-canvas/80 rounded-full shadow-sm"
-								onPress={() => setIsFavorite(!isFavorite)}
+								onPress={toggleBookmark}
 								activeOpacity={0.7}
 							>
 								<Heart
