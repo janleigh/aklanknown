@@ -1,5 +1,7 @@
-/** biome-ignore-all lint/suspicious/noExplicitAny: needed */
-
+import { useUser } from "@clerk/expo";
+import { controllers } from "@lib/api/supabase/controller";
+import { supabase } from "@lib/api/supabase/supabase";
+import type { Location as SupabaseLocation } from "@lib/types/supabase";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
 	ArrowLeft,
@@ -12,111 +14,281 @@ import {
 	Star,
 	X,
 } from "lucide-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, Image, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 import { Text } from "@/components/Text";
 
-const LOCATION_DATA: Record<string, any> = {
-	"1": {
-		id: "1",
-		name: "Boracay White Beach",
-		location: "Malay, Aklan",
-		rating: 4.9,
-		reviews: 1245,
-		description: "World-renowned white sand beach with crystal clear waters.",
-		fullDescription:
-			"Boracay White Beach is world-renowned for its pristine white sand and crystal clear turquoise waters. Stretching over 4 kilometers, it offers stunning sunsets, water activities, and vibrant nightlife. The beach is divided into three distinct stations, each with its own unique charm and atmosphere. Station 1 is known for luxury resorts, Station 2 for bustling D'Mall, and Station 3 for a relaxed, budget-friendly vibe.",
-		images: [
-			"https://picsum.photos/seed/boracay1/800/400",
-			"https://picsum.photos/seed/boracay2/800/400",
-			"https://picsum.photos/seed/boracay3/800/400",
-		],
-	},
-	"2": {
-		id: "2",
-		name: "Jawili Falls",
-		location: "Tangalan, Aklan",
-		rating: 4.7,
-		reviews: 328,
-		description: "Stunning multi-tiered waterfall surrounded by lush greenery.",
-		fullDescription:
-			"Jawili Falls is a stunning multi-tiered waterfall surrounded by lush greenery. The crystal-clear natural pools are perfect for swimming and relaxation. A hidden gem in Aklan, it offers a peaceful escape from the bustling beaches. The trek to the falls takes about 15-20 minutes through scenic forest trails.",
-		images: [
-			"https://picsum.photos/seed/jawili1/800/400",
-			"https://picsum.photos/seed/jawili2/800/400",
-		],
-	},
-	"3": {
-		id: "3",
-		name: "Hinugtan Beach",
-		location: "Buruanga, Aklan",
-		rating: 4.8,
-		reviews: 156,
-		description: "Secluded paradise beach perfect for snorkeling and sunsets.",
-		fullDescription:
-			"Hinugtan Beach is a secluded paradise with powdery white sand and calm turquoise waters. Perfect for snorkeling and sunset watching, this hidden gem offers tranquility away from the crowds. The beach stretches for about 1 kilometer and is surrounded by coconut trees, providing natural shade.",
-		images: [
-			"https://picsum.photos/seed/hinugtan1/800/400",
-			"https://picsum.photos/seed/hinugtan2/800/400",
-		],
-	},
-	"4": {
-		id: "4",
-		name: "Bakhawan Eco-Park",
-		location: "Kalibo, Aklan",
-		rating: 4.6,
-		reviews: 89,
-		description: "Mangrove forest with hanging bridge and eco-trails.",
-		fullDescription:
-			"Bakhawan Eco-Park features a massive man-made forest with towering bamboo structures and hanging bridges. It's a favorite for nature walks, photography, and educational tours. The park spans 22 hectares and is a successful reforestation project that has become a major tourist attraction.",
-		images: [
-			"https://picsum.photos/seed/bakhawan1/800/400",
-			"https://picsum.photos/seed/bakhawan2/800/400",
-		],
-	},
+type LocationDetails = {
+	id: string;
+	name: string;
+	location: string;
+	rating: number;
+	reviews: number;
+	description: string;
+	fullDescription: string;
+	images: string[];
+	latitude?: number | null;
+	longitude?: number | null;
 };
 
-const MOCK_REVIEWS = [
-	{
-		id: "1",
-		userName: "Janleugggh",
-		rating: 5,
-		date: "Apr 6, 2026",
-		comment:
-			"Absolutely breathtaking! The sand is incredibly soft and the water is perfect for swimming.",
-	},
-	{
-		id: "2",
-		userName: "Pauleeenn",
-		rating: 3,
-		date: "May 29, 2026",
-		comment: "Beautiful beach, but can get crowded during peak season. Still worth visiting!",
-	},
-];
+type ReviewItem = {
+	id: string;
+	userName: string;
+	rating: number;
+	date: string;
+	comment: string;
+};
+
+function buildLocationDetails(
+	location: SupabaseLocation,
+	imageUrls: string[],
+	rating: number,
+	reviews: number,
+): LocationDetails {
+	const description =
+		location.description_en ||
+		location.description_tl ||
+		location.description_akl ||
+		"No description available yet.";
+	const locationLabel = [location.street, location.barangay, location.town]
+		.filter(Boolean)
+		.join(", ");
+	const fallbackImages = [location.banner_image_url, location.panorama_image_url].filter(
+		(imageUrl): imageUrl is string => Boolean(imageUrl),
+	);
+	const images = imageUrls.length > 0 ? imageUrls : fallbackImages;
+
+	return {
+		id: location.id,
+		name: location.name,
+		location: locationLabel || location.town || location.barangay || "Unknown location",
+		rating,
+		reviews,
+		description,
+		fullDescription: description,
+		images: images.length > 0 ? images : ["https://picsum.photos/seed/location/800/400"],
+		latitude: location.latitude,
+		longitude: location.longitude,
+	};
+}
 
 export default function LocationDetailsScreen() {
 	const { id } = useLocalSearchParams();
 	const router = useRouter();
+	const { user } = useUser();
 
-	// Safely parse ID to prevent white screen crashes
-	const locationId = typeof id === "string" ? id : "1";
-	const location = LOCATION_DATA[locationId] || LOCATION_DATA["1"];
-
+	const locationId = typeof id === "string" ? id : Array.isArray(id) ? id[0] : "";
+	const [location, setLocation] = useState<LocationDetails | null>(null);
+	const [isLoadingLocation, setIsLoadingLocation] = useState(true);
+	const [loadError, setLoadError] = useState<string | null>(null);
 	const [currentImageIndex, setCurrentImageIndex] = useState(0);
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [userRating, setUserRating] = useState(0);
 	const [reviewText, setReviewText] = useState("");
 	const [isFavorite, setIsFavorite] = useState(false);
+	const [reviews, setReviews] = useState<ReviewItem[]>([]);
+	const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
-	const handleSubmitReview = () => {
+	useEffect(() => {
+		let isMounted = true;
+
+		const loadLocation = async () => {
+			if (!locationId) {
+				if (isMounted) {
+					setLocation(null);
+					setLoadError("Location not found.");
+					setIsLoadingLocation(false);
+				}
+				return;
+			}
+
+			if (isMounted) {
+				setIsLoadingLocation(true);
+				setLoadError(null);
+				setCurrentImageIndex(0);
+			}
+
+			try {
+				const [locationResult, imageResult, reviewResult] = await Promise.all([
+					controllers.location.getById(locationId),
+					supabase
+						.from("location_images")
+						.select("image_url")
+						.eq("location_id", locationId)
+						.order("created_at", { ascending: true }),
+					supabase
+						.from("reviews")
+						.select("id, rating, comment, created_at, user_id")
+						.eq("location_id", locationId)
+						.order("created_at", { ascending: false }),
+				]);
+
+				const imageUrls = [
+					locationResult.banner_image_url,
+					locationResult.panorama_image_url,
+					...(imageResult.data ?? []).map((image) => image.image_url),
+				].filter((imageUrl): imageUrl is string => Boolean(imageUrl));
+
+				const numericRatings = (reviewResult.data ?? []).flatMap((review) =>
+					typeof review.rating === "number" ? [review.rating] : [],
+				);
+				const averageRating =
+					numericRatings.length > 0
+						? Number(
+								(
+									numericRatings.reduce((sum, rating) => sum + rating, 0) / numericRatings.length
+								).toFixed(1),
+							)
+						: 0;
+
+				const reviewerIds = [
+					...new Set(
+						(reviewResult.data ?? [])
+							.map((review) => review.user_id)
+							.filter((reviewerId): reviewerId is string => Boolean(reviewerId)),
+					),
+				];
+				const reviewerProfiles = await Promise.all(
+					reviewerIds.map(async (reviewerId) => {
+						try {
+							return await controllers.user.getById(reviewerId);
+						} catch {
+							return null;
+						}
+					}),
+				);
+				const reviewerNameById = new Map(
+					reviewerProfiles
+						.filter((profile) => profile !== null)
+						.map((profile) => [profile.id, profile.name]),
+				);
+
+				const hydratedReviews: ReviewItem[] = (reviewResult.data ?? []).map((review) => ({
+					id: review.id,
+					userName: review.user_id ? (reviewerNameById.get(review.user_id) ?? "Guest") : "Guest",
+					rating: typeof review.rating === "number" ? review.rating : 0,
+					date: review.created_at ? new Date(review.created_at).toLocaleDateString() : "Recently",
+					comment: review.comment || "",
+				}));
+
+				if (isMounted) {
+					setLocation(
+						buildLocationDetails(
+							locationResult,
+							imageUrls,
+							averageRating,
+							(reviewResult.data ?? []).length,
+						),
+					);
+					setReviews(hydratedReviews);
+				}
+			} catch (error) {
+				console.error("[LocationDetails] Failed to load location:", error);
+				if (isMounted) {
+					setLocation(null);
+					setLoadError("We couldn't find that location.");
+				}
+			} finally {
+				if (isMounted) {
+					setIsLoadingLocation(false);
+				}
+			}
+		};
+
+		loadLocation();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [locationId]);
+
+	const handleSubmitReview = async () => {
 		if (!reviewText.trim() || userRating === 0) {
 			Alert.alert("Missing Info", "Please select a rating and write your review.");
 			return;
 		}
-		Alert.alert("Review Submitted!", "Thank you for sharing your experience.");
-		setReviewText("");
-		setUserRating(0);
+
+		if (!locationId) {
+			Alert.alert("Missing Location", "We could not determine which location to review.");
+			return;
+		}
+
+		setIsSubmittingReview(true);
+
+		try {
+			const submittedReview = await controllers.review.create({
+				location_id: locationId,
+				user_id: user?.id ?? null,
+				rating: userRating,
+				comment: reviewText.trim(),
+				is_flagged: false,
+			});
+
+			setReviews((prev) => [
+				{
+					id: submittedReview.id,
+					userName: user?.fullName || user?.firstName || "Guest",
+					rating: userRating,
+					date: new Date(submittedReview.created_at).toLocaleDateString(),
+					comment: reviewText.trim(),
+				},
+				...prev,
+			]);
+			setReviewText("");
+			setUserRating(0);
+			Alert.alert("Review Submitted!", "Thank you for sharing your experience.");
+		} catch (error) {
+			console.error("[LocationDetails] Failed to submit review:", error);
+			const errMsg = (error as Error).message ?? String(error);
+			if (errMsg.includes("row-level security") || errMsg.includes("violates row-level security")) {
+				Alert.alert(
+					"Review Failed",
+					"The server rejected the review due to permissions. Please sign in with an account that has permission to submit reviews or try again later.",
+				);
+			} else if (
+				errMsg.includes("invalid input syntax for type uuid") ||
+				errMsg.includes("22P02")
+			) {
+				Alert.alert(
+					"Review Failed",
+					"There was an issue with your account identifier. Your review was not saved. Please try signing out and signing back in.",
+				);
+			} else {
+				Alert.alert("Review Failed", "We could not save your review right now.");
+			}
+		} finally {
+			setIsSubmittingReview(false);
+		}
 	};
+
+	if (isLoadingLocation) {
+		return (
+			<View className="flex-1 items-center justify-center bg-canvas px-6">
+				<Text className="text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
+					Loading location...
+				</Text>
+			</View>
+		);
+	}
+
+	if (!location) {
+		return (
+			<View className="flex-1 items-center justify-center bg-canvas px-6">
+				<Text className="mb-3 text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
+					{loadError ?? "Location not found."}
+				</Text>
+				<TouchableOpacity
+					className="px-4 py-3 bg-primary rounded-xl"
+					onPress={() => router.back()}
+					activeOpacity={0.8}
+				>
+					<Text className="font-semibold text-white" fontName="PlusJakartaSans_600SemiBold">
+						Go Back
+					</Text>
+				</TouchableOpacity>
+			</View>
+		);
+	}
 
 	const nextImage = () => {
 		setCurrentImageIndex((prev) => (prev < location.images.length - 1 ? prev + 1 : 0));
@@ -128,7 +300,8 @@ export default function LocationDetailsScreen() {
 
 	return (
 		<View className="flex-1 bg-canvas">
-			<ScrollView showsVerticalScrollIndicator={false}>
+			{/* ✅ BOTTOM NAVBAR FIX: Added pb-20 so content doesn't hide behind layout tab bar */}
+			<ScrollView showsVerticalScrollIndicator={false} className="pb-20">
 				{/* Image Carousel */}
 				<View className="relative h-72 bg-surface-soft">
 					<Image
@@ -188,7 +361,7 @@ export default function LocationDetailsScreen() {
 
 					{location.images.length > 1 && (
 						<View className="absolute bottom-4 left-0 right-0 flex-row gap-2 justify-center">
-							{location.images.map((_: any, index: number) => (
+							{location.images.map((_, index: number) => (
 								<View
 									key={index}
 									className={`h-2 rounded-full ${
@@ -201,7 +374,7 @@ export default function LocationDetailsScreen() {
 				</View>
 
 				{/* Content */}
-				<View className="pb-32 pt-6 px-5">
+				<View className="pt-6 px-5">
 					<Text className="mb-2 text-2xl text-ink" fontName="PlusJakartaSans_700Bold">
 						{location.name}
 					</Text>
@@ -246,7 +419,7 @@ export default function LocationDetailsScreen() {
 							className="flex-1 flex-row gap-2 items-center justify-center py-3 bg-primary rounded-xl"
 							activeOpacity={0.8}
 							onPress={() => {
-								router.push(`/location/${locationId}/map` as any);
+								router.push(`/location/${locationId}/map`);
 							}}
 						>
 							<MapIcon size={18} color="#ffffff" />
@@ -260,6 +433,9 @@ export default function LocationDetailsScreen() {
 						<TouchableOpacity
 							className="flex-1 flex-row gap-2 items-center justify-center py-3 bg-primary/15 rounded-xl"
 							activeOpacity={0.8}
+							onPress={() => {
+								router.push(`/location/${locationId}/360`);
+							}}
 						>
 							<Camera size={18} color="#ff385c" />
 							<Text className="font-semibold text-primary" fontName="PlusJakartaSans_600SemiBold">
@@ -297,22 +473,23 @@ export default function LocationDetailsScreen() {
 					/>
 
 					<TouchableOpacity
-						className="items-center mb-8 py-3 bg-primary rounded-xl"
+						className={`items-center mb-8 py-3 rounded-xl ${isSubmittingReview ? "bg-primary/60" : "bg-primary"}`}
 						onPress={handleSubmitReview}
 						activeOpacity={0.8}
+						disabled={isSubmittingReview}
 					>
 						<Text className="font-semibold text-on-primary" fontName="PlusJakartaSans_600SemiBold">
-							Submit Review
+							{isSubmittingReview ? "Submitting..." : "Submit Review"}
 						</Text>
 					</TouchableOpacity>
 
 					<View className="mb-6 h-px bg-hairline-soft" />
 
 					<Text className="mb-4 text-ink text-lg" fontName="PlusJakartaSans_700Bold">
-						Reviews ({MOCK_REVIEWS.length})
+						Reviews ({reviews.length})
 					</Text>
 
-					{MOCK_REVIEWS.map((review) => (
+					{reviews.map((review) => (
 						<View key={review.id} className="mb-6">
 							<View className="flex-row items-start justify-between mb-2">
 								<View>
@@ -339,32 +516,6 @@ export default function LocationDetailsScreen() {
 					))}
 				</View>
 			</ScrollView>
-
-			{/* Bottom Tab Bar */}
-			<View className="absolute bottom-0 left-0 right-0 z-50 flex-row pb-safe pt-2 px-2 bg-canvas border-hairline border-t">
-				{[
-					{ key: "index", label: "Home", route: "/(home)" },
-					{ key: "maps", label: "Maps", route: "/(home)/maps" },
-					{ key: "bookmarks", label: "Saved", route: "/(home)/bookmarks" },
-					{ key: "profile", label: "Profile", route: "/(home)/profile" },
-				].map((tab) => (
-					<TouchableOpacity
-						key={tab.key}
-						className="flex-1 items-center justify-center py-2"
-						onPress={() => router.push(tab.route as any)}
-						activeOpacity={0.7}
-					>
-						<Text
-							className={`text-xs ${
-								tab.key === "index" ? "text-primary font-semibold" : "text-muted"
-							}`}
-							fontName="PlusJakartaSans_600SemiBold"
-						>
-							{tab.label}
-						</Text>
-					</TouchableOpacity>
-				))}
-			</View>
 		</View>
 	);
 }

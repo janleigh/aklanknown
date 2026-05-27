@@ -54,7 +54,7 @@ export default function AdminDashboardScreen() {
 	const [hasAccess, setHasAccess] = useState(false);
 	const [stats, setStats] = useState<AdminStats>(INITIAL_STATS);
 	const [highlights, setHighlights] = useState<AdminHighlights>(INITIAL_HIGHLIGHTS);
-	const [isLoadingData, setIsLoadingData] = useState(false);
+	const [_isLoadingData, setIsLoadingData] = useState(false);
 
 	useEffect(() => {
 		if (!isLoaded || !user) return;
@@ -130,7 +130,7 @@ export default function AdminDashboardScreen() {
 		};
 	}, [hasAccess]);
 
-	const handleSignOut = async () => {
+	const _handleSignOut = async () => {
 		await signOut();
 		router.replace("/(landing)");
 	};

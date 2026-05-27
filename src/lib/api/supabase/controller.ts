@@ -110,7 +110,14 @@ export const bookmarkController = buildController<Bookmark>("bookmarks");
 export const cachedRouteController = buildController<CachedRoute>("cached_routes");
 export const locationController = buildController<Location>("locations");
 export const locationImageController = buildController<LocationImage>("location_images");
-export const reviewController = buildController<Review>("reviews");
+const _reviewControllerBase = buildController<Review>("reviews");
+
+export const reviewController = {
+	..._reviewControllerBase,
+	create: async (payload: CreatePayload<Review>) => {
+		return _reviewControllerBase.create(payload);
+	},
+};
 export const userController = buildController<UserProfile>("users");
 
 export const controllers = {
