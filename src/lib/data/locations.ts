@@ -3,6 +3,9 @@ import type { Location } from "@/types";
 export interface MapLocation extends Location {
 	latitude: number;
 	longitude: number;
+	location: string;
+	distance: string;
+	rating: number;
 	reviews: number;
 	description: string;
 	fullDescription: string;

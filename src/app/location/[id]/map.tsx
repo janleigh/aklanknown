@@ -22,6 +22,16 @@ type TravelMode = {
 
 type MapboxModule = typeof import("@rnmapbox/maps");
 
+type MapLocationCardData = {
+	id: string;
+	name: string;
+	latitude: number;
+	longitude: number;
+	location: string;
+	distance: string;
+	rating: number;
+};
+
 const TRAVEL_MODES: TravelMode[] = [
 	{ key: "walking", label: "Walking", speedKmh: 5 },
 	{ key: "bicycle", label: "Bicycle", speedKmh: 16 },
@@ -83,7 +93,7 @@ export default function LocationMapScreen() {
 	const router = useRouter();
 	const { id } = useLocalSearchParams();
 	const locationId = typeof id === "string" ? id : "1";
-	const location = LOCATION_DETAILS_BY_ID[locationId] ?? LOCATION_DETAILS_BY_ID["1"];
+	const location = (LOCATION_DETAILS_BY_ID[locationId] ?? LOCATION_DETAILS_BY_ID["1"]) as MapLocationCardData;
 	const [Mapbox, setMapbox] = useState<MapboxModule | null>(null);
 	const cameraRef = useRef<ElementRef<typeof Camera> | null>(null);
 	const [currentPosition, setCurrentPosition] = useState<Coordinate | null>(null);
