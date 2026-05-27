@@ -178,24 +178,21 @@ export default function AdminDashboardScreen() {
 							<Shield size={20} color="#ffffff" />
 						</View>
 						<View>
-							<Text className="text-sm text-on-primary/80" fontName="PlusJakartaSans_500Medium">
+							{/* <Text className="text-sm text-on-primary/80" fontName="PlusJakartaSans_500Medium">
 								Admin Panel
-							</Text>
+							</Text> */}
 							<Text className="text-2xl text-on-primary" fontName="PlusJakartaSans_700Bold">
-								Control Center
+								Admin Panel
 							</Text>
 						</View>
 					</View>
 					<Pressable
 						className="h-11 w-11 items-center justify-center rounded-full bg-on-primary/15"
-						onPress={handleSignOut}
+						onPress={() => router.push("/(home)")}
 					>
 						<ArrowRight size={18} color="#ffffff" />
 					</Pressable>
 				</View>
-				<Text className="max-w-md text-on-primary/85" fontName="PlusJakartaSans_400Regular">
-					Monitor content, review activity, and keep the platform organized from one place.
-				</Text>
 			</View>
 
 			<View className="-mt-4 px-4">
@@ -205,7 +202,7 @@ export default function AdminDashboardScreen() {
 				</View>
 				<View className="mb-4 flex-row gap-3">
 					<AdminMetric icon={FileText} label="Reviews" value={stats.reviews} />
-					<AdminMetric icon={BadgeAlert} label="Flagged" value={stats.flaggedReviews} accent />
+					<AdminMetric icon={BadgeAlert} label="Flagged" value={stats.flaggedReviews} />
 				</View>
 
 				<Card className="mb-4">
@@ -214,58 +211,28 @@ export default function AdminDashboardScreen() {
 							<Text className="text-lg text-ink" fontName="PlusJakartaSans_700Bold">
 								Quick Actions
 							</Text>
-							<Text className="text-muted" fontName="PlusJakartaSans_400Regular">
+							{/* <Text className="text-muted" fontName="PlusJakartaSans_400Regular">
 								Common admin tasks and shortcuts.
-							</Text>
+							</Text> */}
 						</View>
 						<Building2 size={20} color="#ff385c" />
 					</View>
 					<View className="gap-3">
 						<AdminAction
-							label="Review flagged reports"
-							description="Check suspicious or reported content."
-						/>
-						<AdminAction
-							label="Manage locations"
+							label="Manage Locations"
 							description="Keep place data accurate and current."
 							onPress={() => router.push("/(admin)/location")}
 						/>
-						<AdminAction label="Inspect users" description="Track accounts and role assignments." />
-					</View>
-				</Card>
-
-				<Card className="mb-4">
-					<View className="mb-4 flex-row items-center justify-between">
-						<View>
-							<Text className="text-lg text-ink" fontName="PlusJakartaSans_700Bold">
-								Recent Locations
-							</Text>
-							<Text className="text-muted" fontName="PlusJakartaSans_400Regular">
-								Latest entries created in the catalog.
-							</Text>
-						</View>
-						{isLoadingData ? <LoadingSpinner size="small" /> : null}
-					</View>
-					<View className="gap-3">
-						{highlights.recentLocations.length === 0 ? (
-							<Text className="text-muted" fontName="PlusJakartaSans_400Regular">
-								No locations found yet.
-							</Text>
-						) : (
-							highlights.recentLocations.map((location) => (
-								<View
-									key={location.id}
-									className="rounded-xl border border-hairline bg-surface-soft px-4 py-3"
-								>
-									<Text className="text-ink" fontName="PlusJakartaSans_600SemiBold">
-										{location.name}
-									</Text>
-									<Text className="text-sm text-muted" fontName="PlusJakartaSans_400Regular">
-										{location.street}, {location.town}
-									</Text>
-								</View>
-							))
-						)}
+						<AdminAction
+							label="Review Flagged Reports"
+							description="Check suspicious or reported content."
+							onPress={() => router.push("/+not-found")}
+						/>
+						<AdminAction
+							label="Inspect Users"
+							description="Track accounts and role assignments."
+							onPress={() => router.push("/+not-found")}
+						/>
 					</View>
 				</Card>
 
@@ -294,38 +261,6 @@ export default function AdminDashboardScreen() {
 									</Text>
 									<Text className="text-sm text-muted" fontName="PlusJakartaSans_400Regular">
 										Rating: {review.rating ?? "N/A"}
-									</Text>
-								</View>
-							))
-						)}
-					</View>
-				</Card>
-
-				<Card>
-					<View className="mb-4">
-						<Text className="text-lg text-ink" fontName="PlusJakartaSans_700Bold">
-							Recent Users
-						</Text>
-						<Text className="text-muted" fontName="PlusJakartaSans_400Regular">
-							Latest accounts synced from Clerk.
-						</Text>
-					</View>
-					<View className="gap-3">
-						{highlights.recentUsers.length === 0 ? (
-							<Text className="text-muted" fontName="PlusJakartaSans_400Regular">
-								No users found yet.
-							</Text>
-						) : (
-							highlights.recentUsers.map((profile) => (
-								<View
-									key={profile.id}
-									className="rounded-xl border border-hairline bg-surface-soft px-4 py-3"
-								>
-									<Text className="text-ink" fontName="PlusJakartaSans_600SemiBold">
-										{profile.name}
-									</Text>
-									<Text className="text-sm text-muted" fontName="PlusJakartaSans_400Regular">
-										{profile.email}
 									</Text>
 								</View>
 							))

@@ -48,10 +48,10 @@ export default function ProfileScreen() {
 	};
 
 	const menuItems = [
-		{ icon: User, label: "Edit Profile", action: () => {} },
 		...(isAdmin
 			? [{ icon: Shield, label: "Admin Panel", action: () => router.push("/(admin)") }]
 			: []),
+		{ icon: User, label: "Edit Profile", action: goToNotFound },
 		{ icon: Settings, label: "App Settings", action: goToNotFound },
 		{ icon: Bell, label: "Notifications", action: goToNotFound },
 		{ icon: Shield, label: "Privacy & Security", action: goToNotFound },
@@ -79,7 +79,7 @@ export default function ProfileScreen() {
 			<View className="flex-row justify-around mx-4 p-4 bg-canvas border border-hairline rounded-xl shadow-sm -mt-6">
 				<View className="items-center">
 					<Text className="font-bold text-2xl text-primary" fontName="PlusJakartaSans_700Bold">
-						12
+						TBD
 					</Text>
 					<Text className="text-muted text-sm" fontName="PlusJakartaSans_400Regular">
 						Saved
@@ -87,7 +87,7 @@ export default function ProfileScreen() {
 				</View>
 				<View className="items-center">
 					<Text className="font-bold text-2xl text-primary" fontName="PlusJakartaSans_700Bold">
-						5
+						TBD
 					</Text>
 					<Text className="text-muted text-sm" fontName="PlusJakartaSans_400Regular">
 						Reviews
@@ -95,7 +95,7 @@ export default function ProfileScreen() {
 				</View>
 				<View className="items-center">
 					<Text className="font-bold text-2xl text-primary" fontName="PlusJakartaSans_700Bold">
-						28
+						TBD
 					</Text>
 					<Text className="text-muted text-sm" fontName="PlusJakartaSans_400Regular">
 						Visited
