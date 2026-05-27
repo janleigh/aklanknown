@@ -3,10 +3,21 @@ import type { Location as SupabaseLocation } from "@lib/types/supabase";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ArrowLeft, Maximize2, RotateCw } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
-import { Dimensions, Image, NativeScrollEvent, NativeSyntheticEvent, ScrollView, TouchableOpacity, View } from "react-native";
+import {
+	Dimensions,
+	Image,
+	type NativeScrollEvent,
+	type NativeSyntheticEvent,
+	ScrollView,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import { Text } from "@/components/Text";
 
-type PanoramaLocation = Pick<SupabaseLocation, "id" | "name" | "banner_image_url" | "panorama_image_url">;
+type PanoramaLocation = Pick<
+	SupabaseLocation,
+	"id" | "name" | "banner_image_url" | "panorama_image_url"
+>;
 
 export default function Location360Screen() {
 	const router = useRouter();
@@ -104,7 +115,7 @@ export default function Location360Screen() {
 
 	useEffect(() => {
 		hasCenteredRef.current = false;
-	}, [locationId]);
+	}, []);
 
 	const imageWidth = panoramaSize
 		? Math.max(screenHeight * (panoramaSize.width / panoramaSize.height), screenWidth)
@@ -147,7 +158,8 @@ export default function Location360Screen() {
 		}, 0);
 
 		return () => clearTimeout(timer);
-	}, [panoramaSize, imageWidth]);
+		// biome-ignore lint/correctness/useExhaustiveDependencies: needed
+	}, [panoramaSize, centerPanorama]);
 
 	if (isLoading) {
 		return (

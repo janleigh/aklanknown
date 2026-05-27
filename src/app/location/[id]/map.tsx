@@ -1,13 +1,12 @@
 import { controllers } from "@lib/api/supabase/controller";
 import { supabase } from "@lib/api/supabase/supabase";
 import type { Location as SupabaseLocation } from "@lib/types/supabase";
+import type { Camera } from "@rnmapbox/maps";
 import { useLocalSearchParams, useRouter } from "expo-router";
-
 import type { Feature, LineString } from "geojson";
 import { ArrowLeft, MapPin, Navigation, Route, Star } from "lucide-react-native";
-import { useEffect, useMemo, useRef, useState, type ElementRef } from "react";
+import { type ElementRef, useEffect, useMemo, useRef, useState } from "react";
 import { NativeModules, Platform, TouchableOpacity, View } from "react-native";
-import type { Camera } from "@rnmapbox/maps";
 import { Text } from "@/components/Text";
 import { API_KEYS } from "@/config";
 
@@ -36,8 +35,14 @@ type MapLocationCardData = {
 	image: string;
 };
 
-function buildMapLocation(location: SupabaseLocation, rating: number, reviews: number): MapLocationCardData {
-	const locationLabel = [location.street, location.barangay, location.town].filter(Boolean).join(", ");
+function buildMapLocation(
+	location: SupabaseLocation,
+	rating: number,
+	reviews: number,
+): MapLocationCardData {
+	const locationLabel = [location.street, location.barangay, location.town]
+		.filter(Boolean)
+		.join(", ");
 
 	return {
 		id: location.id,
@@ -48,7 +53,10 @@ function buildMapLocation(location: SupabaseLocation, rating: number, reviews: n
 		distance: "Custom location",
 		rating,
 		reviews,
-		image: location.banner_image_url || location.panorama_image_url || "https://picsum.photos/seed/location/400/300",
+		image:
+			location.banner_image_url ||
+			location.panorama_image_url ||
+			"https://picsum.photos/seed/location/400/300",
 	};
 }
 
@@ -121,9 +129,7 @@ export default function LocationMapScreen() {
 	const [currentPosition, setCurrentPosition] = useState<Coordinate | null>(null);
 	const [routeGeometry, setRouteGeometry] = useState<Feature<LineString> | null>(null);
 	const [routeDistanceKm, setRouteDistanceKm] = useState<number | null>(null);
-	const [routeStatus, setRouteStatus] = useState<
-		"idle" | "loading" | "ready" | "approx"
-	>("idle");
+	const [routeStatus, setRouteStatus] = useState<"idle" | "loading" | "ready" | "approx">("idle");
 	const [locationStatus, setLocationStatus] = useState<"loading" | "ready" | "denied" | "error">(
 		"loading",
 	);
@@ -152,10 +158,7 @@ export default function LocationMapScreen() {
 			try {
 				const [locationResult, reviewResult] = await Promise.all([
 					controllers.location.getById(locationId),
-					supabase
-						.from("reviews")
-						.select("rating")
-						.eq("location_id", locationId),
+					supabase.from("reviews").select("rating").eq("location_id", locationId),
 				]);
 
 				if (locationResult.latitude === null || locationResult.longitude === null) {
@@ -168,11 +171,10 @@ export default function LocationMapScreen() {
 				const averageRating =
 					numericRatings.length > 0
 						? Number(
-							(
-								numericRatings.reduce((sum, rating) => sum + rating, 0) /
-								numericRatings.length
-							).toFixed(1),
-						)
+								(
+									numericRatings.reduce((sum, rating) => sum + rating, 0) / numericRatings.length
+								).toFixed(1),
+							)
 						: 0;
 
 				if (isMounted) {
@@ -318,9 +320,7 @@ export default function LocationMapScreen() {
 				const response = await fetch(url, { signal: controller.signal });
 				if (!response.ok) {
 					const errorBody = await response.text();
-					throw new Error(
-						`Directions request failed: ${response.status} ${errorBody}`.trim(),
-					);
+					throw new Error(`Directions request failed: ${response.status} ${errorBody}`.trim());
 				}
 
 				const data = (await response.json()) as {
@@ -348,9 +348,7 @@ export default function LocationMapScreen() {
 						properties: {},
 						geometry: route.geometry,
 					});
-					setRouteDistanceKm(
-						typeof route.distance === "number" ? route.distance / 1000 : null,
-					);
+					setRouteDistanceKm(typeof route.distance === "number" ? route.distance / 1000 : null);
 					setRouteStatus("ready");
 				}
 			} catch (error) {
@@ -379,6 +377,8 @@ export default function LocationMapScreen() {
 		currentPosition?.longitude,
 		selectedData?.latitude,
 		selectedData?.longitude,
+		currentPosition,
+		selectedData,
 	]);
 
 	const mapCenter = currentPosition
@@ -402,7 +402,7 @@ export default function LocationMapScreen() {
 
 		const parsedDistance = Number.parseFloat(selectedData.distance);
 		return Number.isFinite(parsedDistance) ? parsedDistance : null;
-	}, [routeDistanceKm, currentPosition, selectedData?.distance]);
+	}, [routeDistanceKm, currentPosition, selectedData?.distance, selectedData]);
 
 	const travelEstimates = useMemo(() => {
 		if (distanceForEstimates == null) {
@@ -454,12 +454,7 @@ export default function LocationMapScreen() {
 			maxLongitude = Math.max(maxLongitude, longitude);
 		});
 
-		cameraRef.current.fitBounds(
-			[maxLongitude, maxLatitude],
-			[minLongitude, minLatitude],
-			80,
-			600,
-		);
+		cameraRef.current.fitBounds([maxLongitude, maxLatitude], [minLongitude, minLatitude], 80, 600);
 	};
 
 	if (Platform.OS !== "android") {
@@ -570,7 +565,10 @@ export default function LocationMapScreen() {
 						</Mapbox.MarkerView>
 					) : null}
 
-					<Mapbox.MarkerView coordinate={[selectedData.longitude, selectedData.latitude]} allowOverlap>
+					<Mapbox.MarkerView
+						coordinate={[selectedData.longitude, selectedData.latitude]}
+						allowOverlap
+					>
 						<View className="items-center justify-center">
 							<View className="w-10 h-10 items-center justify-center rounded-full bg-primary border-2 border-white shadow-md">
 								<MapPin size={16} color="#fff" />
@@ -682,4 +680,3 @@ export default function LocationMapScreen() {
 		</View>
 	);
 }
-

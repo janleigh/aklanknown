@@ -34,7 +34,9 @@ function buildMapLocation(location: LocationRecord): MapLocationCardData | null 
 		return null;
 	}
 
-	const locationLabel = [location.street, location.barangay, location.town].filter(Boolean).join(", ");
+	const locationLabel = [location.street, location.barangay, location.town]
+		.filter(Boolean)
+		.join(", ");
 
 	return {
 		id: location.id,
@@ -73,7 +75,10 @@ export default function MapsScreen() {
 				if (isMounted) {
 					setLocations(mapLocations);
 
-					if (typeof params.locationId === "string" && mapLocations.some((location) => location.id === params.locationId)) {
+					if (
+						typeof params.locationId === "string" &&
+						mapLocations.some((location) => location.id === params.locationId)
+					) {
 						setSelectedLocation(params.locationId);
 					} else if (mapLocations[0]) {
 						setSelectedLocation(mapLocations[0].id);
@@ -269,16 +274,26 @@ export default function MapsScreen() {
 					<View className="flex-row gap-3 items-center">
 						<View className="overflow-hidden h-14 w-14 bg-surface-soft border border-hairline rounded-xl">
 							{selectedData.image ? (
-								<Image source={{ uri: selectedData.image }} className="h-full w-full" resizeMode="cover" />
+								<Image
+									source={{ uri: selectedData.image }}
+									className="h-full w-full"
+									resizeMode="cover"
+								/>
 							) : null}
 						</View>
 						<View className="flex-1">
-							<Text className="mb-0.5 font-bold text-base text-ink" fontName="PlusJakartaSans_700Bold">
+							<Text
+								className="mb-0.5 font-bold text-base text-ink"
+								fontName="PlusJakartaSans_700Bold"
+							>
 								{selectedData.name}
 							</Text>
 							<View className="flex-row gap-1 items-center mb-0.5">
 								<Star size={12} color="#FBBF24" fill="#FBBF24" />
-								<Text className="font-semibold text-ink text-xs" fontName="PlusJakartaSans_600SemiBold">
+								<Text
+									className="font-semibold text-ink text-xs"
+									fontName="PlusJakartaSans_600SemiBold"
+								>
 									{selectedData.rating}
 								</Text>
 								<Text className="text-muted text-xs" fontName="PlusJakartaSans_400Regular">
@@ -294,7 +309,10 @@ export default function MapsScreen() {
 							onPress={() => router.push(`/location/${selectedData.id}`)}
 							activeOpacity={0.8}
 						>
-							<Text className="font-semibold text-white text-xs" fontName="PlusJakartaSans_600SemiBold">
+							<Text
+								className="font-semibold text-white text-xs"
+								fontName="PlusJakartaSans_600SemiBold"
+							>
 								View
 							</Text>
 						</TouchableOpacity>

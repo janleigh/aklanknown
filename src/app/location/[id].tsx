@@ -1,3 +1,4 @@
+import { useUser } from "@clerk/expo";
 import { controllers } from "@lib/api/supabase/controller";
 import { supabase } from "@lib/api/supabase/supabase";
 import type { Location as SupabaseLocation } from "@lib/types/supabase";
@@ -14,7 +15,6 @@ import {
 	X,
 } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { useUser } from "@clerk/expo";
 import { Alert, Image, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 import { Text } from "@/components/Text";
 
@@ -39,7 +39,6 @@ type ReviewItem = {
 	comment: string;
 };
 
-
 function buildLocationDetails(
 	location: SupabaseLocation,
 	imageUrls: string[],
@@ -47,8 +46,13 @@ function buildLocationDetails(
 	reviews: number,
 ): LocationDetails {
 	const description =
-		location.description_en || location.description_tl || location.description_akl || "No description available yet.";
-	const locationLabel = [location.street, location.barangay, location.town].filter(Boolean).join(", ");
+		location.description_en ||
+		location.description_tl ||
+		location.description_akl ||
+		"No description available yet.";
+	const locationLabel = [location.street, location.barangay, location.town]
+		.filter(Boolean)
+		.join(", ");
 	const fallbackImages = [location.banner_image_url, location.panorama_image_url].filter(
 		(imageUrl): imageUrl is string => Boolean(imageUrl),
 	);
@@ -131,14 +135,19 @@ export default function LocationDetailsScreen() {
 				const averageRating =
 					numericRatings.length > 0
 						? Number(
-							(
-								numericRatings.reduce((sum, rating) => sum + rating, 0) /
-								numericRatings.length
-							).toFixed(1),
-						)
+								(
+									numericRatings.reduce((sum, rating) => sum + rating, 0) / numericRatings.length
+								).toFixed(1),
+							)
 						: 0;
 
-				const reviewerIds = [...new Set((reviewResult.data ?? []).map((review) => review.user_id).filter((reviewerId): reviewerId is string => Boolean(reviewerId)))];
+				const reviewerIds = [
+					...new Set(
+						(reviewResult.data ?? [])
+							.map((review) => review.user_id)
+							.filter((reviewerId): reviewerId is string => Boolean(reviewerId)),
+					),
+				];
 				const reviewerProfiles = await Promise.all(
 					reviewerIds.map(async (reviewerId) => {
 						try {
@@ -149,12 +158,14 @@ export default function LocationDetailsScreen() {
 					}),
 				);
 				const reviewerNameById = new Map(
-					reviewerProfiles.filter((profile) => profile !== null).map((profile) => [profile.id, profile.name]),
+					reviewerProfiles
+						.filter((profile) => profile !== null)
+						.map((profile) => [profile.id, profile.name]),
 				);
 
 				const hydratedReviews: ReviewItem[] = (reviewResult.data ?? []).map((review) => ({
 					id: review.id,
-					userName: review.user_id ? reviewerNameById.get(review.user_id) ?? "Guest" : "Guest",
+					userName: review.user_id ? (reviewerNameById.get(review.user_id) ?? "Guest") : "Guest",
 					rating: typeof review.rating === "number" ? review.rating : 0,
 					date: review.created_at ? new Date(review.created_at).toLocaleDateString() : "Recently",
 					comment: review.comment || "",
@@ -228,13 +239,16 @@ export default function LocationDetailsScreen() {
 			Alert.alert("Review Submitted!", "Thank you for sharing your experience.");
 		} catch (error) {
 			console.error("[LocationDetails] Failed to submit review:", error);
-			const errMsg = (error as any)?.message ?? String(error);
+			const errMsg = (error as Error).message ?? String(error);
 			if (errMsg.includes("row-level security") || errMsg.includes("violates row-level security")) {
 				Alert.alert(
 					"Review Failed",
 					"The server rejected the review due to permissions. Please sign in with an account that has permission to submit reviews or try again later.",
 				);
-			} else if (errMsg.includes("invalid input syntax for type uuid") || errMsg.includes("22P02")) {
+			} else if (
+				errMsg.includes("invalid input syntax for type uuid") ||
+				errMsg.includes("22P02")
+			) {
 				Alert.alert(
 					"Review Failed",
 					"There was an issue with your account identifier. Your review was not saved. Please try signing out and signing back in.",
@@ -502,7 +516,6 @@ export default function LocationDetailsScreen() {
 					))}
 				</View>
 			</ScrollView>
-			{/* ✅ REMOVED: Hardcoded bottom tab bar (now handled by your layout) */}
 		</View>
 	);
 }

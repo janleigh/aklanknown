@@ -114,7 +114,7 @@ const _reviewControllerBase = buildController<Review>("reviews");
 
 export const reviewController = {
 	..._reviewControllerBase,
-	create: async (payload: any) => {
+	create: async (payload: CreatePayload<Review>) => {
 		return _reviewControllerBase.create(payload);
 	},
 };
