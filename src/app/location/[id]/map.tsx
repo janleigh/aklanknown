@@ -7,7 +7,7 @@ import { NativeModules, Platform, TouchableOpacity, View } from "react-native";
 import type { Camera } from "@rnmapbox/maps";
 import { Text } from "@/components/Text";
 import { API_KEYS } from "@/config";
-import { LOCATION_DETAILS_BY_ID } from "@/shared/data/locations";
+import { LOCATION_DETAILS_BY_ID } from "@/lib/data/locations";
 
 type Coordinate = {
 	latitude: number;
@@ -530,3 +530,4 @@ export default function LocationMapScreen() {
 		</View>
 	);
 }
+
