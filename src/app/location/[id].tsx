@@ -419,6 +419,9 @@ export default function LocationDetailsScreen() {
 						<TouchableOpacity
 							className="flex-1 flex-row gap-2 items-center justify-center py-3 bg-primary/15 rounded-xl"
 							activeOpacity={0.8}
+							onPress={() => {
+								router.push(`/location/${locationId}/360`);
+							}}
 						>
 							<Camera size={18} color="#ff385c" />
 							<Text className="font-semibold text-primary" fontName="PlusJakartaSans_600SemiBold">
