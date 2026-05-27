@@ -125,7 +125,7 @@ export default function CreateLocationScreen() {
 					</Text>
 					<Input
 						label="Name *"
-						placeholder="e.g. Boracay White Beach"
+						placeholder="e.g. Riverside Park"
 						value={form.name}
 						onChangeText={(text) => setForm({ ...form, name: text })}
 					/>

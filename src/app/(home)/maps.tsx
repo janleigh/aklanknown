@@ -1,5 +1,6 @@
 import { Text } from "@components/Text";
-import { DEFAULT_MAP_LOCATION, LOCATION_LIST } from "@lib/data/locations";
+import { controllers } from "@lib/api/supabase/controller";
+import type { Location as LocationRecord } from "@lib/types/supabase";
 import type * as TMapbox from "@rnmapbox/maps";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { MapPin, Navigation, Search, SlidersHorizontal, Star } from "lucide-react-native";
@@ -15,21 +16,88 @@ import {
 } from "react-native";
 import { API_KEYS } from "@/config";
 
-const CATEGORIES = ["Beaches", "Parks", "Churches", "Historical", "Hotels"];
+type MapLocationCardData = {
+	id: string;
+	name: string;
+	latitude: number;
+	longitude: number;
+	location: string;
+	distance: string;
+	rating: number;
+	reviews: number;
+	image: string;
+};
+
+function buildMapLocation(location: LocationRecord): MapLocationCardData | null {
+	if (location.latitude === null || location.longitude === null) {
+		return null;
+	}
+
+	const locationLabel = [location.street, location.barangay, location.town].filter(Boolean).join(", ");
+
+	return {
+		id: location.id,
+		name: location.name,
+		latitude: location.latitude,
+		longitude: location.longitude,
+		location: locationLabel || location.town || location.barangay || "Unknown location",
+		distance: "Custom location",
+		rating: 0,
+		reviews: 0,
+		image: location.banner_image_url || location.panorama_image_url || "",
+	};
+}
 
 export default function MapsScreen() {
 	const router = useRouter();
 	const params = useLocalSearchParams();
-	const initialLocationId =
-		typeof params.locationId === "string" ? params.locationId : DEFAULT_MAP_LOCATION.id;
-	const [selectedLocation, setSelectedLocation] = useState<string>(initialLocationId);
+	const [locations, setLocations] = useState<MapLocationCardData[]>([]);
+	const [selectedLocation, setSelectedLocation] = useState<string>("");
+	const [isLoadingLocations, setIsLoadingLocations] = useState(true);
 	const [Mapbox, setMapbox] = useState<typeof TMapbox | null>(null);
 	const hasMapboxNative = Platform.OS === "android" && Boolean(NativeModules.RNMBXModule);
 
 	useEffect(() => {
-		if (typeof params.locationId === "string") {
-			setSelectedLocation(params.locationId);
-		}
+		let isMounted = true;
+
+		const loadLocations = async () => {
+			setIsLoadingLocations(true);
+
+			try {
+				const data = await controllers.location.list({ orderBy: "created_at" });
+				const mapLocations = data
+					.map(buildMapLocation)
+					.filter((location): location is MapLocationCardData => location !== null);
+
+				if (isMounted) {
+					setLocations(mapLocations);
+
+					if (typeof params.locationId === "string" && mapLocations.some((location) => location.id === params.locationId)) {
+						setSelectedLocation(params.locationId);
+					} else if (mapLocations[0]) {
+						setSelectedLocation(mapLocations[0].id);
+					} else {
+						setSelectedLocation("");
+					}
+				}
+			} catch (error) {
+				console.error("[Maps] Error loading locations:", error);
+				if (isMounted) {
+					setLocations([]);
+					setSelectedLocation("");
+				}
+			} finally {
+				if (isMounted) {
+					setIsLoadingLocations(false);
+				}
+			}
+		};
+
+		loadLocations();
+
+		return () => {
+			isMounted = false;
+		};
 	}, [params.locationId]);
 
 	useEffect(() => {
@@ -60,10 +128,13 @@ export default function MapsScreen() {
 	}, [hasMapboxNative]);
 
 	const selectedData = useMemo(() => {
-		return (
-			LOCATION_LIST.find((location) => location.id === selectedLocation) ?? DEFAULT_MAP_LOCATION
-		);
-	}, [selectedLocation]);
+		return locations.find((location) => location.id === selectedLocation) ?? locations[0] ?? null;
+	}, [locations, selectedLocation]);
+
+	const mapLocations = useMemo(
+		() => locations.filter((location) => location.latitude && location.longitude),
+		[locations],
+	);
 
 	if (Platform.OS !== "android") {
 		return (
@@ -75,11 +146,31 @@ export default function MapsScreen() {
 		);
 	}
 
+	if (isLoadingLocations) {
+		return (
+			<View className="flex-1 items-center justify-center bg-canvas px-6">
+				<Text className="text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
+					Loading locations...
+				</Text>
+			</View>
+		);
+	}
+
 	if (!hasMapboxNative || !Mapbox) {
 		return (
 			<View className="flex-1 items-center justify-center bg-canvas px-6">
 				<Text className="text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 					Mapbox native code is not available in this build. Rebuild with a dev client.
+				</Text>
+			</View>
+		);
+	}
+
+	if (!selectedData || locations.length === 0) {
+		return (
+			<View className="flex-1 items-center justify-center bg-canvas px-6">
+				<Text className="text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
+					No locations available yet.
 				</Text>
 			</View>
 		);
@@ -110,7 +201,7 @@ export default function MapsScreen() {
 
 				{/* Categories */}
 				<ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-1 -mx-1">
-					{CATEGORIES.map((cat) => (
+					{["Beaches", "Parks", "Churches", "Historical", "Hotels"].map((cat) => (
 						<TouchableOpacity
 							key={cat}
 							className="mr-2 px-4 py-1.5 bg-surface-soft border border-hairline rounded-full"
@@ -141,7 +232,7 @@ export default function MapsScreen() {
 						animationDuration={800}
 					/>
 
-					{LOCATION_LIST.map((loc) => (
+					{mapLocations.map((loc) => (
 						<Mapbox.MarkerView key={loc.id} coordinate={[loc.longitude, loc.latitude]} allowOverlap>
 							<TouchableOpacity
 								className="items-center justify-center"
@@ -161,66 +252,51 @@ export default function MapsScreen() {
 				<TouchableOpacity
 					className="absolute bottom-4 right-4 p-3 bg-canvas border border-hairline rounded-full shadow-lg"
 					activeOpacity={0.7}
-					onPress={() => setSelectedLocation(DEFAULT_MAP_LOCATION.id)}
+					onPress={() => {
+						if (mapLocations[0]) {
+							setSelectedLocation(mapLocations[0].id);
+						}
+					}}
 				>
 					<Navigation size={20} color="#ff385c" />
 				</TouchableOpacity>
 			</View>
 
-			{/* Bottom Details Card (Static) - Uses pb-safe to not overlap with tabs */}
+			{/* Bottom Details Card */}
 			<View className="z-20 pb-safe px-4 py-3 bg-canvas border-hairline border-t shadow-lg">
-				{selectedData ? (
-					<View className="flex-row gap-3 items-center">
-						<View className="overflow-hidden h-14 w-14 bg-surface-soft border border-hairline rounded-xl">
-							<Image
-								source={{ uri: selectedData.images[0] }}
-								className="h-full w-full"
-								resizeMode="cover"
-							/>
-						</View>
-						<View className="flex-1">
-							<Text
-								className="mb-0.5 font-bold text-base text-ink"
-								fontName="PlusJakartaSans_700Bold"
-							>
-								{selectedData.name}
-							</Text>
-							<View className="flex-row gap-1 items-center mb-0.5">
-								<Star size={12} color="#FBBF24" fill="#FBBF24" />
-								<Text
-									className="font-semibold text-ink text-xs"
-									fontName="PlusJakartaSans_600SemiBold"
-								>
-									{selectedData.rating}
-								</Text>
-								<Text className="text-muted text-xs" fontName="PlusJakartaSans_400Regular">
-									({selectedData.reviews})
-								</Text>
-							</View>
-							<Text className="text-muted text-xs" fontName="PlusJakartaSans_400Regular">
-								{selectedData.location}
-							</Text>
-						</View>
-						<TouchableOpacity
-							className="px-4 py-2 bg-primary rounded-lg"
-							onPress={() => router.push(`/location/${selectedData.id}`)}
-							activeOpacity={0.8}
-						>
-							<Text
-								className="font-semibold text-white text-xs"
-								fontName="PlusJakartaSans_600SemiBold"
-							>
-								View
-							</Text>
-						</TouchableOpacity>
+				<View className="flex-row gap-3 items-center">
+					<View className="overflow-hidden h-14 w-14 bg-surface-soft border border-hairline rounded-xl">
+						{selectedData.image ? (
+							<Image source={{ uri: selectedData.image }} className="h-full w-full" resizeMode="cover" />
+						) : null}
 					</View>
-				) : (
-					<View className="items-center justify-center py-2">
-						<Text className="text-muted text-sm" fontName="PlusJakartaSans_400Regular">
-							Tap a location pin to view details
+					<View className="flex-1">
+						<Text className="mb-0.5 font-bold text-base text-ink" fontName="PlusJakartaSans_700Bold">
+							{selectedData.name}
+						</Text>
+						<View className="flex-row gap-1 items-center mb-0.5">
+							<Star size={12} color="#FBBF24" fill="#FBBF24" />
+							<Text className="font-semibold text-ink text-xs" fontName="PlusJakartaSans_600SemiBold">
+								{selectedData.rating}
+							</Text>
+							<Text className="text-muted text-xs" fontName="PlusJakartaSans_400Regular">
+								({selectedData.reviews})
+							</Text>
+						</View>
+						<Text className="text-muted text-xs" fontName="PlusJakartaSans_400Regular">
+							{selectedData.location}
 						</Text>
 					</View>
-				)}
+					<TouchableOpacity
+						className="px-4 py-2 bg-primary rounded-lg"
+						onPress={() => router.push(`/location/${selectedData.id}`)}
+						activeOpacity={0.8}
+					>
+						<Text className="font-semibold text-white text-xs" fontName="PlusJakartaSans_600SemiBold">
+							View
+						</Text>
+					</TouchableOpacity>
+				</View>
 			</View>
 		</View>
 	);

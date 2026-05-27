@@ -1,3 +1,6 @@
+import { controllers } from "@lib/api/supabase/controller";
+import { supabase } from "@lib/api/supabase/supabase";
+import type { Location as SupabaseLocation } from "@lib/types/supabase";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
 import type { Feature, LineString } from "geojson";
@@ -7,7 +10,6 @@ import { NativeModules, Platform, TouchableOpacity, View } from "react-native";
 import type { Camera } from "@rnmapbox/maps";
 import { Text } from "@/components/Text";
 import { API_KEYS } from "@/config";
-import { LOCATION_DETAILS_BY_ID } from "@/lib/data/locations";
 
 type Coordinate = {
 	latitude: number;
@@ -30,7 +32,25 @@ type MapLocationCardData = {
 	location: string;
 	distance: string;
 	rating: number;
+	reviews: number;
+	image: string;
 };
+
+function buildMapLocation(location: SupabaseLocation, rating: number, reviews: number): MapLocationCardData {
+	const locationLabel = [location.street, location.barangay, location.town].filter(Boolean).join(", ");
+
+	return {
+		id: location.id,
+		name: location.name,
+		latitude: location.latitude ?? 0,
+		longitude: location.longitude ?? 0,
+		location: locationLabel || location.town || location.barangay || "Unknown location",
+		distance: "Custom location",
+		rating,
+		reviews,
+		image: location.banner_image_url || location.panorama_image_url || "https://picsum.photos/seed/location/400/300",
+	};
+}
 
 const TRAVEL_MODES: TravelMode[] = [
 	{ key: "walking", label: "Walking", speedKmh: 5 },
@@ -92,8 +112,10 @@ function formatDistance(kilometers: number) {
 export default function LocationMapScreen() {
 	const router = useRouter();
 	const { id } = useLocalSearchParams();
-	const locationId = typeof id === "string" ? id : "1";
-	const location = (LOCATION_DETAILS_BY_ID[locationId] ?? LOCATION_DETAILS_BY_ID["1"]) as MapLocationCardData;
+	const locationId = typeof id === "string" ? id : Array.isArray(id) ? id[0] : "";
+	const [customLocation, setCustomLocation] = useState<MapLocationCardData | null>(null);
+	const [isLocationLoading, setIsLocationLoading] = useState(true);
+	const [locationError, setLocationError] = useState<string | null>(null);
 	const [Mapbox, setMapbox] = useState<MapboxModule | null>(null);
 	const cameraRef = useRef<ElementRef<typeof Camera> | null>(null);
 	const [currentPosition, setCurrentPosition] = useState<Coordinate | null>(null);
@@ -106,6 +128,78 @@ export default function LocationMapScreen() {
 		"loading",
 	);
 	const hasMapboxNative = Platform.OS === "android" && Boolean(NativeModules.RNMBXModule);
+
+	const selectedData = useMemo(() => customLocation, [customLocation]);
+
+	useEffect(() => {
+		let isMounted = true;
+
+		const loadLocation = async () => {
+			if (!locationId) {
+				if (isMounted) {
+					setCustomLocation(null);
+					setLocationError(null);
+					setIsLocationLoading(false);
+				}
+				return;
+			}
+
+			if (isMounted) {
+				setIsLocationLoading(true);
+				setLocationError(null);
+			}
+
+			try {
+				const [locationResult, reviewResult] = await Promise.all([
+					controllers.location.getById(locationId),
+					supabase
+						.from("reviews")
+						.select("rating")
+						.eq("location_id", locationId),
+				]);
+
+				if (locationResult.latitude === null || locationResult.longitude === null) {
+					throw new Error("Location does not have coordinates yet.");
+				}
+
+				const numericRatings = (reviewResult.data ?? []).flatMap((review) =>
+					typeof review.rating === "number" ? [review.rating] : [],
+				);
+				const averageRating =
+					numericRatings.length > 0
+						? Number(
+							(
+								numericRatings.reduce((sum, rating) => sum + rating, 0) /
+								numericRatings.length
+							).toFixed(1),
+						)
+						: 0;
+
+				if (isMounted) {
+					setCustomLocation(
+						buildMapLocation(locationResult, averageRating, (reviewResult.data ?? []).length),
+					);
+					setLocationError(null);
+				}
+			} catch (error) {
+				console.error("[LocationMap] Failed to load location:", error);
+				if (isMounted) {
+					setCustomLocation(null);
+					setLocationError("This location is not available on the map yet.");
+				}
+			} finally {
+				if (isMounted) {
+					setIsLocationLoading(false);
+				}
+			}
+		};
+
+		loadLocation();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [locationId]);
 
 	useEffect(() => {
 		if (!hasMapboxNative) {
@@ -192,7 +286,7 @@ export default function LocationMapScreen() {
 	}, []);
 
 	useEffect(() => {
-		if (!currentPosition) {
+		if (!currentPosition || !selectedData) {
 			setRouteGeometry(null);
 			setRouteDistanceKm(null);
 			setRouteStatus("idle");
@@ -200,11 +294,11 @@ export default function LocationMapScreen() {
 		}
 
 		if (!API_KEYS.mapbox) {
-			setRouteGeometry(buildFallbackRoute(currentPosition, location));
+			setRouteGeometry(buildFallbackRoute(currentPosition, selectedData));
 			setRouteDistanceKm(
 				haversineKm(currentPosition, {
-					latitude: location.latitude,
-					longitude: location.longitude,
+					latitude: selectedData.latitude,
+					longitude: selectedData.longitude,
 				}),
 			);
 			setRouteStatus("approx");
@@ -218,7 +312,7 @@ export default function LocationMapScreen() {
 			try {
 				setRouteStatus("loading");
 				const origin = `${currentPosition.longitude},${currentPosition.latitude}`;
-				const destination = `${location.longitude},${location.latitude}`;
+				const destination = `${selectedData.longitude},${selectedData.latitude}`;
 				const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${origin};${destination}?geometries=geojson&overview=full&access_token=${API_KEYS.mapbox}`;
 
 				const response = await fetch(url, { signal: controller.signal });
@@ -236,11 +330,11 @@ export default function LocationMapScreen() {
 				const route = data.routes?.[0];
 				if (!route?.geometry || route.geometry.coordinates.length === 0) {
 					if (isMounted) {
-						setRouteGeometry(buildFallbackRoute(currentPosition, location));
+						setRouteGeometry(buildFallbackRoute(currentPosition, selectedData));
 						setRouteDistanceKm(
 							haversineKm(currentPosition, {
-								latitude: location.latitude,
-								longitude: location.longitude,
+								latitude: selectedData.latitude,
+								longitude: selectedData.longitude,
 							}),
 						);
 						setRouteStatus("approx");
@@ -262,11 +356,11 @@ export default function LocationMapScreen() {
 			} catch (error) {
 				if (isMounted && !controller.signal.aborted) {
 					console.warn("Unable to fetch Mapbox directions:", error);
-					setRouteGeometry(buildFallbackRoute(currentPosition, location));
+					setRouteGeometry(buildFallbackRoute(currentPosition, selectedData));
 					setRouteDistanceKm(
 						haversineKm(currentPosition, {
-							latitude: location.latitude,
-							longitude: location.longitude,
+							latitude: selectedData.latitude,
+							longitude: selectedData.longitude,
 						}),
 					);
 					setRouteStatus("approx");
@@ -283,13 +377,15 @@ export default function LocationMapScreen() {
 	}, [
 		currentPosition?.latitude,
 		currentPosition?.longitude,
-		location.latitude,
-		location.longitude,
+		selectedData?.latitude,
+		selectedData?.longitude,
 	]);
 
 	const mapCenter = currentPosition
 		? [currentPosition.longitude, currentPosition.latitude]
-		: [location.longitude, location.latitude];
+		: selectedData
+			? [selectedData.longitude, selectedData.latitude]
+			: [0, 0];
 
 	const distanceForEstimates = useMemo(() => {
 		if (routeDistanceKm != null) {
@@ -300,9 +396,13 @@ export default function LocationMapScreen() {
 			return null;
 		}
 
-		const parsedDistance = Number.parseFloat(location.distance);
+		if (!selectedData) {
+			return null;
+		}
+
+		const parsedDistance = Number.parseFloat(selectedData.distance);
 		return Number.isFinite(parsedDistance) ? parsedDistance : null;
-	}, [routeDistanceKm, currentPosition, location.distance]);
+	}, [routeDistanceKm, currentPosition, selectedData?.distance]);
 
 	const travelEstimates = useMemo(() => {
 		if (distanceForEstimates == null) {
@@ -382,6 +482,35 @@ export default function LocationMapScreen() {
 		);
 	}
 
+	if (isLocationLoading) {
+		return (
+			<View className="flex-1 items-center justify-center bg-canvas px-6">
+				<Text className="text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
+					Loading map location...
+				</Text>
+			</View>
+		);
+	}
+
+	if (!selectedData) {
+		return (
+			<View className="flex-1 items-center justify-center bg-canvas px-6">
+				<Text className="mb-3 text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
+					{locationError ?? "Location not found."}
+				</Text>
+				<TouchableOpacity
+					className="px-4 py-3 bg-primary rounded-xl"
+					onPress={() => router.back()}
+					activeOpacity={0.8}
+				>
+					<Text className="font-semibold text-white" fontName="PlusJakartaSans_600SemiBold">
+						Go Back
+					</Text>
+				</TouchableOpacity>
+			</View>
+		);
+	}
+
 	return (
 		<View className="flex-1 bg-canvas">
 			<View className="absolute left-4 right-4 top-12 z-20 flex-row items-center justify-between">
@@ -394,7 +523,7 @@ export default function LocationMapScreen() {
 				</TouchableOpacity>
 				<View className="px-4 py-2 bg-canvas/90 rounded-full shadow-sm">
 					<Text className="font-semibold text-ink text-sm" fontName="PlusJakartaSans_600SemiBold">
-						{location.name}
+						{selectedData.name}
 					</Text>
 				</View>
 			</View>
@@ -441,7 +570,7 @@ export default function LocationMapScreen() {
 						</Mapbox.MarkerView>
 					) : null}
 
-					<Mapbox.MarkerView coordinate={[location.longitude, location.latitude]} allowOverlap>
+					<Mapbox.MarkerView coordinate={[selectedData.longitude, selectedData.latitude]} allowOverlap>
 						<View className="items-center justify-center">
 							<View className="w-10 h-10 items-center justify-center rounded-full bg-primary border-2 border-white shadow-md">
 								<MapPin size={16} color="#fff" />
@@ -449,6 +578,19 @@ export default function LocationMapScreen() {
 							<View className="w-2 h-2 mt-1 rounded-full bg-primary/70" />
 						</View>
 					</Mapbox.MarkerView>
+					{customLocation ? (
+						<Mapbox.MarkerView
+							coordinate={[customLocation.longitude, customLocation.latitude]}
+							allowOverlap
+						>
+							<View className="items-center justify-center">
+								<View className="w-10 h-10 items-center justify-center rounded-full bg-primary border-2 border-white shadow-md">
+									<MapPin size={16} color="#fff" />
+								</View>
+								<View className="w-2 h-2 mt-1 rounded-full bg-primary/70" />
+							</View>
+						</Mapbox.MarkerView>
+					) : null}
 				</Mapbox.MapView>
 			</View>
 
@@ -456,16 +598,16 @@ export default function LocationMapScreen() {
 				<View className="flex-row items-center justify-between mb-2">
 					<View className="flex-1 pr-3">
 						<Text className="text-xl text-ink" fontName="PlusJakartaSans_700Bold">
-							{location.name}
+							{selectedData.name}
 						</Text>
 						<Text className="mt-1 text-muted text-sm" fontName="PlusJakartaSans_400Regular">
-							{location.location}
+							{selectedData.location}
 						</Text>
 					</View>
 					<View className="flex-row items-center px-2 py-1 bg-primary/10 rounded-full">
 						<Star size={12} color="#FBBF24" fill="#FBBF24" />
 						<Text className="ml-1 text-ink text-sm" fontName="PlusJakartaSans_600SemiBold">
-							{location.rating}
+							{selectedData.rating}
 						</Text>
 					</View>
 				</View>
@@ -486,7 +628,7 @@ export default function LocationMapScreen() {
 						<Text className="mt-0.5 text-muted text-xs" fontName="PlusJakartaSans_400Regular">
 							{currentPosition
 								? `Origin: ${currentPosition.latitude.toFixed(4)}, ${currentPosition.longitude.toFixed(4)}`
-								: `Destination center: ${location.latitude.toFixed(4)}, ${location.longitude.toFixed(4)}`}
+								: `Destination center: ${selectedData.latitude.toFixed(4)}, ${selectedData.longitude.toFixed(4)}`}
 						</Text>
 					</View>
 				</View>
