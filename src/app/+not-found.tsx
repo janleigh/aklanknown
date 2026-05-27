@@ -1,13 +1,13 @@
+import { Text } from "@components/index";
 import { useRouter } from "expo-router";
 import { AlertCircle } from "lucide-react-native";
 import { Pressable, ScrollView, View } from "react-native";
-import { Text } from "@/components/index";
 
 export default function NotFoundScreen() {
 	const router = useRouter();
 
 	return (
-		<ScrollView className="flex-1 bg-surface-soft">
+		<ScrollView className="flex-1 bg-surface-soft px-4">
 			<View className="flex-1 items-center justify-center px-4 py-12">
 				<View className="items-center justify-center mb-6 h-20 w-20 bg-error/10 rounded-full">
 					<AlertCircle size={40} color="#ef4444" />
@@ -30,15 +30,6 @@ export default function NotFoundScreen() {
 				>
 					<Text className="font-semibold text-on-primary" fontName="PlusJakartaSans_600SemiBold">
 						Go Back
-					</Text>
-				</Pressable>
-
-				<Pressable
-					className="items-center justify-center px-6 py-4 w-full bg-canvas border border-hairline rounded-xl"
-					onPress={() => router.replace("/(home)")}
-				>
-					<Text className="font-semibold text-ink" fontName="PlusJakartaSans_600SemiBold">
-						Go Home
 					</Text>
 				</Pressable>
 			</View>

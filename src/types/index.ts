@@ -1,16 +1,45 @@
-// src/types/index.ts
-export interface Location {
+import type { Review } from "@/lib/types/supabase";
+
+export type {
+	Bookmark,
+	CachedRoute,
+	Location,
+	LocationImage,
+	Review,
+	UserProfile,
+} from "@/lib/types/supabase";
+
+export interface LocationCardData {
 	id: string;
 	name: string;
-	location: string;
+	image: string;
 	distance: string;
 	rating: number;
-	image: string;
 	category: string;
-	latitude?: number;
-	longitude?: number;
-	description?: string;
+	banner_image_url: string;
 }
+
+export interface LocationDetailData {
+	id: string;
+	name: string;
+	description: string;
+	latitude: number;
+	longitude: number;
+	banner_image_url: string;
+	panorama_image_url: string;
+	street: string;
+	barangay: string;
+	town: string;
+	reviews: number;
+	rating: number;
+	images: string[];
+}
+
+export interface ReviewWithUser extends Review {
+	userName: string;
+	userAvatar?: string;
+}
+
 export interface Event {
 	id: string;
 	title: string;
@@ -20,19 +49,5 @@ export interface Event {
 	description: string;
 	image: string;
 }
-export interface Review {
-	id: string;
-	userName: string;
-	rating: number;
-	date: string;
-	comment: string;
-	locationId?: string;
-}
-export interface User {
-	id: string;
-	name: string;
-	email: string;
-	role: "guest" | "admin";
-	avatar?: string;
-}
-export type UserRole = "guest" | "admin";
+
+export type UserRole = "user" | "admin";

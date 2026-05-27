@@ -2,7 +2,7 @@ import { useUser } from "@clerk/expo";
 import { Tabs } from "expo-router";
 import { useEffect } from "react";
 import { HOME_TAB_ICONS, HOME_TAB_SCREEN_OPTIONS } from "@/components/navigation/HomeTabBar";
-import { userController } from "@/shared/api/supabase/controller";
+import { userController } from "@/lib/api/supabase/controller";
 
 const TAB_SCREENS = [
 	{ name: "index", label: "Home" },
@@ -29,7 +29,7 @@ export default function HomeLayout() {
 					options={{
 						title: screen.label,
 						tabBarIcon: HOME_TAB_ICONS[screen.name as keyof typeof HOME_TAB_ICONS],
-						...(screen.hidden && { href: null }),
+						...("hidden" in screen && screen.hidden && { href: null }),
 					}}
 				/>
 			))}
@@ -37,9 +37,9 @@ export default function HomeLayout() {
 	);
 }
 
-async function syncUserToSupabase(user: any) {
+async function syncUserToSupabase(user: ReturnType<typeof useUser>["user"]) {
 	try {
-		const existingUser = await userController.getById(user.id);
+		const existingUser = await userController.getById(user!.id);
 		if (existingUser) return;
 	} catch (err) {
 		console.error("Error checking user:", err);
@@ -47,16 +47,16 @@ async function syncUserToSupabase(user: any) {
 
 	try {
 		const email =
-			user.primaryEmailAddress?.emailAddress ?? user.emailAddresses[0]?.emailAddress ?? "";
-		const name = user.fullName ?? user.firstName ?? "Unknown User";
-		const googleAccount = user.externalAccounts.find((ea: any) => ea.provider === "google");
-		const facebookAccount = user.externalAccounts.find((ea: any) => ea.provider === "facebook");
+			user!.primaryEmailAddress?.emailAddress ?? user!.emailAddresses[0]?.emailAddress ?? "";
+		const name = user!.fullName ?? user!.firstName ?? "Unknown User";
+		const googleAccount = user!.externalAccounts.find((ea) => ea.provider === "google");
+		const facebookAccount = user!.externalAccounts.find((ea) => ea.provider === "facebook");
 
 		await userController.create({
-			id: user.id,
+			id: user!.id,
 			email,
 			name,
-			avatar_url: user.imageUrl ?? "",
+			avatar_url: user!.imageUrl ?? "",
 			google_id: googleAccount?.id ?? null,
 			facebook_id: facebookAccount?.id ?? null,
 			role: "user",

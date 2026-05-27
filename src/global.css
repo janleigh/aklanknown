@@ -1,4 +1,3 @@
-/* ✅ Uniwind + Tailwind v4 Theme Configuration */
 @import "tailwindcss";
 @import "uniwind";
 
@@ -47,8 +46,6 @@
 	--font-serif: Georgia, "Times New Roman", serif;
 }
 
-/* ✅ Mobile Safe Area Support */
-/* This prevents bottom tabs from being hidden behind the iPhone Home Bar */
 .pb-safe {
 	padding-bottom: env(safe-area-inset-bottom);
 }

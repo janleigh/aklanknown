@@ -1,5 +1,10 @@
 import { useRef } from "react";
-import { Animated, TouchableOpacity, type TouchableOpacityProps } from "react-native";
+import {
+	Animated,
+	type GestureResponderEvent,
+	TouchableOpacity,
+	type TouchableOpacityProps,
+} from "react-native";
 
 export interface PressableScaleProps extends TouchableOpacityProps {
 	scaleValue?: number;
@@ -15,7 +20,7 @@ export function PressableScale({
 }: PressableScaleProps) {
 	const scaleAnim = useRef(new Animated.Value(1)).current;
 
-	const handlePressIn = (e: any) => {
+	const handlePressIn = (e: GestureResponderEvent) => {
 		Animated.spring(scaleAnim, {
 			toValue: scaleValue,
 			useNativeDriver: true,
@@ -23,7 +28,7 @@ export function PressableScale({
 		onPressIn?.(e);
 	};
 
-	const handlePressOut = (e: any) => {
+	const handlePressOut = (e: GestureResponderEvent) => {
 		Animated.spring(scaleAnim, {
 			toValue: 1,
 			useNativeDriver: true,

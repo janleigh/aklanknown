@@ -1,13 +1,46 @@
 import { useAuth, useUser } from "@clerk/expo";
+import { Text } from "@components/index";
+import { userController } from "@lib/api/supabase/controller";
 import { useRouter } from "expo-router";
 import { Bell, LogOut, Settings, Shield, User } from "lucide-react-native";
+import { useEffect, useState } from "react";
 import { Image, Pressable, ScrollView, View } from "react-native";
-import { Text } from "@/components/index";
 
 export default function ProfileScreen() {
 	const { signOut } = useAuth();
 	const { user } = useUser();
 	const router = useRouter();
+	const [isAdmin, setIsAdmin] = useState(false);
+
+	const goToNotFound = () => {
+		router.push("/+not-found");
+	};
+
+	useEffect(() => {
+		if (!user) return;
+
+		let isMounted = true;
+
+		const loadRole = async () => {
+			try {
+				const profile = await userController.getById(user.id);
+				if (isMounted) {
+					setIsAdmin(profile.role === "admin");
+				}
+			} catch (error) {
+				console.error("[Profile] Failed to load user role:", error);
+				if (isMounted) {
+					setIsAdmin(false);
+				}
+			}
+		};
+
+		loadRole();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [user]);
 
 	const handleLogout = async () => {
 		await signOut();
@@ -15,10 +48,13 @@ export default function ProfileScreen() {
 	};
 
 	const menuItems = [
-		{ icon: User, label: "Edit Profile", action: () => {} },
-		{ icon: Settings, label: "App Settings", action: () => router.push("/404") },
-		{ icon: Bell, label: "Notifications", action: () => router.push("/404") },
-		{ icon: Shield, label: "Privacy & Security", action: () => router.push("/404") },
+		...(isAdmin
+			? [{ icon: Shield, label: "Admin Panel", action: () => router.push("/(admin)") }]
+			: []),
+		{ icon: User, label: "Edit Profile", action: goToNotFound },
+		{ icon: Settings, label: "App Settings", action: goToNotFound },
+		{ icon: Bell, label: "Notifications", action: goToNotFound },
+		{ icon: Shield, label: "Privacy & Security", action: goToNotFound },
 	];
 
 	return (
@@ -43,7 +79,7 @@ export default function ProfileScreen() {
 			<View className="flex-row justify-around mx-4 p-4 bg-canvas border border-hairline rounded-xl shadow-sm -mt-6">
 				<View className="items-center">
 					<Text className="font-bold text-2xl text-primary" fontName="PlusJakartaSans_700Bold">
-						12
+						TBD
 					</Text>
 					<Text className="text-muted text-sm" fontName="PlusJakartaSans_400Regular">
 						Saved
@@ -51,7 +87,7 @@ export default function ProfileScreen() {
 				</View>
 				<View className="items-center">
 					<Text className="font-bold text-2xl text-primary" fontName="PlusJakartaSans_700Bold">
-						5
+						TBD
 					</Text>
 					<Text className="text-muted text-sm" fontName="PlusJakartaSans_400Regular">
 						Reviews
@@ -59,7 +95,7 @@ export default function ProfileScreen() {
 				</View>
 				<View className="items-center">
 					<Text className="font-bold text-2xl text-primary" fontName="PlusJakartaSans_700Bold">
-						28
+						TBD
 					</Text>
 					<Text className="text-muted text-sm" fontName="PlusJakartaSans_400Regular">
 						Visited
