@@ -110,7 +110,24 @@ export const bookmarkController = buildController<Bookmark>("bookmarks");
 export const cachedRouteController = buildController<CachedRoute>("cached_routes");
 export const locationController = buildController<Location>("locations");
 export const locationImageController = buildController<LocationImage>("location_images");
-export const reviewController = buildController<Review>("reviews");
+const _reviewControllerBase = buildController<Review>("reviews");
+
+// Wrap the generated review controller to sanitize incoming auth IDs that
+// are not native DB UUIDs (for example Clerk IDs like "user_..."), which
+// would otherwise cause "invalid input syntax for type uuid" errors if the
+// `reviews.user_id` column is a uuid type in the database. If an incoming
+// user_id looks like an external auth id, store null instead.
+export const reviewController = {
+	..._reviewControllerBase,
+	create: async (payload: any) => {
+		const safePayload = { ...payload };
+		if (typeof safePayload.user_id === "string" && safePayload.user_id.startsWith("user_")) {
+			safePayload.user_id = null;
+		}
+
+		return _reviewControllerBase.create(safePayload);
+	},
+};
 export const userController = buildController<UserProfile>("users");
 
 export const controllers = {

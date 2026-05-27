@@ -14,6 +14,7 @@ import {
 	X,
 } from "lucide-react-native";
 import { useEffect, useState } from "react";
+import { useUser } from "@clerk/expo";
 import { Alert, Image, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 import { Text } from "@/components/Text";
 
@@ -38,23 +39,6 @@ type ReviewItem = {
 	comment: string;
 };
 
-const DEFAULT_REVIEWS: ReviewItem[] = [
-	{
-		id: "1",
-		userName: "Janleugggh",
-		rating: 5,
-		date: "Apr 6, 2026",
-		comment:
-			"Absolutely breathtaking! The sand is incredibly soft and the water is perfect for swimming.",
-	},
-	{
-		id: "2",
-		userName: "Pauleeenn",
-		rating: 3,
-		date: "May 29, 2026",
-		comment: "Beautiful beach, but can get crowded during peak season. Still worth visiting!",
-	},
-];
 
 function buildLocationDetails(
 	location: SupabaseLocation,
@@ -87,6 +71,7 @@ function buildLocationDetails(
 export default function LocationDetailsScreen() {
 	const { id } = useLocalSearchParams();
 	const router = useRouter();
+	const { user } = useUser();
 
 	const locationId = typeof id === "string" ? id : Array.isArray(id) ? id[0] : "";
 	const [location, setLocation] = useState<LocationDetails | null>(null);
@@ -97,7 +82,8 @@ export default function LocationDetailsScreen() {
 	const [userRating, setUserRating] = useState(0);
 	const [reviewText, setReviewText] = useState("");
 	const [isFavorite, setIsFavorite] = useState(false);
-	const [reviews, setReviews] = useState<ReviewItem[]>(DEFAULT_REVIEWS);
+	const [reviews, setReviews] = useState<ReviewItem[]>([]);
+	const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
 	useEffect(() => {
 		let isMounted = true;
@@ -128,7 +114,7 @@ export default function LocationDetailsScreen() {
 						.order("created_at", { ascending: true }),
 					supabase
 						.from("reviews")
-						.select("id, rating, comment, created_at")
+						.select("id, rating, comment, created_at, user_id")
 						.eq("location_id", locationId)
 						.order("created_at", { ascending: false }),
 				]);
@@ -152,9 +138,23 @@ export default function LocationDetailsScreen() {
 						)
 						: 0;
 
-				const formattedReviews: ReviewItem[] = (reviewResult.data ?? []).map((review) => ({
+				const reviewerIds = [...new Set((reviewResult.data ?? []).map((review) => review.user_id).filter((reviewerId): reviewerId is string => Boolean(reviewerId)))];
+				const reviewerProfiles = await Promise.all(
+					reviewerIds.map(async (reviewerId) => {
+						try {
+							return await controllers.user.getById(reviewerId);
+						} catch {
+							return null;
+						}
+					}),
+				);
+				const reviewerNameById = new Map(
+					reviewerProfiles.filter((profile) => profile !== null).map((profile) => [profile.id, profile.name]),
+				);
+
+				const hydratedReviews: ReviewItem[] = (reviewResult.data ?? []).map((review) => ({
 					id: review.id,
-					userName: "Guest",
+					userName: review.user_id ? reviewerNameById.get(review.user_id) ?? "Guest" : "Guest",
 					rating: typeof review.rating === "number" ? review.rating : 0,
 					date: review.created_at ? new Date(review.created_at).toLocaleDateString() : "Recently",
 					comment: review.comment || "",
@@ -169,7 +169,7 @@ export default function LocationDetailsScreen() {
 							(reviewResult.data ?? []).length,
 						),
 					);
-					setReviews(formattedReviews.length > 0 ? formattedReviews : DEFAULT_REVIEWS);
+					setReviews(hydratedReviews);
 				}
 			} catch (error) {
 				console.error("[LocationDetails] Failed to load location:", error);
@@ -191,14 +191,60 @@ export default function LocationDetailsScreen() {
 		};
 	}, [locationId]);
 
-	const handleSubmitReview = () => {
+	const handleSubmitReview = async () => {
 		if (!reviewText.trim() || userRating === 0) {
 			Alert.alert("Missing Info", "Please select a rating and write your review.");
 			return;
 		}
-		Alert.alert("Review Submitted!", "Thank you for sharing your experience.");
-		setReviewText("");
-		setUserRating(0);
+
+		if (!locationId) {
+			Alert.alert("Missing Location", "We could not determine which location to review.");
+			return;
+		}
+
+		setIsSubmittingReview(true);
+
+		try {
+			const submittedReview = await controllers.review.create({
+				location_id: locationId,
+				user_id: user?.id ?? null,
+				rating: userRating,
+				comment: reviewText.trim(),
+				is_flagged: false,
+			});
+
+			setReviews((prev) => [
+				{
+					id: submittedReview.id,
+					userName: user?.fullName || user?.firstName || "Guest",
+					rating: userRating,
+					date: new Date(submittedReview.created_at).toLocaleDateString(),
+					comment: reviewText.trim(),
+				},
+				...prev,
+			]);
+			setReviewText("");
+			setUserRating(0);
+			Alert.alert("Review Submitted!", "Thank you for sharing your experience.");
+		} catch (error) {
+			console.error("[LocationDetails] Failed to submit review:", error);
+			const errMsg = (error as any)?.message ?? String(error);
+			if (errMsg.includes("row-level security") || errMsg.includes("violates row-level security")) {
+				Alert.alert(
+					"Review Failed",
+					"The server rejected the review due to permissions. Please sign in with an account that has permission to submit reviews or try again later.",
+				);
+			} else if (errMsg.includes("invalid input syntax for type uuid") || errMsg.includes("22P02")) {
+				Alert.alert(
+					"Review Failed",
+					"There was an issue with your account identifier. Your review was not saved. Please try signing out and signing back in.",
+				);
+			} else {
+				Alert.alert("Review Failed", "We could not save your review right now.");
+			}
+		} finally {
+			setIsSubmittingReview(false);
+		}
 	};
 
 	if (isLoadingLocation) {
@@ -410,12 +456,13 @@ export default function LocationDetailsScreen() {
 					/>
 
 					<TouchableOpacity
-						className="items-center mb-8 py-3 bg-primary rounded-xl"
+						className={`items-center mb-8 py-3 rounded-xl ${isSubmittingReview ? "bg-primary/60" : "bg-primary"}`}
 						onPress={handleSubmitReview}
 						activeOpacity={0.8}
+						disabled={isSubmittingReview}
 					>
 						<Text className="font-semibold text-on-primary" fontName="PlusJakartaSans_600SemiBold">
-							Submit Review
+							{isSubmittingReview ? "Submitting..." : "Submit Review"}
 						</Text>
 					</TouchableOpacity>
 
