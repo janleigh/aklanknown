@@ -392,10 +392,9 @@ export default function LocationDetailsScreen() {
 
 	return (
 		<View className="flex-1 bg-canvas">
-			{/* ✅ BOTTOM NAVBAR FIX: Added pb-20 so content doesn't hide behind layout tab bar */}
-			<ScrollView showsVerticalScrollIndicator={false} className="pb-20">
+			<ScrollView showsVerticalScrollIndicator={false} className="pb-32">
 				{/* Image Carousel */}
-				<View className="relative h-72 bg-surface-soft">
+				<View className="relative h-96 bg-surface-soft">
 					<Image
 						source={{ uri: location.images[currentImageIndex] }}
 						className="h-full w-full"
@@ -466,18 +465,15 @@ export default function LocationDetailsScreen() {
 				</View>
 
 				{/* Content */}
-				<View className="pt-6 px-5">
-					<Text className="mb-2 text-2xl text-ink" fontName="PlusJakartaSans_700Bold">
-						{location.name}
-					</Text>
-					<View className="flex-row items-center justify-between mb-4">
-						<View className="flex-row gap-2 items-center">
+				<View className="-mt-8 pt-8 px-6 bg-canvas rounded-t-[32px]">
+					<View className="flex-row justify-between items-start mb-2">
+						<Text className="flex-1 text-3xl text-ink leading-tight pr-2" fontName="PlusJakartaSans_700Bold">
+							{location.name}
+						</Text>
+						<View className="items-end">
 							<View className="flex-row items-center">
 								<Star size={16} color="#FBBF24" fill="#FBBF24" />
-								<Text
-									className="ml-1 font-semibold text-ink"
-									fontName="PlusJakartaSans_600SemiBold"
-								>
+								<Text className="ml-1 text-ink font-bold" fontName="PlusJakartaSans_700Bold">
 									{location.rating}
 								</Text>
 							</View>
@@ -485,13 +481,34 @@ export default function LocationDetailsScreen() {
 								({location.reviews} reviews)
 							</Text>
 						</View>
-						<View className="flex-row gap-1 items-center">
-							<MapPin size={16} color="#929292" />
-							<Text className="text-muted text-sm" fontName="PlusJakartaSans_400Regular">
-								{location.location}
-							</Text>
+					</View>
+
+					<View className="flex-row items-center mb-6">
+						<MapPin size={16} color="#929292" />
+						<Text className="ml-1 text-muted text-sm" fontName="PlusJakartaSans_400Regular">
+							{location.location}
+						</Text>
+					</View>
+
+					{/* Mock Features Row */}
+					<View className="flex-row justify-around py-4 border border-hairline-soft rounded-2xl mb-6">
+						<View className="items-center flex-row gap-2 px-2">
+							<MapIcon size={16} color="#222222" />
+							<Text className="text-ink text-sm font-medium" fontName="PlusJakartaSans_600SemiBold">Ticket</Text>
+						</View>
+						<View className="w-px h-6 bg-hairline-soft" />
+						<View className="items-center flex-row gap-2 px-2">
+							<Camera size={16} color="#222222" />
+							<Text className="text-ink text-sm font-medium" fontName="PlusJakartaSans_600SemiBold">Hotel</Text>
+						</View>
+						<View className="w-px h-6 bg-hairline-soft" />
+						<View className="items-center flex-row gap-2 px-2">
+							<Star size={16} color="#222222" />
+							<Text className="text-ink text-sm font-medium" fontName="PlusJakartaSans_600SemiBold">Meal</Text>
 						</View>
 					</View>
+
+					<Text className="text-xl text-ink mb-3" fontName="PlusJakartaSans_700Bold">Description</Text>
 
 					<Text className="mb-2 leading-6 text-body" fontName="PlusJakartaSans_400Regular">
 						{isExpanded ? location.fullDescription : location.description}
@@ -506,35 +523,7 @@ export default function LocationDetailsScreen() {
 					</TouchableOpacity>
 
 					{/* Action Buttons */}
-					<View className="flex-row gap-3 mb-8">
-						<TouchableOpacity
-							className="flex-1 flex-row gap-2 items-center justify-center py-3 bg-primary rounded-xl"
-							activeOpacity={0.8}
-							onPress={() => {
-								router.push(`/location/${locationId}/map`);
-							}}
-						>
-							<MapIcon size={18} color="#ffffff" />
-							<Text
-								className="font-semibold text-on-primary"
-								fontName="PlusJakartaSans_600SemiBold"
-							>
-								View on Map
-							</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							className="flex-1 flex-row gap-2 items-center justify-center py-3 bg-primary/15 rounded-xl"
-							activeOpacity={0.8}
-							onPress={() => {
-								router.push(`/location/${locationId}/360`);
-							}}
-						>
-							<Camera size={18} color="#ff385c" />
-							<Text className="font-semibold text-primary" fontName="PlusJakartaSans_600SemiBold">
-								View 360
-							</Text>
-						</TouchableOpacity>
-					</View>
+					{/* Action Buttons Moved to Fixed Bottom Bar */}
 
 					<View className="mb-6 h-px bg-hairline-soft" />
 
@@ -623,6 +612,32 @@ export default function LocationDetailsScreen() {
 					))}
 				</View>
 			</ScrollView>
+
+			{/* Fixed Bottom Bar */}
+			<View className="absolute bottom-0 left-0 right-0 px-6 py-4 bg-canvas border-t border-hairline-soft flex-row gap-4 items-center">
+				<TouchableOpacity
+					className="flex-1 items-center justify-center py-4 bg-surface-strong rounded-full"
+					activeOpacity={0.8}
+					onPress={() => {
+						router.push(`/location/${locationId}/360`);
+					}}
+				>
+					<Text className="font-semibold text-ink text-base" fontName="PlusJakartaSans_600SemiBold">
+						View 360
+					</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					className="flex-1 flex-row gap-2 items-center justify-center py-4 bg-primary rounded-full shadow-sm"
+					activeOpacity={0.8}
+					onPress={() => {
+						router.push(`/location/${locationId}/map`);
+					}}
+				>
+					<Text className="font-semibold text-white text-base" fontName="PlusJakartaSans_600SemiBold">
+						View on Map
+					</Text>
+				</TouchableOpacity>
+			</View>
 		</View>
 	);
 }
