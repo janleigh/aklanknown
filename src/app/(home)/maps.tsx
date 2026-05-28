@@ -1,5 +1,6 @@
 import { Text } from "@components/Text";
 import { controllers } from "@lib/api/supabase/controller";
+import { supabase } from "@lib/api/supabase/supabase";
 import type { Location as LocationRecord } from "@lib/types/supabase";
 import type * as TMapbox from "@rnmapbox/maps";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -29,7 +30,45 @@ type MapLocationCardData = {
 	image: string;
 };
 
-function buildMapLocation(location: LocationRecord): MapLocationCardData | null {
+type ReviewStat = {
+	locationId: string;
+	rating: number;
+	reviews: number;
+};
+
+function buildReviewStats(reviews: Array<{ location_id: string | null; rating: number | null }>) {
+	const statsByLocationId = new Map<string, ReviewStat>();
+
+	for (const review of reviews) {
+		if (!review.location_id) {
+			continue;
+		}
+
+		const existing = statsByLocationId.get(review.location_id);
+		const nextReviews = (existing?.reviews ?? 0) + 1;
+		const nextRating =
+			typeof review.rating === "number"
+				? Number(
+						(
+							(((existing?.rating ?? 0) * (existing?.reviews ?? 0) + review.rating) / nextReviews)
+						).toFixed(1),
+					)
+				: existing?.rating ?? 0;
+
+		statsByLocationId.set(review.location_id, {
+			locationId: review.location_id,
+			rating: nextRating,
+			reviews: nextReviews,
+		});
+	}
+
+	return statsByLocationId;
+}
+
+function buildMapLocation(
+	location: LocationRecord,
+	reviewStat: ReviewStat | undefined,
+): MapLocationCardData | null {
 	if (location.latitude === null || location.longitude === null) {
 		return null;
 	}
@@ -45,8 +84,8 @@ function buildMapLocation(location: LocationRecord): MapLocationCardData | null 
 		longitude: location.longitude,
 		location: locationLabel || location.town || location.barangay || "Unknown location",
 		distance: "Custom location",
-		rating: 0,
-		reviews: 0,
+		rating: reviewStat?.rating ?? 0,
+		reviews: reviewStat?.reviews ?? 0,
 		image: location.banner_image_url || location.panorama_image_url || "",
 	};
 }
@@ -56,6 +95,8 @@ export default function MapsScreen() {
 	const params = useLocalSearchParams();
 	const [locations, setLocations] = useState<MapLocationCardData[]>([]);
 	const [selectedLocation, setSelectedLocation] = useState<string>("");
+	const [searchQuery, setSearchQuery] = useState("");
+	const [isSearchFocused, setIsSearchFocused] = useState(false);
 	const [isLoadingLocations, setIsLoadingLocations] = useState(true);
 	const [Mapbox, setMapbox] = useState<typeof TMapbox | null>(null);
 	const hasMapboxNative = Platform.OS === "android" && Boolean(NativeModules.RNMBXModule);
@@ -67,9 +108,14 @@ export default function MapsScreen() {
 			setIsLoadingLocations(true);
 
 			try {
-				const data = await controllers.location.list({ orderBy: "created_at" });
+				const [data, reviews] = await Promise.all([
+					controllers.location.list({ orderBy: "created_at" }),
+					supabase.from("reviews").select("location_id, rating"),
+				]);
+
+				const reviewStatsByLocationId = buildReviewStats(reviews.data ?? []);
 				const mapLocations = data
-					.map(buildMapLocation)
+					.map((location) => buildMapLocation(location, reviewStatsByLocationId.get(location.id)))
 					.filter((location): location is MapLocationCardData => location !== null);
 
 				if (isMounted) {
@@ -137,10 +183,37 @@ export default function MapsScreen() {
 		return locations.find((location) => location.id === selectedLocation) ?? locations[0] ?? null;
 	}, [locations, selectedLocation]);
 
+	const searchSuggestions = useMemo(() => {
+		const query = searchQuery.trim().toLowerCase();
+
+		if (!query) {
+			return locations.slice(0, 5);
+		}
+
+		return locations
+			.filter((location) => {
+				const haystack = [location.name, location.location, location.distance].join(" ").toLowerCase();
+				return haystack.includes(query);
+			})
+			.slice(0, 5);
+	}, [locations, searchQuery]);
+
+	const shouldShowSearchDropdown = searchSuggestions.length > 0 && (isSearchFocused || !searchQuery.trim());
+
 	const mapLocations = useMemo(
 		() => locations.filter((location) => location.latitude && location.longitude),
 		[locations],
 	);
+
+	const handleSearchSelection = (locationId: string) => {
+		const location = locations.find((item) => item.id === locationId);
+		if (!location) {
+			return;
+		}
+
+		setSelectedLocation(location.id);
+		setSearchQuery(location.name);
+	};
 
 	if (Platform.OS !== "android") {
 		return (
@@ -191,14 +264,45 @@ export default function MapsScreen() {
 				</Text>
 
 				{/* Search & Filter */}
-				<View className="flex-row gap-2 items-center mb-3">
-					<View className="flex-1 flex-row items-center px-4 py-2.5 bg-surface-soft border border-hairline rounded-full">
-						<Search size={18} color="#929292" />
-						<TextInput
-							className="flex-1 ml-2 text-ink text-sm"
-							placeholder="Where to in Aklan?"
-							placeholderTextColor="#929292"
-						/>
+				<View className="relative flex-row gap-2 items-center mb-3">
+					<View className="flex-1">
+						<View className="flex-row items-center px-4 py-2.5 bg-surface-soft border border-hairline rounded-full">
+							<Search size={18} color="#929292" />
+							<TextInput
+								className="flex-1 ml-2 text-ink text-sm"
+								placeholder="Where to in Aklan?"
+								placeholderTextColor="#929292"
+								value={searchQuery}
+								onChangeText={setSearchQuery}
+								onFocus={() => setIsSearchFocused(true)}
+								blurOnSubmit={false}
+								onBlur={() => {
+									setTimeout(() => {
+										setIsSearchFocused(false);
+									}, 150);
+								}}
+							/>
+						</View>
+
+						{shouldShowSearchDropdown ? (
+							<View className="absolute left-0 right-0 top-[54px] z-30 overflow-hidden bg-canvas border border-hairline rounded-2xl shadow-lg">
+								{searchSuggestions.map((location, index) => (
+									<TouchableOpacity
+										key={location.id}
+										className={`px-4 py-3 ${index !== searchSuggestions.length - 1 ? "border-b border-hairline" : ""}`}
+										onPress={() => handleSearchSelection(location.id)}
+										activeOpacity={0.75}
+									>
+										<Text className="font-semibold text-ink text-sm" fontName="PlusJakartaSans_600SemiBold">
+											{location.name}
+										</Text>
+										<Text className="text-muted text-xs" fontName="PlusJakartaSans_400Regular">
+											{location.location}
+										</Text>
+									</TouchableOpacity>
+								))}
+							</View>
+						) : null}
 					</View>
 					<TouchableOpacity className="p-2.5 bg-primary/10 rounded-full" activeOpacity={0.7}>
 						<SlidersHorizontal size={18} color="#ff385c" />

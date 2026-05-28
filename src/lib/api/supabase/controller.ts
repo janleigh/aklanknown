@@ -91,18 +91,13 @@ const buildController = <T extends BaseRecord>(tableName: string): Controller<T>
 		return data as T;
 	},
 	remove: async (id) => {
-		const { data, error } = await supabase
-			.from(tableName)
-			.delete()
-			.eq("id", id)
-			.select("*")
-			.single();
+		const { error } = await supabase.from(tableName).delete().eq("id", id);
 
 		if (error) {
 			throw error;
 		}
 
-		return data as T;
+		return { id } as T;
 	},
 });
 

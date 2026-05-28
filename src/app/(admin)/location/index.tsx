@@ -1,16 +1,18 @@
 import { Text } from "@components/Text";
 import { controllers } from "@lib/api/supabase/controller";
+import { supabase } from "@lib/api/supabase/supabase";
 import type { Location as LocationRecord } from "@lib/types/supabase";
 import { useRouter } from "expo-router";
-import { Building2, MapPin, Plus } from "lucide-react-native";
+import { Building2, MapPin, Plus, Trash2 } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { FlatList, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, TouchableOpacity, View } from "react-native";
 import { Card, LoadingSpinner } from "@/components/index";
 
 export default function AdminLocationsScreen() {
 	const router = useRouter();
 	const [locations, setLocations] = useState<LocationRecord[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
+	const [isDeletingLocationId, setIsDeletingLocationId] = useState<string | null>(null);
 
 	useEffect(() => {
 		let isMounted = true;
@@ -37,6 +39,27 @@ export default function AdminLocationsScreen() {
 			isMounted = false;
 		};
 	}, []);
+
+	const deleteLocationCascade = async (locationId: string) => {
+		setIsDeletingLocationId(locationId);
+
+		try {
+			await Promise.all([
+				supabase.from("bookmarks").delete().eq("location_id", locationId),
+				supabase.from("cached_routes").delete().eq("location_id", locationId),
+				supabase.from("location_images").delete().eq("location_id", locationId),
+				supabase.from("reviews").delete().eq("location_id", locationId),
+			]);
+
+			await controllers.location.remove(locationId);
+			setLocations((prev) => prev.filter((location) => location.id !== locationId));
+		} catch (error) {
+			console.error("[Admin Locations] Failed to delete location:", error);
+			Alert.alert("Delete Failed", "We couldn't delete that location right now.");
+		} finally {
+			setIsDeletingLocationId((current) => (current === locationId ? null : current));
+		}
+	};
 
 	return (
 		<View className="flex-1 bg-surface-soft">
@@ -82,8 +105,33 @@ export default function AdminLocationsScreen() {
 										</Text>
 									</View>
 								</View>
-								<View className="h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-									<Building2 size={18} color="#ff385c" />
+								<View className="items-end gap-2">
+									<View className="h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+										<Building2 size={18} color="#ff385c" />
+									</View>
+									<TouchableOpacity
+										className="h-10 w-10 items-center justify-center rounded-xl bg-error/10"
+										onPress={() => {
+											Alert.alert(
+												"Delete location?",
+												`This will permanently remove ${item.name} and its related reviews, bookmarks, cached routes, and images.`,
+												[
+													{ text: "Cancel", style: "cancel" },
+													{
+														text: "Delete",
+														style: "destructive",
+														onPress: () => {
+															void deleteLocationCascade(item.id);
+														},
+													},
+												],
+											);
+										}}
+										disabled={isDeletingLocationId === item.id}
+										activeOpacity={0.75}
+									>
+										<Trash2 size={16} color="#ef4444" />
+									</TouchableOpacity>
 								</View>
 							</View>
 						</Card>

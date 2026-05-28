@@ -16,7 +16,8 @@ import {
 	Shield,
 	Users,
 } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useFocusEffect } from "expo-router";
 import { Pressable, ScrollView, View } from "react-native";
 import { Button, Card, LoadingSpinner } from "@/components/index";
 
@@ -109,9 +110,11 @@ export default function AdminDashboardScreen() {
 					flaggedReviews: reviews.filter((review) => review.is_flagged).length,
 				});
 
+				const flaggedReviews = reviews.filter((review) => review.is_flagged);
+
 				setHighlights({
 					recentLocations: locations.slice(0, 3),
-					recentReviews: reviews.slice(0, 3),
+					recentReviews: flaggedReviews.slice(0, 3),
 					recentUsers: users.slice(0, 3),
 				});
 			} catch (error) {
@@ -129,6 +132,52 @@ export default function AdminDashboardScreen() {
 			isMounted = false;
 		};
 	}, [hasAccess]);
+
+	// Reload dashboard whenever this screen comes back into focus so counts/highlights
+	// reflect recent changes (for example: resolving or deleting flagged reviews).
+	useFocusEffect(
+		useCallback(() => {
+			if (!hasAccess) return;
+
+			let isMounted = true;
+
+			const reload = async () => {
+				try {
+					const [users, locations, reviews] = await Promise.all([
+						controllers.user.list({ orderBy: "created_at" }),
+						controllers.location.list({ orderBy: "created_at" }),
+						controllers.review.list({ orderBy: "created_at" }),
+					]);
+
+					if (!isMounted) return;
+
+					setStats({
+						users: users.length,
+						locations: locations.length,
+						reviews: reviews.length,
+						flaggedReviews: reviews.filter((review) => review.is_flagged).length,
+					});
+
+					const flaggedReviews = reviews.filter((review) => review.is_flagged);
+
+					setHighlights((prev) => ({
+						...prev,
+						recentLocations: locations.slice(0, 3),
+						recentReviews: flaggedReviews.slice(0, 3),
+						recentUsers: users.slice(0, 3),
+					}));
+				} catch (error) {
+					console.error("[Admin] Failed to reload dashboard data:", error);
+				}
+			};
+
+			reload();
+
+			return () => {
+				isMounted = false;
+			};
+		}, [hasAccess]),
+	);
 
 	const _handleSignOut = async () => {
 		await signOut();
@@ -226,12 +275,12 @@ export default function AdminDashboardScreen() {
 						<AdminAction
 							label="Review Flagged Reports"
 							description="Check suspicious or reported content."
-							onPress={() => router.push("/+not-found")}
+							onPress={() => router.push("/(admin)/reviews")}
 						/>
 						<AdminAction
 							label="Inspect Users"
 							description="Track accounts and role assignments."
-							onPress={() => router.push("/+not-found")}
+							onPress={() => router.push("/(admin)/users")}
 						/>
 					</View>
 				</Card>
@@ -248,7 +297,7 @@ export default function AdminDashboardScreen() {
 					<View className="gap-3">
 						{highlights.recentReviews.length === 0 ? (
 							<Text className="text-muted" fontName="PlusJakartaSans_400Regular">
-								No reviews available yet.
+								No flagged reviews yet.
 							</Text>
 						) : (
 							highlights.recentReviews.map((review) => (

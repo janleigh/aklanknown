@@ -17,6 +17,7 @@ import {
 import { useEffect, useState } from "react";
 import { Alert, Image, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 import { Text } from "@/components/Text";
+import { addBookmark, isBookmarked, removeBookmark, subscribeBookmarks } from "@lib/storage/bookmarks";
 
 type LocationDetails = {
 	id: string;
@@ -37,6 +38,7 @@ type ReviewItem = {
 	rating: number;
 	date: string;
 	comment: string;
+	isFlagged: boolean;
 };
 
 function buildLocationDetails(
@@ -86,8 +88,8 @@ export default function LocationDetailsScreen() {
 	const [userRating, setUserRating] = useState(0);
 	const [reviewText, setReviewText] = useState("");
 	const [isFavorite, setIsFavorite] = useState(false);
-	const [reviews, setReviews] = useState<ReviewItem[]>([]);
 	const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+	const [reviews, setReviews] = useState<ReviewItem[]>([]);
 
 	useEffect(() => {
 		let isMounted = true;
@@ -118,7 +120,7 @@ export default function LocationDetailsScreen() {
 						.order("created_at", { ascending: true }),
 					supabase
 						.from("reviews")
-						.select("id, rating, comment, created_at, user_id")
+							.select("id, rating, comment, created_at, user_id, is_flagged")
 						.eq("location_id", locationId)
 						.order("created_at", { ascending: false }),
 				]);
@@ -169,6 +171,7 @@ export default function LocationDetailsScreen() {
 					rating: typeof review.rating === "number" ? review.rating : 0,
 					date: review.created_at ? new Date(review.created_at).toLocaleDateString() : "Recently",
 					comment: review.comment || "",
+					isFlagged: Boolean(review.is_flagged),
 				}));
 
 				if (isMounted) {
@@ -196,6 +199,48 @@ export default function LocationDetailsScreen() {
 		};
 
 		loadLocation();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [locationId]);
+
+	useEffect(() => {
+		const refreshBookmarkState = async () => {
+			if (!locationId) return;
+			const bookmarked = await isBookmarked(locationId);
+			setIsFavorite(bookmarked);
+		};
+
+		const unsubscribe = subscribeBookmarks(() => {
+			void refreshBookmarkState();
+		});
+
+		return unsubscribe;
+	}, [locationId]);
+
+	useEffect(() => {
+		let isMounted = true;
+
+		const loadBookmarkState = async () => {
+			if (!locationId) {
+				if (isMounted) {
+					setIsFavorite(false);
+				}
+				return;
+			}
+
+			try {
+				const bookmarked = await isBookmarked(locationId);
+				if (isMounted) {
+					setIsFavorite(bookmarked);
+				}
+			} catch (error) {
+				console.error("[LocationDetails] Failed to load bookmark state:", error);
+			}
+		};
+
+		void loadBookmarkState();
 
 		return () => {
 			isMounted = false;
@@ -258,6 +303,47 @@ export default function LocationDetailsScreen() {
 			}
 		} finally {
 			setIsSubmittingReview(false);
+		}
+	};
+
+	const handleReportReview = async (reviewId: string) => {
+		try {
+			await controllers.review.update(reviewId, { is_flagged: true });
+			setReviews((prev) =>
+				prev.map((review) =>
+					review.id === reviewId
+						? {
+							...review,
+							isFlagged: true,
+						}
+						: review,
+					),
+			);
+			Alert.alert("Reported", "Thanks for reporting this review. Our admins will review it.");
+		} catch (error) {
+			console.error("[LocationDetails] Failed to report review:", error);
+			Alert.alert("Report Failed", "We couldn't report this review right now.");
+		}
+	};
+
+	const toggleBookmark = async () => {
+		if (!locationId) {
+			return;
+		}
+
+		const nextValue = !isFavorite;
+		setIsFavorite(nextValue);
+
+		try {
+			if (nextValue) {
+				await addBookmark(locationId);
+			} else {
+				await removeBookmark(locationId);
+			}
+		} catch (error) {
+			console.error("[LocationDetails] Failed to toggle bookmark:", error);
+			setIsFavorite(!nextValue);
+			Alert.alert("Bookmark Failed", "We couldn't save this bookmark right now.");
 		}
 	};
 
@@ -340,7 +426,7 @@ export default function LocationDetailsScreen() {
 						<View className="flex-row gap-2">
 							<TouchableOpacity
 								className="items-center justify-center h-10 w-10 bg-canvas/80 rounded-full shadow-sm"
-								onPress={() => setIsFavorite(!isFavorite)}
+								onPress={toggleBookmark}
 								activeOpacity={0.7}
 							>
 								<Heart
@@ -512,6 +598,21 @@ export default function LocationDetailsScreen() {
 							<Text className="leading-5 text-body" fontName="PlusJakartaSans_400Regular">
 								{review.comment}
 							</Text>
+							<View className="mt-3 flex-row justify-end">
+								<TouchableOpacity
+									className={`rounded-full px-3 py-2 ${review.isFlagged ? "bg-primary/10" : "bg-error/10"}`}
+									onPress={() => void handleReportReview(review.id)}
+									disabled={review.isFlagged}
+									activeOpacity={0.8}
+								>
+									<Text
+										className={`text-xs font-semibold ${review.isFlagged ? "text-primary" : "text-error"}`}
+										fontName="PlusJakartaSans_600SemiBold"
+									>
+										{review.isFlagged ? "Reported" : "Report Review"}
+									</Text>
+								</TouchableOpacity>
+							</View>
 						</View>
 					))}
 				</View>
