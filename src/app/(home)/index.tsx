@@ -8,12 +8,15 @@ import {
 } from "@lib/storage/bookmarks";
 import type { Location as LocationRecord } from "@lib/types/supabase";
 import { useFocusEffect, useRouter } from "expo-router";
-import { ArrowUpRight, Bell, Heart, MapPin, Menu, Search, Star } from "lucide-react-native";
+import { ArrowUpRight, Heart, MapPin, Search, Star } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
-import { FlatList, Image, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, ScrollView, TouchableOpacity, View } from "react-native";
+import { Input } from "@/components/ui/Input";
 import { Text } from "@/components/ui/Text";
+import { useUser } from "@clerk/expo";
 
 export default function HomeScreen() {
+	const { user } = useUser();
 	const router = useRouter();
 	const [searchQuery, setSearchQuery] = useState("");
 	const [locations, setLocations] = useState<LocationRecord[]>([]);
@@ -86,22 +89,18 @@ export default function HomeScreen() {
 		<View className="flex-1 bg-surface-soft">
 			{/* Header */}
 			<View className="pt-12 px-5 bg-surface-soft pb-4">
-				<View className="flex-row justify-between items-center mb-6">
-					<TouchableOpacity className="items-center justify-center h-12 w-12 bg-canvas rounded-full shadow-sm">
-						<Menu size={24} color="#222222" />
-					</TouchableOpacity>
-					<View className="flex-row gap-3">
-						<TouchableOpacity className="items-center justify-center h-12 w-12 bg-canvas rounded-full shadow-sm">
-							<Search size={20} color="#222222" />
-						</TouchableOpacity>
-						<TouchableOpacity className="items-center justify-center h-12 w-12 bg-canvas rounded-full shadow-sm relative">
-							<Bell size={20} color="#222222" />
-							<View className="absolute top-3 right-3 w-2.5 h-2.5 bg-primary rounded-full border-2 border-canvas" />
-						</TouchableOpacity>
-					</View>
+				<View className="flex-row items-center bg-canvas rounded-full px-4 py-3 shadow-sm mb-6">
+					<Search size={20} color="#999999" />
+					<Input
+						placeholder="Search locations..."
+						value={searchQuery}
+						onChangeText={setSearchQuery}
+						className="flex-1 ml-3 text-ink"
+						placeholderTextColor="#999999"
+					/>
 				</View>
 				<Text className="text-3xl text-ink mb-1" fontName="PlusJakartaSans_700Bold">
-					Hi, Christopher 👋
+					Hi, {user?.firstName} 👋
 				</Text>
 				<Text className="text-muted text-base mb-6" fontName="PlusJakartaSans_400Regular">
 					Where do you want to explore today?
@@ -109,7 +108,7 @@ export default function HomeScreen() {
 				
 				{/* Mock Categories Row */}
 				<ScrollView horizontal showsHorizontalScrollIndicator={false} className="overflow-visible" contentContainerStyle={{ paddingRight: 20 }}>
-					{["Asia", "Europe", "America"].map((category) => (
+					{["Beach", "Parks", "Churches"].map((category) => (
 						<TouchableOpacity key={category} className="flex-row items-center bg-canvas rounded-full pl-2 pr-5 py-2 mr-3 shadow-sm">
 							<Image source={{ uri: `https://picsum.photos/seed/${category}/100/100` }} className="w-8 h-8 rounded-full mr-2" />
 							<Text className="text-ink" fontName="PlusJakartaSans_600SemiBold">{category}</Text>
@@ -131,7 +130,7 @@ export default function HomeScreen() {
 					showsVerticalScrollIndicator={false}
 					renderItem={({ item }) => (
 						<TouchableOpacity
-							className="overflow-hidden mb-6 bg-canvas rounded-[32px] shadow-sm relative h-96"
+							className="overflow-hidden mb-6 bg-canvas rounded-4xl shadow-sm relative h-96"
 							onPress={() => router.push(`/location/${item.id}`)}
 							activeOpacity={0.9}
 						>

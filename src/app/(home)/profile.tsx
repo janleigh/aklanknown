@@ -52,9 +52,7 @@ export default function ProfileScreen() {
 			? [{ icon: Shield, label: "Admin Panel", action: () => router.push("/(admin)") }]
 			: []),
 		{ icon: User, label: "Edit Profile", action: goToNotFound },
-		{ icon: Settings, label: "App Settings", action: goToNotFound },
-		{ icon: Bell, label: "Notifications", action: goToNotFound },
-		{ icon: Shield, label: "Privacy & Security", action: goToNotFound },
+		{ icon: Settings, label: "App Settings", action: goToNotFound }
 	];
 
 	return (
@@ -76,7 +74,7 @@ export default function ProfileScreen() {
 			</View>
 
 			{/* Stats */}
-			<View className="flex-row justify-around mx-4 p-4 bg-canvas border border-hairline rounded-xl shadow-sm -mt-6">
+			{/* <View className="flex-row justify-around mx-4 p-4 bg-canvas border border-hairline rounded-xl shadow-sm -mt-6">
 				<View className="items-center">
 					<Text className="font-bold text-2xl text-primary" fontName="PlusJakartaSans_700Bold">
 						TBD
@@ -101,7 +99,7 @@ export default function ProfileScreen() {
 						Visited
 					</Text>
 				</View>
-			</View>
+			</View> */}
 
 			{/* Menu Items */}
 			<View className="mt-6 px-4">

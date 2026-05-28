@@ -261,15 +261,15 @@ export default function MapsScreen() {
 	return (
 		<View className="flex-1 bg-canvas">
 			{/* Header */}
-			<View className="z-20 pb-3 pt-12 px-4 bg-canvas border-b border-hairline">
-				<Text className="mb-3 text-2xl text-ink" fontName="PlusJakartaSans_700Bold">
-					Maps
-				</Text>
+		<View className="z-20 pb-4 pt-12 px-5 bg-canvas border-b border-hairline">
+			<Text className="mb-4 text-3xl text-ink" fontName="PlusJakartaSans_700Bold">
+				Explore Map
+			</Text>
 
-				{/* Search & Filter */}
-				<View className="relative flex-row gap-2 items-center mb-3">
-					<View className="flex-1">
-						<View className="flex-row items-center px-4 py-2.5 bg-surface-soft border border-hairline rounded-full">
+			{/* Search & Filter */}
+			<View className="relative flex-row gap-3 items-center">
+				<View className="flex-1">
+					<View className="flex-row items-center px-4 py-3 bg-surface-soft border border-hairline rounded-full shadow-sm">
 							<Search size={18} color="#929292" />
 							<TextInput
 								className="flex-1 ml-2 text-ink text-sm"
@@ -310,21 +310,21 @@ export default function MapsScreen() {
 							</View>
 						) : null}
 					</View>
-					<TouchableOpacity className="p-2.5 bg-primary/10 rounded-full" activeOpacity={0.7}>
+					<TouchableOpacity className="p-3 bg-surface-soft border border-hairline rounded-full shadow-sm" activeOpacity={0.7}>
 						<SlidersHorizontal size={18} color="#ff385c" />
 					</TouchableOpacity>
 				</View>
 
 				{/* Categories */}
-				<ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-1 -mx-1">
+				<ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-1 -mx-1 mt-4">
 					{["Beaches", "Parks", "Churches", "Historical", "Hotels"].map((cat) => (
 						<TouchableOpacity
 							key={cat}
-							className="mr-2 px-4 py-1.5 bg-surface-soft border border-hairline rounded-full"
+							className="mr-3 px-4 py-2 bg-surface-soft border border-hairline rounded-full shadow-sm"
 							activeOpacity={0.7}
 						>
 							<Text
-								className="font-semibold text-ink text-xs"
+								className="font-semibold text-ink text-sm"
 								fontName="PlusJakartaSans_600SemiBold"
 							>
 								{cat}
@@ -380,9 +380,9 @@ export default function MapsScreen() {
 
 			{/* ✅ BOTTOM NAVBAR FIX: Wrapped in SafeAreaView, removed pb-safe */}
 			<SafeAreaView edges={["bottom"]} className="bg-canvas border-hairline border-t shadow-lg">
-				<View className="px-4 py-3">
-					<View className="flex-row gap-3 items-center">
-						<View className="overflow-hidden h-14 w-14 bg-surface-soft border border-hairline rounded-xl">
+			<View className="px-5 py-4">
+				<View className="flex-row gap-4 items-center">
+					<View className="overflow-hidden h-16 w-16 bg-surface-soft border border-hairline rounded-2xl shadow-sm">
 							{selectedData.image ? (
 								<Image
 									source={{ uri: selectedData.image }}
@@ -393,34 +393,34 @@ export default function MapsScreen() {
 						</View>
 						<View className="flex-1">
 							<Text
-								className="mb-0.5 font-bold text-base text-ink"
+								className="mb-1 font-bold text-lg text-ink"
 								fontName="PlusJakartaSans_700Bold"
 							>
 								{selectedData.name}
 							</Text>
-							<View className="flex-row gap-1 items-center mb-0.5">
-								<Star size={12} color="#FBBF24" fill="#FBBF24" />
+							<View className="flex-row gap-2 items-center mb-1">
+								<Star size={14} color="#FBBF24" fill="#FBBF24" />
 								<Text
-									className="font-semibold text-ink text-xs"
+									className="font-semibold text-ink text-sm"
 									fontName="PlusJakartaSans_600SemiBold"
 								>
 									{selectedData.rating}
 								</Text>
-								<Text className="text-muted text-xs" fontName="PlusJakartaSans_400Regular">
+								<Text className="text-muted text-sm" fontName="PlusJakartaSans_400Regular">
 									({selectedData.reviews})
 								</Text>
 							</View>
-							<Text className="text-muted text-xs" fontName="PlusJakartaSans_400Regular">
+							<Text className="text-muted text-sm" fontName="PlusJakartaSans_400Regular">
 								{selectedData.location}
 							</Text>
 						</View>
 						<TouchableOpacity
-							className="px-4 py-2 bg-primary rounded-lg"
+							className="px-5 py-3 bg-primary rounded-xl shadow-sm"
 							onPress={() => router.push(`/location/${selectedData.id}`)}
 							activeOpacity={0.8}
 						>
 							<Text
-								className="font-semibold text-white text-xs"
+								className="font-semibold text-white text-sm"
 								fontName="PlusJakartaSans_600SemiBold"
 							>
 								View

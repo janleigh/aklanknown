@@ -11,7 +11,6 @@ import type { Location as SupabaseLocation } from "@lib/types/supabase";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
 	ArrowLeft,
-	Camera,
 	ChevronLeft,
 	ChevronRight,
 	Heart,
@@ -465,7 +464,7 @@ export default function LocationDetailsScreen() {
 				</View>
 
 				{/* Content */}
-				<View className="-mt-8 pt-8 px-6 bg-canvas rounded-t-[32px]">
+				<View className="-mt-8 pt-8 px-6 bg-canvas rounded-t-4xl">
 					<View className="flex-row justify-between items-start mb-2">
 						<Text className="flex-1 text-3xl text-ink leading-tight pr-2" fontName="PlusJakartaSans_700Bold">
 							{location.name}
@@ -488,24 +487,6 @@ export default function LocationDetailsScreen() {
 						<Text className="ml-1 text-muted text-sm" fontName="PlusJakartaSans_400Regular">
 							{location.location}
 						</Text>
-					</View>
-
-					{/* Mock Features Row */}
-					<View className="flex-row justify-around py-4 border border-hairline-soft rounded-2xl mb-6">
-						<View className="items-center flex-row gap-2 px-2">
-							<MapIcon size={16} color="#222222" />
-							<Text className="text-ink text-sm font-medium" fontName="PlusJakartaSans_600SemiBold">Ticket</Text>
-						</View>
-						<View className="w-px h-6 bg-hairline-soft" />
-						<View className="items-center flex-row gap-2 px-2">
-							<Camera size={16} color="#222222" />
-							<Text className="text-ink text-sm font-medium" fontName="PlusJakartaSans_600SemiBold">Hotel</Text>
-						</View>
-						<View className="w-px h-6 bg-hairline-soft" />
-						<View className="items-center flex-row gap-2 px-2">
-							<Star size={16} color="#222222" />
-							<Text className="text-ink text-sm font-medium" fontName="PlusJakartaSans_600SemiBold">Meal</Text>
-						</View>
 					</View>
 
 					<Text className="text-xl text-ink mb-3" fontName="PlusJakartaSans_700Bold">Description</Text>
@@ -614,7 +595,7 @@ export default function LocationDetailsScreen() {
 			</ScrollView>
 
 			{/* Fixed Bottom Bar */}
-			<View className="absolute bottom-0 left-0 right-0 px-6 py-4 bg-canvas border-t border-hairline-soft flex-row gap-4 items-center">
+			<View className="absolute bottom-0 left-0 right-0 px-6 pb-6 py-4 bg-canvas border-t border-hairline-soft flex-row gap-4 items-center">
 				<TouchableOpacity
 					className="flex-1 items-center justify-center py-4 bg-surface-strong rounded-full"
 					activeOpacity={0.8}
