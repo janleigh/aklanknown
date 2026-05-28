@@ -1,3 +1,4 @@
+import { useUser } from "@clerk/expo";
 import { LoadingSpinner } from "@components/index";
 import { controllers } from "@lib/api/supabase/controller";
 import {
@@ -10,9 +11,8 @@ import type { Location as LocationRecord } from "@lib/types/supabase";
 import { useFocusEffect, useRouter } from "expo-router";
 import { ArrowUpRight, Heart, MapPin, Search, Star } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
-import { FlatList, Image, ScrollView, TouchableOpacity, View, TextInput } from "react-native";
+import { FlatList, Image, TextInput, TouchableOpacity, View } from "react-native";
 import { Text } from "@/components/ui/Text";
-import { useUser } from "@clerk/expo";
 
 export default function HomeScreen() {
 	const { user } = useUser();
@@ -105,7 +105,7 @@ export default function HomeScreen() {
 					Where do you want to explore today?
 				</Text>
 
-				<ScrollView
+				{/* <ScrollView
 					horizontal
 					showsHorizontalScrollIndicator={false}
 					className="overflow-visible"
@@ -125,7 +125,7 @@ export default function HomeScreen() {
 							</Text>
 						</TouchableOpacity>
 					))}
-				</ScrollView>
+				</ScrollView> */}
 			</View>
 
 			{/* List */}

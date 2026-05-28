@@ -9,16 +9,7 @@ import {
 } from "@lib/storage/bookmarks";
 import type { Location as SupabaseLocation } from "@lib/types/supabase";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import {
-	ArrowLeft,
-	ChevronLeft,
-	ChevronRight,
-	Heart,
-	Map as MapIcon,
-	MapPin,
-	Star,
-	X,
-} from "lucide-react-native";
+import { ArrowLeft, ChevronLeft, ChevronRight, Heart, MapPin, Star, X } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { Alert, Image, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 import { Text } from "@/components/ui/Text";

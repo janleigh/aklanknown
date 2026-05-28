@@ -2,7 +2,7 @@ import { useAuth, useUser } from "@clerk/expo";
 import { Text } from "@components/index";
 import { userController } from "@lib/api/supabase/controller";
 import { useRouter } from "expo-router";
-import { Bell, LogOut, Settings, Shield, User, ChevronRight } from "lucide-react-native";
+import { ChevronRight, LogOut, Settings, Shield } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { Image, Pressable, ScrollView, View } from "react-native";
 
