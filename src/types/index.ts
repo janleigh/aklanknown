@@ -3,20 +3,21 @@ import type { Review } from "@/lib/types/supabase";
 export type {
 	Bookmark,
 	CachedRoute,
-	Location,
 	LocationImage,
 	Review,
 	UserProfile,
 } from "@/lib/types/supabase";
 
-export interface LocationCardData {
+export interface Location {
 	id: string;
 	name: string;
-	image: string;
+	location: string;
 	distance: string;
 	rating: number;
-	category: string;
-	banner_image_url: string;
+	image: string;
+	panorama_image_url?: string | null; // ✅ Added for 360 support
+	latitude: number;
+	longitude: number;
 }
 
 export interface LocationDetailData {
