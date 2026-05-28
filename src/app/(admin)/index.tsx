@@ -109,9 +109,11 @@ export default function AdminDashboardScreen() {
 					flaggedReviews: reviews.filter((review) => review.is_flagged).length,
 				});
 
+				const flaggedReviews = reviews.filter((review) => review.is_flagged);
+
 				setHighlights({
 					recentLocations: locations.slice(0, 3),
-					recentReviews: reviews.slice(0, 3),
+					recentReviews: flaggedReviews.slice(0, 3),
 					recentUsers: users.slice(0, 3),
 				});
 			} catch (error) {
@@ -226,12 +228,12 @@ export default function AdminDashboardScreen() {
 						<AdminAction
 							label="Review Flagged Reports"
 							description="Check suspicious or reported content."
-							onPress={() => router.push("/+not-found")}
+							onPress={() => router.push("/(admin)/reviews")}
 						/>
 						<AdminAction
 							label="Inspect Users"
 							description="Track accounts and role assignments."
-							onPress={() => router.push("/+not-found")}
+							onPress={() => router.push("/(admin)/users")}
 						/>
 					</View>
 				</Card>
@@ -248,7 +250,7 @@ export default function AdminDashboardScreen() {
 					<View className="gap-3">
 						{highlights.recentReviews.length === 0 ? (
 							<Text className="text-muted" fontName="PlusJakartaSans_400Regular">
-								No reviews available yet.
+								No flagged reviews yet.
 							</Text>
 						) : (
 							highlights.recentReviews.map((review) => (

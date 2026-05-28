@@ -38,6 +38,7 @@ type ReviewItem = {
 	rating: number;
 	date: string;
 	comment: string;
+	isFlagged: boolean;
 };
 
 function buildLocationDetails(
@@ -119,7 +120,7 @@ export default function LocationDetailsScreen() {
 						.order("created_at", { ascending: true }),
 					supabase
 						.from("reviews")
-						.select("id, rating, comment, created_at, user_id")
+							.select("id, rating, comment, created_at, user_id, is_flagged")
 						.eq("location_id", locationId)
 						.order("created_at", { ascending: false }),
 				]);
@@ -170,6 +171,7 @@ export default function LocationDetailsScreen() {
 					rating: typeof review.rating === "number" ? review.rating : 0,
 					date: review.created_at ? new Date(review.created_at).toLocaleDateString() : "Recently",
 					comment: review.comment || "",
+					isFlagged: Boolean(review.is_flagged),
 				}));
 
 				if (isMounted) {
@@ -301,6 +303,26 @@ export default function LocationDetailsScreen() {
 			}
 		} finally {
 			setIsSubmittingReview(false);
+		}
+	};
+
+	const handleReportReview = async (reviewId: string) => {
+		try {
+			await controllers.review.update(reviewId, { is_flagged: true });
+			setReviews((prev) =>
+				prev.map((review) =>
+					review.id === reviewId
+						? {
+							...review,
+							isFlagged: true,
+						}
+						: review,
+					),
+			);
+			Alert.alert("Reported", "Thanks for reporting this review. Our admins will review it.");
+		} catch (error) {
+			console.error("[LocationDetails] Failed to report review:", error);
+			Alert.alert("Report Failed", "We couldn't report this review right now.");
 		}
 	};
 
@@ -576,6 +598,21 @@ export default function LocationDetailsScreen() {
 							<Text className="leading-5 text-body" fontName="PlusJakartaSans_400Regular">
 								{review.comment}
 							</Text>
+							<View className="mt-3 flex-row justify-end">
+								<TouchableOpacity
+									className={`rounded-full px-3 py-2 ${review.isFlagged ? "bg-primary/10" : "bg-error/10"}`}
+									onPress={() => void handleReportReview(review.id)}
+									disabled={review.isFlagged}
+									activeOpacity={0.8}
+								>
+									<Text
+										className={`text-xs font-semibold ${review.isFlagged ? "text-primary" : "text-error"}`}
+										fontName="PlusJakartaSans_600SemiBold"
+									>
+										{review.isFlagged ? "Reported" : "Report Review"}
+									</Text>
+								</TouchableOpacity>
+							</View>
 						</View>
 					))}
 				</View>
