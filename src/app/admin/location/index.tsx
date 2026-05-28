@@ -108,13 +108,6 @@ export default function AdminLocationsScreen() {
 								<View className="items-end gap-2">
 									<TouchableOpacity
 										className="h-10 w-10 items-center justify-center rounded-xl bg-primary/10"
-										onPress={() => router.push(`/admin/location/${item.id}`)}
-										activeOpacity={0.75}
-									>
-										<Pencil size={16} color="#ff385c" />
-									</TouchableOpacity>
-									<TouchableOpacity
-										className="h-10 w-10 items-center justify-center rounded-xl bg-primary/10"
 										onPress={() =>
 											router.push({
 											pathname: "/location/edit/[id]",
