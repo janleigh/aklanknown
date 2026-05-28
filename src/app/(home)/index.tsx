@@ -87,7 +87,7 @@ export default function HomeScreen() {
 	return (
 		<View className="flex-1 bg-surface-soft">
 			{/* Header */}
-			<View className="pt-12 px-5 bg-surface-soft pb-4">
+			<View className="pt-12 px-5 bg-surface-soft">
 				<View className="flex-row items-center bg-canvas rounded-full px-5 py-3.5 shadow-sm mb-6 border border-hairline">
 					<Search size={20} color="#999999" />
 					<TextInput

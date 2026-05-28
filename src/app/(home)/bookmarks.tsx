@@ -104,7 +104,7 @@ export default function BookmarksScreen() {
 
 	return (
 		<View className="flex-1 bg-surface-soft">
-			<View className="pt-12 px-5 bg-surface-soft pb-4">
+			<View className="pt-12 px-5 bg-surface-soft">
 				<View className="flex-row gap-3 items-center mb-6">
 					{/* <View className="items-center justify-center h-12 w-12 bg-primary/10 rounded-full">
 						<Heart size={24} color="#ff385c" fill="#ff385c" />
