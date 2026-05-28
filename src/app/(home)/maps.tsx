@@ -198,7 +198,7 @@ export default function MapsScreen() {
 			.slice(0, 5);
 	}, [locations, searchQuery]);
 
-	const shouldShowSearchDropdown = searchSuggestions.length > 0 && (isSearchFocused || !searchQuery.trim());
+	const shouldShowSearchDropdown = isSearchFocused && searchSuggestions.length > 0;
 
 	const mapLocations = useMemo(
 		() => locations.filter((location) => location.latitude && location.longitude),
