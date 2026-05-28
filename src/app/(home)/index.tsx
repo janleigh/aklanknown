@@ -1,8 +1,13 @@
 import { LoadingSpinner } from "@components/index";
 import { Text } from "@components/Text";
 import { controllers } from "@lib/api/supabase/controller";
+import {
+	addBookmark,
+	getBookmarkedIds,
+	removeBookmark,
+	subscribeBookmarks,
+} from "@lib/storage/bookmarks";
 import type { Location as LocationRecord } from "@lib/types/supabase";
-import { addBookmark, getBookmarkedIds, removeBookmark, subscribeBookmarks } from "@lib/storage/bookmarks";
 import { useFocusEffect, useRouter } from "expo-router";
 import { Heart, MapPin, Search } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";

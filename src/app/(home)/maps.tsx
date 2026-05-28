@@ -50,10 +50,11 @@ function buildReviewStats(reviews: Array<{ location_id: string | null; rating: n
 			typeof review.rating === "number"
 				? Number(
 						(
-							(((existing?.rating ?? 0) * (existing?.reviews ?? 0) + review.rating) / nextReviews)
+							((existing?.rating ?? 0) * (existing?.reviews ?? 0) + review.rating) /
+							nextReviews
 						).toFixed(1),
 					)
-				: existing?.rating ?? 0;
+				: (existing?.rating ?? 0);
 
 		statsByLocationId.set(review.location_id, {
 			locationId: review.location_id,
@@ -192,7 +193,9 @@ export default function MapsScreen() {
 
 		return locations
 			.filter((location) => {
-				const haystack = [location.name, location.location, location.distance].join(" ").toLowerCase();
+				const haystack = [location.name, location.location, location.distance]
+					.join(" ")
+					.toLowerCase();
 				return haystack.includes(query);
 			})
 			.slice(0, 5);
@@ -285,7 +288,7 @@ export default function MapsScreen() {
 						</View>
 
 						{shouldShowSearchDropdown ? (
-							<View className="absolute left-0 right-0 top-[54px] z-30 overflow-hidden bg-canvas border border-hairline rounded-2xl shadow-lg">
+							<View className="absolute left-0 right-0 top-13.5 z-30 overflow-hidden bg-canvas border border-hairline rounded-2xl shadow-lg">
 								{searchSuggestions.map((location, index) => (
 									<TouchableOpacity
 										key={location.id}
@@ -293,7 +296,10 @@ export default function MapsScreen() {
 										onPress={() => handleSearchSelection(location.id)}
 										activeOpacity={0.75}
 									>
-										<Text className="font-semibold text-ink text-sm" fontName="PlusJakartaSans_600SemiBold">
+										<Text
+											className="font-semibold text-ink text-sm"
+											fontName="PlusJakartaSans_600SemiBold"
+										>
 											{location.name}
 										</Text>
 										<Text className="text-muted text-xs" fontName="PlusJakartaSans_400Regular">

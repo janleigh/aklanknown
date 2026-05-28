@@ -1,6 +1,10 @@
 import { Text } from "@components/Text";
 import { controllers } from "@lib/api/supabase/controller";
-import type { Location as LocationRecord, Review as ReviewRecord, UserProfile } from "@lib/types/supabase";
+import type {
+	Location as LocationRecord,
+	Review as ReviewRecord,
+	UserProfile,
+} from "@lib/types/supabase";
 import { useRouter } from "expo-router";
 import { ArrowLeft, BadgeAlert, CircleCheck, MapPin, Trash2, User } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
@@ -27,8 +31,20 @@ export default function AdminReviewsScreen() {
 			try {
 				const reviewRecords = await controllers.review.list({ orderBy: "created_at" });
 				const flaggedReviews = reviewRecords.filter((review) => review.is_flagged);
-				const locationIds = [...new Set(flaggedReviews.map((review) => review.location_id).filter((id): id is string => Boolean(id)))];
-				const userIds = [...new Set(flaggedReviews.map((review) => review.user_id).filter((id): id is string => Boolean(id)))];
+				const locationIds = [
+					...new Set(
+						flaggedReviews
+							.map((review) => review.location_id)
+							.filter((id): id is string => Boolean(id)),
+					),
+				];
+				const userIds = [
+					...new Set(
+						flaggedReviews
+							.map((review) => review.user_id)
+							.filter((id): id is string => Boolean(id)),
+					),
+				];
 
 				const [locations, users] = await Promise.all([
 					Promise.all(
@@ -52,10 +68,14 @@ export default function AdminReviewsScreen() {
 				]);
 
 				const locationNameById = new Map(
-					locations.filter((location): location is LocationRecord => location !== null).map((location) => [location.id, location.name]),
+					locations
+						.filter((location): location is LocationRecord => location !== null)
+						.map((location) => [location.id, location.name]),
 				);
 				const userNameById = new Map(
-					users.filter((user): user is UserProfile => user !== null).map((user) => [user.id, user.name]),
+					users
+						.filter((user): user is UserProfile => user !== null)
+						.map((user) => [user.id, user.name]),
 				);
 
 				if (!isMounted) return;
@@ -63,8 +83,10 @@ export default function AdminReviewsScreen() {
 				setReviews(
 					flaggedReviews.map((review) => ({
 						...review,
-						locationName: review.location_id ? locationNameById.get(review.location_id) ?? "Unknown location" : "Unknown location",
-						authorName: review.user_id ? userNameById.get(review.user_id) ?? "Guest" : "Guest",
+						locationName: review.location_id
+							? (locationNameById.get(review.location_id) ?? "Unknown location")
+							: "Unknown location",
+						authorName: review.user_id ? (userNameById.get(review.user_id) ?? "Guest") : "Guest",
 					})),
 				);
 			} catch (error) {

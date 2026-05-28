@@ -1,8 +1,8 @@
-import { Text } from "@components/Text";
 import { LoadingSpinner } from "@components/index";
+import { Text } from "@components/Text";
 import { controllers } from "@lib/api/supabase/controller";
-import type { Location as LocationRecord } from "@lib/types/supabase";
 import { getBookmarkedIds, removeBookmark, subscribeBookmarks } from "@lib/storage/bookmarks";
+import type { Location as LocationRecord } from "@lib/types/supabase";
 import { useFocusEffect, useRouter } from "expo-router";
 import { Heart, MapPin } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
@@ -16,13 +16,18 @@ type SavedLocationCard = {
 };
 
 function buildSavedLocation(location: LocationRecord): SavedLocationCard {
-	const locationLabel = [location.street, location.barangay, location.town].filter(Boolean).join(", ");
+	const locationLabel = [location.street, location.barangay, location.town]
+		.filter(Boolean)
+		.join(", ");
 
 	return {
 		id: location.id,
 		name: location.name,
 		location: locationLabel || location.town || location.barangay || "Unknown location",
-		image: location.banner_image_url || location.panorama_image_url || "https://picsum.photos/seed/location/800/400",
+		image:
+			location.banner_image_url ||
+			location.panorama_image_url ||
+			"https://picsum.photos/seed/location/800/400",
 	};
 }
 
@@ -69,7 +74,7 @@ export default function BookmarksScreen() {
 			return () => {
 				isMounted = false;
 			};
-		}, []),
+		}, [loadSavedLocations]),
 	);
 
 	useEffect(() => {

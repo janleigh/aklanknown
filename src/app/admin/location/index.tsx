@@ -74,7 +74,7 @@ export default function AdminLocationsScreen() {
 				</View>
 				<TouchableOpacity
 					className="h-12 w-12 items-center justify-center rounded-full bg-primary"
-					onPress={() => router.push("/(admin)/location/create")}
+					onPress={() => router.push("/admin/location/create")}
 					activeOpacity={0.8}
 				>
 					<Plus size={24} color="#ffffff" />
@@ -108,7 +108,7 @@ export default function AdminLocationsScreen() {
 								<View className="items-end gap-2">
 									<TouchableOpacity
 										className="h-10 w-10 items-center justify-center rounded-xl bg-primary/10"
-										onPress={() => router.push(`/(admin)/location/${item.id}`)}
+										onPress={() => router.push(`/admin/location/${item.id}`)}
 										activeOpacity={0.75}
 									>
 										<Pencil size={16} color="#ff385c" />

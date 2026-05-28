@@ -251,7 +251,11 @@ export default function EditLocationScreen() {
 						className="mb-4 h-40 items-center justify-center rounded-xl border-2 border-dashed border-hairline bg-surface-soft overflow-hidden"
 					>
 						{displayPanorama ? (
-							<Image source={{ uri: displayPanorama }} className="h-full w-full" resizeMode="cover" />
+							<Image
+								source={{ uri: displayPanorama }}
+								className="h-full w-full"
+								resizeMode="cover"
+							/>
 						) : (
 							<View className="items-center">
 								<ImageIcon size={28} color="#929292" />

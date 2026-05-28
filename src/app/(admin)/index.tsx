@@ -6,7 +6,7 @@ import type {
 	Review as ReviewRecord,
 	UserProfile,
 } from "@lib/types/supabase";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import {
 	ArrowRight,
 	BadgeAlert,
@@ -16,8 +16,7 @@ import {
 	Shield,
 	Users,
 } from "lucide-react-native";
-import { useEffect, useState, useCallback } from "react";
-import { useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { Button, Card, LoadingSpinner } from "@/components/index";
 
@@ -270,7 +269,7 @@ export default function AdminDashboardScreen() {
 						<AdminAction
 							label="Manage Locations"
 							description="Keep place data accurate and current."
-							onPress={() => router.push("/(admin)/location")}
+							onPress={() => router.push("/admin/location")}
 						/>
 						<AdminAction
 							label="Review Flagged Reports"

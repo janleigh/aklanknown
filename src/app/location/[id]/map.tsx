@@ -507,7 +507,7 @@ export default function LocationMapScreen() {
 	}
 
 	return (
-		<View className="flex-1 bg-canvas">
+		<View className="flex-1 bg-canvas pb-6">
 			<View className="absolute left-4 right-4 top-12 z-20 flex-row items-center justify-between">
 				<TouchableOpacity
 					className="items-center justify-center h-11 w-11 bg-canvas/90 rounded-full shadow-sm"

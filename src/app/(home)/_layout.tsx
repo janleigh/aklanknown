@@ -7,7 +7,7 @@ import { userController } from "@/lib/api/supabase/controller";
 const TAB_SCREENS = [
 	{ name: "index", label: "Home" },
 	{ name: "maps", label: "Maps" },
-	{ name: "bookmarks", label: "Saved" },
+	{ name: "bookmarks", label: "Bookmarks" },
 	{ name: "profile", label: "Profile" },
 	{ name: "settings", label: "Settings", hidden: true },
 ] as const;

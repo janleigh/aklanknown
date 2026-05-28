@@ -1,6 +1,12 @@
 import { useUser } from "@clerk/expo";
 import { controllers } from "@lib/api/supabase/controller";
 import { supabase } from "@lib/api/supabase/supabase";
+import {
+	addBookmark,
+	isBookmarked,
+	removeBookmark,
+	subscribeBookmarks,
+} from "@lib/storage/bookmarks";
 import type { Location as SupabaseLocation } from "@lib/types/supabase";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
@@ -17,7 +23,6 @@ import {
 import { useEffect, useState } from "react";
 import { Alert, Image, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 import { Text } from "@/components/Text";
-import { addBookmark, isBookmarked, removeBookmark, subscribeBookmarks } from "@lib/storage/bookmarks";
 
 type LocationDetails = {
 	id: string;
@@ -120,7 +125,7 @@ export default function LocationDetailsScreen() {
 						.order("created_at", { ascending: true }),
 					supabase
 						.from("reviews")
-							.select("id, rating, comment, created_at, user_id, is_flagged")
+						.select("id, rating, comment, created_at, user_id, is_flagged")
 						.eq("location_id", locationId)
 						.order("created_at", { ascending: false }),
 				]);
@@ -313,11 +318,11 @@ export default function LocationDetailsScreen() {
 				prev.map((review) =>
 					review.id === reviewId
 						? {
-							...review,
-							isFlagged: true,
-						}
+								...review,
+								isFlagged: true,
+							}
 						: review,
-					),
+				),
 			);
 			Alert.alert("Reported", "Thanks for reporting this review. Our admins will review it.");
 		} catch (error) {

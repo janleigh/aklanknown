@@ -95,7 +95,10 @@ export default function AdminUsersScreen() {
 							<View className="mb-4 h-14 w-14 items-center justify-center rounded-full bg-primary/10">
 								<Shield size={24} color="#ff385c" />
 							</View>
-							<Text className="mb-2 text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
+							<Text
+								className="mb-2 text-center text-ink text-lg"
+								fontName="PlusJakartaSans_700Bold"
+							>
 								No matching users
 							</Text>
 							<Text className="text-center text-muted" fontName="PlusJakartaSans_400Regular">
@@ -135,10 +138,14 @@ export default function AdminUsersScreen() {
 										User ID: {user.id}
 									</Text>
 									<Text className="text-sm text-muted" fontName="PlusJakartaSans_400Regular">
-										Provider IDs: {user.google_id || user.facebook_id ? [user.google_id, user.facebook_id].filter(Boolean).join(" • ") : "None linked"}
+										Provider IDs:{" "}
+										{user.google_id || user.facebook_id
+											? [user.google_id, user.facebook_id].filter(Boolean).join(" • ")
+											: "None linked"}
 									</Text>
 									<Text className="text-sm text-muted" fontName="PlusJakartaSans_400Regular">
-										Joined: {user.created_at ? new Date(user.created_at).toLocaleDateString() : "Unknown"}
+										Joined:{" "}
+										{user.created_at ? new Date(user.created_at).toLocaleDateString() : "Unknown"}
 									</Text>
 								</View>
 							</View>
