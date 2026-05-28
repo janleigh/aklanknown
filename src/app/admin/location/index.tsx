@@ -3,7 +3,7 @@ import { controllers } from "@lib/api/supabase/controller";
 import { supabase } from "@lib/api/supabase/supabase";
 import type { Location as LocationRecord } from "@lib/types/supabase";
 import { useRouter } from "expo-router";
-import { MapPin, Pencil, Plus, Trash2 } from "lucide-react-native";
+import { Building2, MapPin, Pencil, Plus, Trash2 } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { Alert, FlatList, TouchableOpacity, View } from "react-native";
 import { Card, LoadingSpinner } from "@/components/index";
@@ -109,6 +109,18 @@ export default function AdminLocationsScreen() {
 									<TouchableOpacity
 										className="h-10 w-10 items-center justify-center rounded-xl bg-primary/10"
 										onPress={() => router.push(`/admin/location/${item.id}`)}
+										activeOpacity={0.75}
+									>
+										<Pencil size={16} color="#ff385c" />
+									</TouchableOpacity>
+									<TouchableOpacity
+										className="h-10 w-10 items-center justify-center rounded-xl bg-primary/10"
+										onPress={() =>
+											router.push({
+											pathname: "/location/edit/[id]",
+											params: { id: item.id },
+										})
+										}
 										activeOpacity={0.75}
 									>
 										<Pencil size={16} color="#ff385c" />

@@ -27,6 +27,7 @@ export default function CreateLocationScreen() {
 
 	const [bannerImage, setBannerImage] = useState<string | null>(null);
 	const [panoramaImage, setPanoramaImage] = useState<string | null>(null);
+	const [galleryImages, setGalleryImages] = useState<string[]>([]);
 
 	const pickImage = async (setImage: (uri: string) => void) => {
 		const result = await ImagePicker.launchImageLibraryAsync({
@@ -38,6 +39,26 @@ export default function CreateLocationScreen() {
 		if (!result.canceled) {
 			setImage(result.assets[0].uri);
 		}
+	};
+
+	const pickGalleryImages = async () => {
+		const result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ["images"],
+			allowsEditing: false,
+			allowsMultipleSelection: true,
+			selectionLimit: 10,
+			quality: 0.8,
+		});
+
+		if (result.canceled) {
+			return;
+		}
+
+		const selectedUris = result.assets.map((asset) => asset.uri);
+		setGalleryImages((prev) => {
+			const unique = new Set([...prev, ...selectedUris]);
+			return Array.from(unique);
+		});
 	};
 
 	const uploadImageAsync = async (uri: string, pathPrefix: string) => {
@@ -92,7 +113,25 @@ export default function CreateLocationScreen() {
 				longitude: Number.parseFloat(form.longitude) || null,
 			};
 
-			await controllers.location.create(payload);
+			const createdLocation = await controllers.location.create(payload);
+
+			if (galleryImages.length > 0) {
+				const galleryUrls = await Promise.all(
+					galleryImages.map((imageUri, index) =>
+						uploadImageAsync(imageUri, `gallery-${createdLocation.id}-${index}`),
+					),
+				);
+
+				await Promise.all(
+					galleryUrls.map((imageUrl) =>
+						controllers.locationImage.create({
+							location_id: createdLocation.id,
+							image_url: imageUrl,
+						}),
+					),
+				);
+			}
+
 			router.back();
 		} catch (error) {
 			console.error("[Create Location] Error:", error);
@@ -205,6 +244,53 @@ export default function CreateLocationScreen() {
 							</View>
 						)}
 					</TouchableOpacity>
+
+					<Text className="mb-2 ml-1 font-semibold text-ink" fontName="PlusJakartaSans_600SemiBold">
+						Additional Gallery Images
+					</Text>
+					<TouchableOpacity
+						onPress={() => void pickGalleryImages()}
+						className="mb-3 min-h-24 items-center justify-center rounded-xl border-2 border-dashed border-hairline bg-surface-soft px-4 py-4"
+					>
+						<View className="items-center">
+							<ImageIcon size={24} color="#929292" />
+							<Text className="mt-2 text-muted" fontName="PlusJakartaSans_500Medium">
+								Tap to select multiple images
+							</Text>
+						</View>
+					</TouchableOpacity>
+
+					{galleryImages.length > 0 ? (
+						<View className="mb-3">
+							<Text className="mb-2 text-sm text-muted" fontName="PlusJakartaSans_400Regular">
+								{galleryImages.length} image(s) selected
+							</Text>
+							<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+								<View className="flex-row gap-2">
+									{galleryImages.map((imageUri) => (
+										<View key={imageUri} className="relative">
+											<Image
+												source={{ uri: imageUri }}
+												className="h-20 w-20 rounded-lg"
+												resizeMode="cover"
+											/>
+											<TouchableOpacity
+												className="absolute -right-1 -top-1 h-6 w-6 items-center justify-center rounded-full bg-error"
+												onPress={() => {
+													setGalleryImages((prev) => prev.filter((uri) => uri !== imageUri));
+												}}
+												activeOpacity={0.8}
+											>
+												<Text className="text-xs text-white" fontName="PlusJakartaSans_700Bold">
+													x
+												</Text>
+											</TouchableOpacity>
+										</View>
+									))}
+								</View>
+							</ScrollView>
+						</View>
+					) : null}
 
 					<View className="flex-row gap-3 mt-2">
 						<View className="flex-1">
