@@ -459,6 +459,29 @@ export default function LocationMapScreen() {
 		cameraRef.current.fitBounds([maxLongitude, maxLatitude], [minLongitude, minLatitude], 80, 600);
 	};
 
+	const [routeShown, setRouteShown] = useState(false);
+
+	const handleRouteToggle = () => {
+		if (!routeShown) {
+			if (canFocusRoute) {
+				focusRoute();
+			}
+			setRouteShown(true);
+			return;
+		}
+
+		// hide route state: reset flag and attempt to recenter camera
+		setRouteShown(false);
+		try {
+			const anyRef = cameraRef.current as any;
+			if (anyRef?.setCamera) {
+				anyRef.setCamera({ centerCoordinate: mapCenter, zoomLevel: 14, animationDuration: 400 });
+			}
+		} catch {
+			// ignore camera reset failures
+		}
+	};
+
 	if (Platform.OS !== "android") {
 		return (
 			<View className="flex-1 items-center justify-center px-6 bg-canvas">
@@ -680,15 +703,15 @@ export default function LocationMapScreen() {
 					</TouchableOpacity>
 					<TouchableOpacity
 						className={`flex-1 flex-row items-center justify-center gap-1.5 rounded-full py-3 shadow-sm ${
-							canFocusRoute ? "bg-primary" : "bg-primary/50"
+							(!routeShown && !canFocusRoute) ? "bg-primary/50" : "bg-primary"
 						}`}
-						onPress={focusRoute}
-						activeOpacity={canFocusRoute ? 0.8 : 1}
-						disabled={!canFocusRoute}
+						onPress={handleRouteToggle}
+						activeOpacity={(!routeShown && !canFocusRoute) ? 1 : 0.8}
+						disabled={!routeShown && !canFocusRoute}
 					>
 						<Navigation size={16} color="#ffffff" />
 						<Text className="text-white text-sm" fontName="PlusJakartaSans_600SemiBold">
-							Route Details
+							{routeShown ? "Back" : "Route Details"}
 						</Text>
 					</TouchableOpacity>
 				</View>
