@@ -10,8 +10,7 @@ import type { Location as LocationRecord } from "@lib/types/supabase";
 import { useFocusEffect, useRouter } from "expo-router";
 import { ArrowUpRight, Heart, MapPin, Search, Star } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
-import { FlatList, Image, ScrollView, TouchableOpacity, View } from "react-native";
-import { Input } from "@/components/ui/Input";
+import { FlatList, Image, ScrollView, TouchableOpacity, View, TextInput } from "react-native";
 import { Text } from "@/components/ui/Text";
 import { useUser } from "@clerk/expo";
 
@@ -89,13 +88,13 @@ export default function HomeScreen() {
 		<View className="flex-1 bg-surface-soft">
 			{/* Header */}
 			<View className="pt-12 px-5 bg-surface-soft pb-4">
-				<View className="flex-row items-center bg-canvas rounded-full px-4 py-3 shadow-sm mb-6">
+				<View className="flex-row items-center bg-canvas rounded-full px-5 py-3.5 shadow-sm mb-6 border border-hairline">
 					<Search size={20} color="#999999" />
-					<Input
+					<TextInput
 						placeholder="Search locations..."
 						value={searchQuery}
 						onChangeText={setSearchQuery}
-						className="flex-1 ml-3 text-ink"
+						className="flex-1 ml-3 text-ink text-base p-0"
 						placeholderTextColor="#999999"
 					/>
 				</View>
