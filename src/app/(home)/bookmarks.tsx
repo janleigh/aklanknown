@@ -106,9 +106,9 @@ export default function BookmarksScreen() {
 		<View className="flex-1 bg-surface-soft">
 			<View className="pt-12 px-5 bg-surface-soft pb-4">
 				<View className="flex-row gap-3 items-center mb-6">
-				<View className="items-center justify-center h-12 w-12 bg-primary/10 rounded-full">
-					<Heart size={24} color="#ff385c" fill="#ff385c" />
-				</View>
+					{/* <View className="items-center justify-center h-12 w-12 bg-primary/10 rounded-full">
+						<Heart size={24} color="#ff385c" fill="#ff385c" />
+					</View> */}
 					<View className="flex-1">
 						<Text className="text-3xl text-ink mb-1" fontName="PlusJakartaSans_700Bold">
 							My Bookmarks
@@ -179,11 +179,17 @@ export default function BookmarksScreen() {
 								<View className="flex-1 mr-4">
 									<View className="flex-row items-center mb-1">
 										<MapPin size={16} color="#ffffff" />
-										<Text className="ml-1 text-white text-sm" fontName="PlusJakartaSans_600SemiBold">
+										<Text
+											className="ml-1 text-white text-sm"
+											fontName="PlusJakartaSans_600SemiBold"
+										>
 											{item.location}
 										</Text>
 									</View>
-									<Text className="text-white text-3xl drop-shadow-md" fontName="PlusJakartaSans_700Bold">
+									<Text
+										className="text-white text-3xl drop-shadow-md"
+										fontName="PlusJakartaSans_700Bold"
+									>
 										{item.name}
 									</Text>
 								</View>

@@ -104,13 +104,26 @@ export default function HomeScreen() {
 				<Text className="text-muted text-base mb-6" fontName="PlusJakartaSans_400Regular">
 					Where do you want to explore today?
 				</Text>
-				
+
 				{/* Mock Categories Row */}
-				<ScrollView horizontal showsHorizontalScrollIndicator={false} className="overflow-visible" contentContainerStyle={{ paddingRight: 20 }}>
-					{["Beach", "Parks", "Churches"].map((category) => (
-						<TouchableOpacity key={category} className="flex-row items-center bg-canvas rounded-full pl-2 pr-5 py-2 mr-3 shadow-sm">
-							<Image source={{ uri: `https://picsum.photos/seed/${category}/100/100` }} className="w-8 h-8 rounded-full mr-2" />
-							<Text className="text-ink" fontName="PlusJakartaSans_600SemiBold">{category}</Text>
+				<ScrollView
+					horizontal
+					showsHorizontalScrollIndicator={false}
+					className="overflow-visible"
+					contentContainerStyle={{ paddingRight: 20 }}
+				>
+					{["Beach", "Parks", "Churches", "Historical"].map((category) => (
+						<TouchableOpacity
+							key={category}
+							className="flex-row items-center bg-canvas rounded-full pl-2 pr-5 py-2 mr-3 shadow-sm"
+						>
+							<Image
+								source={{ uri: `https://picsum.photos/seed/${category}/100/100` }}
+								className="w-8 h-8 rounded-full mr-2"
+							/>
+							<Text className="text-ink" fontName="PlusJakartaSans_600SemiBold">
+								{category}
+							</Text>
 						</TouchableOpacity>
 					))}
 				</ScrollView>
@@ -139,15 +152,19 @@ export default function HomeScreen() {
 									className="absolute inset-0 h-full w-full"
 									resizeMode="cover"
 								/>
-							) : <View className="absolute inset-0 h-full w-full bg-surface-strong" />}
-							
+							) : (
+								<View className="absolute inset-0 h-full w-full bg-surface-strong" />
+							)}
+
 							<View className="absolute inset-0 bg-black/20" />
 
 							{/* Top Elements */}
 							<View className="absolute top-4 left-4 right-4 flex-row justify-between">
 								<View className="flex-row items-center bg-canvas/80 px-3 py-1.5 rounded-full backdrop-blur-md">
 									<Star size={14} color="#FBBF24" fill="#FBBF24" />
-									<Text className="ml-1 text-ink text-sm" fontName="PlusJakartaSans_700Bold">5.0</Text>
+									<Text className="ml-1 text-ink text-sm" fontName="PlusJakartaSans_700Bold">
+										5.0
+									</Text>
 								</View>
 								<TouchableOpacity
 									className="items-center justify-center h-10 w-10 bg-canvas/80 rounded-full backdrop-blur-md"
@@ -170,11 +187,17 @@ export default function HomeScreen() {
 								<View className="flex-1 mr-4">
 									<View className="flex-row items-center mb-1">
 										<MapPin size={16} color="#ffffff" />
-										<Text className="ml-1 text-white text-sm" fontName="PlusJakartaSans_600SemiBold">
+										<Text
+											className="ml-1 text-white text-sm"
+											fontName="PlusJakartaSans_600SemiBold"
+										>
 											{item.town || item.street || "Aklan"}
 										</Text>
 									</View>
-									<Text className="text-white text-3xl drop-shadow-md" fontName="PlusJakartaSans_700Bold">
+									<Text
+										className="text-white text-3xl drop-shadow-md"
+										fontName="PlusJakartaSans_700Bold"
+									>
 										{item.name}
 									</Text>
 								</View>

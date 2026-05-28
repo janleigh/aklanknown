@@ -6,9 +6,9 @@ export const HOME_TAB_SCREEN_OPTIONS = {
 		backgroundColor: "#ffffff",
 		borderTopWidth: 1,
 		borderTopColor: "#e5e5e5",
-		paddingBottom: 4,
-		paddingTop: 4,
-		height: 60,
+		paddingBottom: 24,
+		paddingTop: 8,
+		height: 80,
 	},
 	tabBarItemStyle: {
 		paddingVertical: 8,
@@ -18,7 +18,6 @@ export const HOME_TAB_SCREEN_OPTIONS = {
 	tabBarLabelStyle: {
 		fontSize: 10,
 		fontWeight: "600",
-		marginTop: 4,
 	},
 } as const;
 

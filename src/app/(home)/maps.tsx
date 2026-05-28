@@ -261,15 +261,15 @@ export default function MapsScreen() {
 	return (
 		<View className="flex-1 bg-canvas">
 			{/* Header */}
-		<View className="z-20 pb-4 pt-12 px-5 bg-canvas border-b border-hairline">
-			<Text className="mb-4 text-3xl text-ink" fontName="PlusJakartaSans_700Bold">
-				Explore Map
-			</Text>
+			<View className="z-20 pb-4 pt-12 px-5 bg-canvas border-b border-hairline">
+				<Text className="mb-4 text-3xl text-ink" fontName="PlusJakartaSans_700Bold">
+					Explore Map
+				</Text>
 
-			{/* Search & Filter */}
-			<View className="relative flex-row gap-3 items-center">
-				<View className="flex-1">
-					<View className="flex-row items-center px-4 py-3 bg-surface-soft border border-hairline rounded-full shadow-sm">
+				{/* Search & Filter */}
+				<View className="relative flex-row gap-3 items-center">
+					<View className="flex-1">
+						<View className="flex-row items-center px-4 py-3 bg-surface-soft border border-hairline rounded-full shadow-sm">
 							<Search size={18} color="#929292" />
 							<TextInput
 								className="flex-1 ml-2 text-ink text-sm"
@@ -310,12 +310,15 @@ export default function MapsScreen() {
 							</View>
 						) : null}
 					</View>
-					<TouchableOpacity className="p-3 bg-surface-soft border border-hairline rounded-full shadow-sm" activeOpacity={0.7}>
+					<TouchableOpacity
+						className="p-3 bg-surface-soft border border-hairline rounded-full shadow-sm"
+						activeOpacity={0.7}
+					>
 						<SlidersHorizontal size={18} color="#ff385c" />
 					</TouchableOpacity>
 				</View>
 
-				{/* Categories */}
+				{/* Categories
 				<ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-1 -mx-1 mt-4">
 					{["Beaches", "Parks", "Churches", "Historical", "Hotels"].map((cat) => (
 						<TouchableOpacity
@@ -331,7 +334,7 @@ export default function MapsScreen() {
 							</Text>
 						</TouchableOpacity>
 					))}
-				</ScrollView>
+				</ScrollView> */}
 			</View>
 
 			{/* Map Area */}
@@ -378,11 +381,10 @@ export default function MapsScreen() {
 				</TouchableOpacity>
 			</View>
 
-			{/* ✅ BOTTOM NAVBAR FIX: Wrapped in SafeAreaView, removed pb-safe */}
 			<SafeAreaView edges={["bottom"]} className="bg-canvas border-hairline border-t shadow-lg">
-			<View className="px-5 py-4">
-				<View className="flex-row gap-4 items-center">
-					<View className="overflow-hidden h-16 w-16 bg-surface-soft border border-hairline rounded-2xl shadow-sm">
+				<View className="p-4 pt-8">
+					<View className="flex-row gap-4 items-center">
+						<View className="overflow-hidden h-16 w-16 bg-surface-soft border border-hairline rounded-2xl shadow-sm">
 							{selectedData.image ? (
 								<Image
 									source={{ uri: selectedData.image }}
@@ -392,10 +394,7 @@ export default function MapsScreen() {
 							) : null}
 						</View>
 						<View className="flex-1">
-							<Text
-								className="mb-1 font-bold text-lg text-ink"
-								fontName="PlusJakartaSans_700Bold"
-							>
+							<Text className="mb-1 font-bold text-lg text-ink" fontName="PlusJakartaSans_700Bold">
 								{selectedData.name}
 							</Text>
 							<View className="flex-row gap-2 items-center mb-1">

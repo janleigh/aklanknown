@@ -51,13 +51,13 @@ export default function ProfileScreen() {
 		...(isAdmin
 			? [{ icon: Shield, label: "Admin Panel", action: () => router.push("/(admin)") }]
 			: []),
-		{ icon: Settings, label: "App Settings", action: goToNotFound }
+		{ icon: Settings, label: "App Settings", action: goToNotFound },
 	];
 
 	return (
 		<ScrollView className="flex-1 bg-surface-soft">
 			{/* Header Section */}
-			<View className="bg-canvas rounded-b-[40px] shadow-sm pb-8 pt-16 px-6 items-center">
+			<View className="bg-primary rounded-b-[40px] shadow-sm pb-8 pt-16 px-6 items-center">
 				<View className="relative shadow-md mb-2">
 					<View className="overflow-hidden items-center justify-center h-28 w-28 bg-surface-soft rounded-full border-4 border-canvas">
 						{user?.imageUrl ? (
@@ -74,21 +74,22 @@ export default function ProfileScreen() {
 						</View>
 					)}
 				</View>
-				
-				<Text className="mt-2 font-bold text-ink text-2xl" fontName="PlusJakartaSans_700Bold">
+
+				<Text className="mt-2 font-bold text-canvas text-2xl" fontName="PlusJakartaSans_700Bold">
 					{user?.firstName || user?.emailAddresses[0]?.emailAddress || "Guest"}
 				</Text>
-				<Text className="text-muted text-base mt-1 mb-5" fontName="PlusJakartaSans_400Regular">
+				<Text className="text-canvas mt-1 mb-5" fontName="PlusJakartaSans_400Regular">
 					{user?.emailAddresses[0]?.emailAddress}
 				</Text>
-				
-				<Pressable className="bg-primary/10 px-6 py-2.5 rounded-full" onPress={goToNotFound}>
-					<Text className="text-primary font-semibold" fontName="PlusJakartaSans_600SemiBold">Edit Profile</Text>
+
+				<Pressable className="bg-canvas/20 px-6 py-2.5 rounded-full" onPress={goToNotFound}>
+					<Text className="text- font-semibold" fontName="PlusJakartaSans_600SemiBold">
+						Edit Profile
+					</Text>
 				</Pressable>
 			</View>
 
-			{/* Stats */}
-			<View className="flex-row mx-4 mt-6 bg-canvas rounded-2xl shadow-sm p-5 justify-between">
+			{/* <View className="flex-row mx-4 mt-6 bg-canvas rounded-2xl shadow-sm p-5 justify-between">
 				<View className="items-center flex-1 border-r border-hairline">
 					<Text className="font-bold text-xl text-ink" fontName="PlusJakartaSans_700Bold">12</Text>
 					<Text className="text-muted text-xs mt-1" fontName="PlusJakartaSans_600SemiBold">Saved</Text>
@@ -101,11 +102,16 @@ export default function ProfileScreen() {
 					<Text className="font-bold text-xl text-ink" fontName="PlusJakartaSans_700Bold">8</Text>
 					<Text className="text-muted text-xs mt-1" fontName="PlusJakartaSans_600SemiBold">Visited</Text>
 				</View>
-			</View>
+			</View> */}
 
 			{/* Settings / Menu */}
 			<View className="mt-8 px-4">
-				<Text className="text-muted font-bold text-xs uppercase tracking-wider mb-3 ml-2" fontName="PlusJakartaSans_700Bold">Preferences</Text>
+				<Text
+					className="text-muted font-bold text-xs uppercase tracking-wider mb-3 ml-2"
+					fontName="PlusJakartaSans_700Bold"
+				>
+					Preferences
+				</Text>
 				<View className="bg-canvas rounded-2xl overflow-hidden shadow-sm">
 					{menuItems.map((item, i) => {
 						const Icon = item.icon;
@@ -113,7 +119,7 @@ export default function ProfileScreen() {
 						return (
 							<Pressable
 								key={i}
-								className={`flex-row items-center p-4 bg-canvas ${!isLast ? 'border-b border-hairline' : ''}`}
+								className={`flex-row items-center p-4 bg-canvas ${!isLast ? "border-b border-hairline" : ""}`}
 								onPress={() => item.action?.()}
 							>
 								<View className="items-center justify-center mr-4 h-10 w-10 bg-surface-soft rounded-full">
@@ -139,7 +145,10 @@ export default function ProfileScreen() {
 					onPress={handleLogout}
 				>
 					<LogOut size={20} color="#ff385c" />
-					<Text className="ml-2 font-semibold text-primary text-base" fontName="PlusJakartaSans_600SemiBold">
+					<Text
+						className="ml-2 font-semibold text-primary text-base"
+						fontName="PlusJakartaSans_600SemiBold"
+					>
 						Log Out
 					</Text>
 				</Pressable>

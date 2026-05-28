@@ -466,7 +466,10 @@ export default function LocationDetailsScreen() {
 				{/* Content */}
 				<View className="-mt-8 pt-8 px-6 bg-canvas rounded-t-4xl">
 					<View className="flex-row justify-between items-start mb-2">
-						<Text className="flex-1 text-3xl text-ink leading-tight pr-2" fontName="PlusJakartaSans_700Bold">
+						<Text
+							className="flex-1 text-3xl text-ink leading-tight pr-2"
+							fontName="PlusJakartaSans_700Bold"
+						>
 							{location.name}
 						</Text>
 						<View className="items-end">
@@ -489,7 +492,9 @@ export default function LocationDetailsScreen() {
 						</Text>
 					</View>
 
-					<Text className="text-xl text-ink mb-3" fontName="PlusJakartaSans_700Bold">Description</Text>
+					<Text className="text-xl text-ink mb-3" fontName="PlusJakartaSans_700Bold">
+						Description
+					</Text>
 
 					<Text className="mb-2 leading-6 text-body" fontName="PlusJakartaSans_400Regular">
 						{isExpanded ? location.fullDescription : location.description}
@@ -614,7 +619,10 @@ export default function LocationDetailsScreen() {
 						router.push(`/location/${locationId}/map`);
 					}}
 				>
-					<Text className="font-semibold text-white text-base" fontName="PlusJakartaSans_600SemiBold">
+					<Text
+						className="font-semibold text-white text-base"
+						fontName="PlusJakartaSans_600SemiBold"
+					>
 						View on Map
 					</Text>
 				</TouchableOpacity>
