@@ -397,7 +397,10 @@ export default function LocationDetailsScreen() {
 
 	return (
 		<View className="flex-1 bg-canvas">
-			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
+			<ScrollView
+				showsVerticalScrollIndicator={false}
+				contentContainerStyle={{ paddingBottom: 120 }}
+			>
 				{/* Image Carousel */}
 				<View className="relative h-96 bg-surface-soft">
 					<Image
@@ -514,9 +517,6 @@ export default function LocationDetailsScreen() {
 						</Text>
 					</TouchableOpacity>
 
-					{/* Action Buttons */}
-					{/* Action Buttons Moved to Fixed Bottom Bar */}
-
 					<View className="mb-6 h-px bg-hairline-soft" />
 
 					<Text className="mb-3 text-ink text-lg" fontName="PlusJakartaSans_700Bold">
@@ -571,7 +571,10 @@ export default function LocationDetailsScreen() {
 											<Image source={{ uri: review.avatarUrl }} className="h-full w-full" />
 										) : (
 											<View className="h-full w-full items-center justify-center bg-primary/10">
-												<Text className="text-primary font-bold text-lg" fontName="PlusJakartaSans_700Bold">
+												<Text
+													className="text-primary font-bold text-lg"
+													fontName="PlusJakartaSans_700Bold"
+												>
 													{review.userName.charAt(0).toUpperCase()}
 												</Text>
 											</View>
@@ -618,7 +621,6 @@ export default function LocationDetailsScreen() {
 				</View>
 			</ScrollView>
 
-			{/* Fixed Bottom Bar */}
 			<View className="absolute bottom-0 left-0 right-0 px-6 pb-6 py-4 bg-canvas border-t border-hairline-soft flex-row gap-4 items-center">
 				<TouchableOpacity
 					className="flex-1 items-center justify-center py-4 bg-surface-strong rounded-full"

@@ -56,7 +56,6 @@ export default function ProfileScreen() {
 
 	return (
 		<ScrollView className="flex-1 bg-surface-soft">
-			{/* Header Section */}
 			<View className="bg-primary rounded-b-[40px] shadow-sm pb-8 pt-16 px-6 items-center">
 				<View className="relative mb-2">
 					<View className="overflow-hidden items-center justify-center h-28 w-28 bg-surface-soft rounded-full border-4 border-canvas">
@@ -104,7 +103,6 @@ export default function ProfileScreen() {
 				</View>
 			</View> */}
 
-			{/* Settings / Menu */}
 			<View className="mt-8 px-4">
 				<Text
 					className="text-muted font-bold text-xs uppercase tracking-wider mb-3 ml-2"
@@ -138,7 +136,6 @@ export default function ProfileScreen() {
 				</View>
 			</View>
 
-			{/* Logout */}
 			<View className="px-4 mt-6 mb-12">
 				<Pressable
 					className="flex-row items-center justify-center py-4 bg-canvas rounded-2xl shadow-sm"

@@ -160,7 +160,6 @@ export default function BookmarksScreen() {
 							/>
 							<View className="absolute inset-0 bg-black/20" />
 
-							{/* Top Right - Remove Button */}
 							<View className="absolute top-4 right-4">
 								<TouchableOpacity
 									className="items-center justify-center h-10 w-10 bg-canvas/80 rounded-full backdrop-blur-md"
@@ -174,7 +173,6 @@ export default function BookmarksScreen() {
 								</TouchableOpacity>
 							</View>
 
-							{/* Bottom Elements */}
 							<View className="absolute bottom-4 left-5 right-5 flex-row items-end justify-between">
 								<View className="flex-1 mr-4">
 									<View className="flex-row items-center mb-1">

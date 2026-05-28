@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 import { MapPin, Pencil, Plus, Trash2 } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { Alert, FlatList, TouchableOpacity, View } from "react-native";
-import { Card, LoadingSpinner } from "@/components/index";
+import { LoadingSpinner } from "@/components/index";
 import { Text } from "@/components/ui/Text";
 
 export default function AdminLocationsScreen() {
@@ -92,7 +92,7 @@ export default function AdminLocationsScreen() {
 					contentContainerStyle={{ padding: 16 }}
 					showsVerticalScrollIndicator={false}
 					renderItem={({ item }) => (
-						<Card className="mb-4">
+						<View className="mb-4 bg-canvas rounded-[28px] shadow-sm p-5">
 							<View className="flex-row items-start justify-between">
 								<View className="flex-1 pr-4">
 									<Text className="mb-1 text-ink text-lg" fontName="PlusJakartaSans_700Bold">
@@ -143,7 +143,7 @@ export default function AdminLocationsScreen() {
 									</TouchableOpacity>
 								</View>
 							</View>
-						</Card>
+						</View>
 					)}
 					ListEmptyComponent={
 						<View className="items-center justify-center py-10">

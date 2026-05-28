@@ -17,7 +17,7 @@ import {
 } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
-import { Button, Card, LoadingSpinner } from "@/components/index";
+import { LoadingSpinner } from "@/components/index";
 import { Text } from "@/components/ui/Text";
 
 type AdminStats = {
@@ -197,7 +197,7 @@ export default function AdminDashboardScreen() {
 	if (!hasAccess) {
 		return (
 			<View className="flex-1 items-center justify-center px-6 bg-surface-soft">
-				<Card className="items-center max-w-md w-full">
+				<View className="items-center max-w-md w-full bg-canvas rounded-[28px] shadow-sm p-6 mb-6">
 					<View className="items-center justify-center mb-4 h-14 w-14 bg-error/10 rounded-full">
 						<Shield size={24} color="#ef4444" />
 					</View>
@@ -207,12 +207,15 @@ export default function AdminDashboardScreen() {
 					<Text className="mb-6 text-center text-muted" fontName="PlusJakartaSans_400Regular">
 						Your account is signed in, but it does not have the admin role yet.
 					</Text>
-					<Button
-						label="Back to Home"
+					<Pressable
 						onPress={() => router.replace("/(home)")}
-						className="w-full"
-					/>
-				</Card>
+						className="w-full bg-primary py-4 rounded-full items-center shadow-md"
+					>
+						<Text className="text-white text-base" fontName="PlusJakartaSans_700Bold">
+							Back to Home
+						</Text>
+					</Pressable>
+				</View>
 			</View>
 		);
 	}
@@ -253,7 +256,7 @@ export default function AdminDashboardScreen() {
 					<AdminMetric icon={BadgeAlert} label="Flagged" value={stats.flaggedReviews} />
 				</View>
 
-				<Card className="mb-4">
+				<View className="mb-4 bg-canvas rounded-[28px] shadow-sm p-5">
 					<View className="flex-row items-center justify-between mb-4">
 						<View>
 							<Text className="text-ink text-lg" fontName="PlusJakartaSans_700Bold">
@@ -282,9 +285,9 @@ export default function AdminDashboardScreen() {
 							onPress={() => router.push("/(admin)/users")}
 						/>
 					</View>
-				</Card>
+				</View>
 
-				<Card className="mb-4">
+				<View className="mb-4 bg-canvas rounded-[28px] shadow-sm p-5">
 					<View className="mb-4">
 						<Text className="text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 							Flagged Reviews
@@ -314,7 +317,7 @@ export default function AdminDashboardScreen() {
 							))
 						)}
 					</View>
-				</Card>
+				</View>
 			</View>
 		</ScrollView>
 	);
@@ -332,7 +335,7 @@ function AdminMetric({
 	accent?: boolean;
 }) {
 	return (
-		<Card className="flex-1">
+		<View className="flex-1 bg-canvas rounded-[24px] shadow-sm p-5">
 			<View className="flex-row items-start justify-between">
 				<View>
 					<Text className="text-muted text-sm" fontName="PlusJakartaSans_500Medium">
@@ -351,7 +354,7 @@ function AdminMetric({
 					<Icon size={18} color={accent ? "#ef4444" : "#ff385c"} />
 				</View>
 			</View>
-		</Card>
+		</View>
 	);
 }
 
@@ -367,7 +370,7 @@ function AdminAction({
 	return (
 		<Pressable
 			onPress={onPress}
-			className="flex-row items-center justify-between px-4 py-4 bg-surface-soft border border-hairline rounded-xl"
+			className="flex-row items-center justify-between px-5 py-4 bg-surface-soft rounded-[20px]"
 		>
 			<View className="flex-1 pr-3">
 				<Text className="text-ink" fontName="PlusJakartaSans_600SemiBold">

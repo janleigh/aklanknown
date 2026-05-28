@@ -586,7 +586,7 @@ export default function LocationMapScreen() {
 				<View className="items-center mb-6">
 					<View className="h-1.5 w-12 bg-surface-strong rounded-full" />
 				</View>
-				
+
 				<View className="flex-row items-center justify-between mb-5">
 					<View className="flex-1 pr-4">
 						<Text className="text-ink text-2xl leading-tight" fontName="PlusJakartaSans_700Bold">
@@ -613,7 +613,10 @@ export default function LocationMapScreen() {
 							{locationStatusLabel}
 						</Text>
 						{routeStatusLabel ? (
-							<Text className="mt-0.5 text-muted-soft text-xs" fontName="PlusJakartaSans_400Regular">
+							<Text
+								className="mt-0.5 text-muted-soft text-xs"
+								fontName="PlusJakartaSans_400Regular"
+							>
 								{routeStatusLabel}
 							</Text>
 						) : null}
@@ -626,13 +629,19 @@ export default function LocationMapScreen() {
 							key={mode.key}
 							className="px-4 py-3 w-[48%] bg-surface-strong/50 border border-hairline-soft rounded-2xl"
 						>
-							<Text className="text-muted-soft text-[11px] uppercase tracking-wider" fontName="PlusJakartaSans_600SemiBold">
+							<Text
+								className="text-muted-soft text-[11px] uppercase tracking-wider"
+								fontName="PlusJakartaSans_600SemiBold"
+							>
 								{mode.label}
 							</Text>
 							<Text className="mt-1.5 text-ink text-xl" fontName="PlusJakartaSans_700Bold">
 								{mode.timeLabel}
 							</Text>
-							<Text className="mt-0.5 text-muted-soft text-xs" fontName="PlusJakartaSans_400Regular">
+							<Text
+								className="mt-0.5 text-muted-soft text-xs"
+								fontName="PlusJakartaSans_400Regular"
+							>
 								{distanceForEstimates == null
 									? "Distance unavailable"
 									: formatDistance(distanceForEstimates)}

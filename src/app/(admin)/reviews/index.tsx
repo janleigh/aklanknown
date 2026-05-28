@@ -8,7 +8,7 @@ import { useRouter } from "expo-router";
 import { ArrowLeft, BadgeAlert, CircleCheck, MapPin, Trash2, User } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { Alert, FlatList, TouchableOpacity, View } from "react-native";
-import { Card, LoadingSpinner } from "@/components/index";
+import { LoadingSpinner } from "@/components/index";
 import { Text } from "@/components/ui/Text";
 
 type FlaggedReviewItem = ReviewRecord & {
@@ -194,7 +194,7 @@ export default function AdminReviewsScreen() {
 					showsVerticalScrollIndicator={false}
 					ListEmptyComponent={emptyState}
 					renderItem={({ item }) => (
-						<Card className="mb-4">
+						<View className="mb-4 bg-canvas rounded-[28px] shadow-sm p-5">
 							<View className="flex-row gap-3 items-start justify-between">
 								<View className="flex-1">
 									<View className="flex-row gap-2 items-center mb-2">
@@ -240,7 +240,7 @@ export default function AdminReviewsScreen() {
 									</TouchableOpacity>
 								</View>
 							</View>
-						</Card>
+						</View>
 					)}
 				/>
 			)}

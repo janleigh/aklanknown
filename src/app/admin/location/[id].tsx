@@ -7,7 +7,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { ArrowLeft, Image as ImageIcon } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { Alert, Image, ScrollView, TouchableOpacity, View } from "react-native";
-import { Button, Card, Input, LoadingSpinner } from "@/components/index";
+import { Input, LoadingSpinner } from "@/components/index";
 import { Text } from "@/components/ui/Text";
 import type { Location } from "@/types";
 
@@ -175,7 +175,7 @@ export default function EditLocationScreen() {
 			</View>
 
 			<ScrollView className="flex-1" contentContainerStyle={{ padding: 16 }}>
-				<Card className="mb-4">
+				<View className="mb-4 bg-canvas rounded-[28px] shadow-sm p-5">
 					<Text className="mb-4 text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 						Basic Details
 					</Text>
@@ -193,9 +193,9 @@ export default function EditLocationScreen() {
 						multiline
 						numberOfLines={3}
 					/>
-				</Card>
+				</View>
 
-				<Card className="mb-4">
+				<View className="mb-4 bg-canvas rounded-[28px] shadow-sm p-5">
 					<Text className="mb-4 text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 						Address *
 					</Text>
@@ -217,9 +217,9 @@ export default function EditLocationScreen() {
 						value={form.town}
 						onChangeText={(text) => setForm({ ...form, town: text })}
 					/>
-				</Card>
+				</View>
 
-				<Card className="mb-4">
+				<View className="mb-4 bg-canvas rounded-[28px] shadow-sm p-5">
 					<Text className="mb-4 text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 						Media & Map
 					</Text>
@@ -286,14 +286,18 @@ export default function EditLocationScreen() {
 							/>
 						</View>
 					</View>
-				</Card>
+				</View>
 
-				<Button
-					label={isLoading ? "Saving..." : "Save Changes"}
+				<TouchableOpacity
+					className={`bg-primary rounded-full py-4 items-center shadow-md mb-8 ${isLoading ? "opacity-70" : ""}`}
 					onPress={handleUpdate}
 					disabled={isLoading}
-					className="mb-8"
-				/>
+					activeOpacity={0.8}
+				>
+					<Text className="text-white text-base" fontName="PlusJakartaSans_700Bold">
+						{isLoading ? "Saving..." : "Save Changes"}
+					</Text>
+				</TouchableOpacity>
 			</ScrollView>
 		</View>
 	);

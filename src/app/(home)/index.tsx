@@ -105,7 +105,6 @@ export default function HomeScreen() {
 					Where do you want to explore today?
 				</Text>
 
-				{/* Mock Categories Row */}
 				<ScrollView
 					horizontal
 					showsHorizontalScrollIndicator={false}
@@ -158,7 +157,6 @@ export default function HomeScreen() {
 
 							<View className="absolute inset-0 bg-black/20" />
 
-							{/* Top Elements */}
 							<View className="absolute top-4 left-4 right-4 flex-row justify-between">
 								<View className="flex-row items-center bg-canvas/80 px-3 py-1.5 rounded-full backdrop-blur-md">
 									<Star size={14} color="#FBBF24" fill="#FBBF24" />
@@ -182,7 +180,6 @@ export default function HomeScreen() {
 								</TouchableOpacity>
 							</View>
 
-							{/* Bottom Elements */}
 							<View className="absolute bottom-4 left-5 right-5 flex-row items-end justify-between">
 								<View className="flex-1 mr-4">
 									<View className="flex-row items-center mb-1">
