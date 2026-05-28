@@ -162,7 +162,9 @@ export default function LocationMapScreen() {
 				]);
 
 				if (locationResult.latitude === null || locationResult.longitude === null) {
-					throw new Error("Location does not have coordinates yet.");
+					throw new Error(
+						"This location does not have coordinates yet. Ask the stupid admin to add latitude and longitude before opening it on the map.",
+					);
 				}
 
 				const numericRatings = (reviewResult.data ?? []).flatMap((review) =>
@@ -490,18 +492,29 @@ export default function LocationMapScreen() {
 	if (!selectedData) {
 		return (
 			<View className="flex-1 items-center justify-center px-6 bg-canvas">
-				<Text className="mb-3 text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
-					{locationError ?? "Location not found."}
-				</Text>
-				<TouchableOpacity
-					className="px-4 py-3 bg-primary rounded-xl"
-					onPress={() => router.back()}
-					activeOpacity={0.8}
-				>
-					<Text className="font-semibold text-white" fontName="PlusJakartaSans_600SemiBold">
-						Go Back
+				<View className="max-w-sm items-center rounded-3xl border border-hairline bg-surface-soft px-6 py-8">
+					<Text
+						className="mb-3 text-center text-ink text-xl"
+						fontName="PlusJakartaSans_700Bold"
+					>
+						{locationError ?? "This location cannot be shown on the map yet."}
 					</Text>
-				</TouchableOpacity>
+					<Text className="mb-6 text-center text-muted text-sm" fontName="PlusJakartaSans_400Regular">
+						The location exists, but the admin has not added coordinates yet, so Mapbox cannot place it.
+					</Text>
+					<Text className="mb-6 text-center text-muted text-sm" fontName="PlusJakartaSans_400Regular">
+						Ask the stupid admin to add latitude and longitude for this location before opening it on the map.
+					</Text>
+					<TouchableOpacity
+						className="px-5 py-3 bg-primary rounded-xl"
+						onPress={() => router.replace("/(home)")}
+						activeOpacity={0.8}
+					>
+						<Text className="font-semibold text-white" fontName="PlusJakartaSans_600SemiBold">
+							Go Back Home
+						</Text>
+					</TouchableOpacity>
+				</View>
 			</View>
 		);
 	}
@@ -567,7 +580,7 @@ export default function LocationMapScreen() {
 				</Mapbox.MapView>
 			</View>
 
-			<View className="absolute left-4 right-4 top-12 z-20 flex-row items-center justify-between">
+			<View className="absolute left-4 right-4 top-16 z-20 flex-row items-center justify-between">
 				<TouchableOpacity
 					className="items-center justify-center h-12 w-12 bg-white rounded-full shadow-lg"
 					onPress={() => router.back()}
@@ -582,39 +595,44 @@ export default function LocationMapScreen() {
 				</View>
 			</View>
 
-			<View className="absolute bottom-0 left-0 right-0 pt-6 pb-8 px-6 bg-canvas rounded-t-4xl shadow-[0_-8px_30px_rgba(0,0,0,0.12)]">
-				<View className="items-center mb-6">
+			<View className="absolute bottom-0 left-0 right-0 h-[36%] pt-3 pb-4 px-4 bg-white rounded-t-[32px] shadow-[0_-8px_30px_rgba(0,0,0,0.12)] overflow-hidden">
+				<View className="items-center mb-3">
 					<View className="h-1.5 w-12 bg-surface-strong rounded-full" />
 				</View>
 
-				<View className="flex-row items-center justify-between mb-5">
-					<View className="flex-1 pr-4">
-						<Text className="text-ink text-2xl leading-tight" fontName="PlusJakartaSans_700Bold">
+				<View className="flex-row items-start justify-between mb-3 gap-3">
+					<View className="flex-1 pr-2">
+						<Text className="text-ink text-lg leading-tight" fontName="PlusJakartaSans_700Bold">
 							{selectedData.name}
 						</Text>
-						<Text className="mt-1.5 text-muted text-sm" fontName="PlusJakartaSans_400Regular">
+						<Text className="mt-1 text-muted text-xs" fontName="PlusJakartaSans_400Regular">
 							{selectedData.location}
 						</Text>
 					</View>
-					<View className="flex-row items-center px-3 py-2 bg-surface-strong rounded-full">
-						<Star size={16} color="#FBBF24" fill="#FBBF24" />
-						<Text className="ml-1.5 text-ink text-sm" fontName="PlusJakartaSans_700Bold">
-							{selectedData.rating}
+					<View className="items-end">
+						<View className="flex-row items-center px-2.5 py-1.5 bg-surface-strong rounded-full">
+							<Star size={14} color="#FBBF24" fill="#FBBF24" />
+							<Text className="ml-1 text-ink text-xs" fontName="PlusJakartaSans_700Bold">
+								{selectedData.rating}
+							</Text>
+						</View>
+						<Text className="mt-1 text-muted text-[10px]" fontName="PlusJakartaSans_400Regular">
+							({selectedData.reviews} reviews)
 						</Text>
 					</View>
 				</View>
 
-				<View className="flex-row gap-3 items-center mb-5 px-4 py-3 bg-surface-soft border border-hairline-soft rounded-2xl">
-					<View className="items-center justify-center h-10 w-10 bg-primary/10 rounded-full">
-						<Route size={18} color="#ff385c" />
+				<View className="flex-row gap-2 items-center mb-3 px-3 py-2.5 bg-surface-soft border border-hairline-soft rounded-2xl">
+					<View className="items-center justify-center h-8 w-8 bg-primary/10 rounded-full">
+						<Route size={16} color="#ff385c" />
 					</View>
 					<View className="flex-1">
-						<Text className="text-ink text-sm" fontName="PlusJakartaSans_600SemiBold">
+						<Text className="text-ink text-xs" fontName="PlusJakartaSans_600SemiBold">
 							{locationStatusLabel}
 						</Text>
 						{routeStatusLabel ? (
 							<Text
-								className="mt-0.5 text-muted-soft text-xs"
+								className="mt-0.5 text-muted-soft text-[10px]"
 								fontName="PlusJakartaSans_400Regular"
 							>
 								{routeStatusLabel}
@@ -623,23 +641,23 @@ export default function LocationMapScreen() {
 					</View>
 				</View>
 
-				<View className="flex-row flex-wrap gap-3 justify-between mb-6">
+				<View className="flex-row flex-nowrap gap-1.5 mb-3">
 					{travelEstimates.map((mode) => (
 						<View
 							key={mode.key}
-							className="px-4 py-3 w-[48%] bg-surface-strong/50 border border-hairline-soft rounded-2xl"
+							className="flex-1 min-w-0 px-1.5 py-1.5 bg-surface-strong/50 border border-hairline-soft rounded-2xl"
 						>
 							<Text
-								className="text-muted-soft text-[11px] uppercase tracking-wider"
+								className="text-muted-soft text-[7px] uppercase tracking-wider text-center"
 								fontName="PlusJakartaSans_600SemiBold"
 							>
 								{mode.label}
 							</Text>
-							<Text className="mt-1.5 text-ink text-xl" fontName="PlusJakartaSans_700Bold">
+							<Text className="mt-0.5 text-ink text-[9px] text-center" fontName="PlusJakartaSans_700Bold">
 								{mode.timeLabel}
 							</Text>
 							<Text
-								className="mt-0.5 text-muted-soft text-xs"
+								className="mt-0.5 text-muted-soft text-[7px] text-center"
 								fontName="PlusJakartaSans_400Regular"
 							>
 								{distanceForEstimates == null
@@ -650,26 +668,26 @@ export default function LocationMapScreen() {
 					))}
 				</View>
 
-				<View className="flex-row gap-3">
+				<View className="flex-row gap-2">
 					<TouchableOpacity
-						className="flex-1 items-center justify-center py-4 bg-surface-strong rounded-full"
+						className="flex-1 items-center justify-center py-3 bg-surface-strong rounded-full"
 						onPress={() => router.back()}
 						activeOpacity={0.8}
 					>
-						<Text className="text-ink text-base" fontName="PlusJakartaSans_600SemiBold">
+						<Text className="text-ink text-sm" fontName="PlusJakartaSans_600SemiBold">
 							Back to Details
 						</Text>
 					</TouchableOpacity>
 					<TouchableOpacity
-						className={`flex-1 flex-row items-center justify-center gap-2 rounded-full py-4 shadow-sm ${
+						className={`flex-1 flex-row items-center justify-center gap-1.5 rounded-full py-3 shadow-sm ${
 							canFocusRoute ? "bg-primary" : "bg-primary/50"
 						}`}
 						onPress={focusRoute}
 						activeOpacity={canFocusRoute ? 0.8 : 1}
 						disabled={!canFocusRoute}
 					>
-						<Navigation size={18} color="#ffffff" />
-						<Text className="text-white text-base" fontName="PlusJakartaSans_600SemiBold">
+						<Navigation size={16} color="#ffffff" />
+						<Text className="text-white text-sm" fontName="PlusJakartaSans_600SemiBold">
 							Route Details
 						</Text>
 					</TouchableOpacity>
