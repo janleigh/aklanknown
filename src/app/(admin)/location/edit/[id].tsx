@@ -21,6 +21,11 @@ type FormState = {
 	longitude: string;
 };
 
+type GalleryImageRecord = {
+	id: string;
+	image_url: string;
+};
+
 function toFormState(location: LocationRecord): FormState {
 	return {
 		name: location.name,
@@ -53,6 +58,8 @@ export default function EditLocationScreen() {
 	const [panoramaImage, setPanoramaImage] = useState<string | null>(null);
 	const [existingBannerImage, setExistingBannerImage] = useState<string>("");
 	const [existingPanoramaImage, setExistingPanoramaImage] = useState<string>("");
+	const [existingGalleryImages, setExistingGalleryImages] = useState<GalleryImageRecord[]>([]);
+	const [newGalleryImages, setNewGalleryImages] = useState<string[]>([]);
 
 	useEffect(() => {
 		let isMounted = true;
@@ -67,11 +74,19 @@ export default function EditLocationScreen() {
 
 			setIsLoading(true);
 			try {
-				const location = await controllers.location.getById(locationId);
+				const [location, galleryImages] = await Promise.all([
+					controllers.location.getById(locationId),
+					supabase
+						.from("location_images")
+						.select("id, image_url")
+						.eq("location_id", locationId)
+						.order("created_at", { ascending: true }),
+				]);
 				if (!isMounted) return;
 				setForm(toFormState(location));
 				setExistingBannerImage(location.banner_image_url || "");
 				setExistingPanoramaImage(location.panorama_image_url || "");
+				setExistingGalleryImages((galleryImages.data ?? []) as GalleryImageRecord[]);
 			} catch (error) {
 				console.error("[Edit Location] Failed to load location:", error);
 				Alert.alert("Error", "Unable to load location details.");
@@ -104,6 +119,23 @@ export default function EditLocationScreen() {
 		}
 	};
 
+	const pickGalleryImages = async () => {
+		const result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ["images"],
+			allowsEditing: false,
+			allowsMultipleSelection: true,
+			selectionLimit: 10,
+			quality: 0.8,
+		});
+
+		if (result.canceled) {
+			return;
+		}
+
+		const selectedUris = result.assets.map((asset) => asset.uri);
+		setNewGalleryImages((prev) => Array.from(new Set([...prev, ...selectedUris])));
+	};
+
 	const uploadImageAsync = async (uri: string, pathPrefix: string) => {
 		const base64 = await FileSystem.readAsStringAsync(uri, { encoding: "base64" });
 		const fileExt = uri.split(".").pop() || "jpeg";
@@ -119,6 +151,42 @@ export default function EditLocationScreen() {
 
 		const { data } = supabase.storage.from("locations").getPublicUrl(fileName);
 		return data.publicUrl;
+	};
+
+	const getStoragePathFromPublicUrl = (publicUrl: string) => {
+		try {
+			const path = new URL(publicUrl).pathname;
+			const marker = "/object/public/locations/";
+			const index = path.indexOf(marker);
+			if (index === -1) {
+				return null;
+			}
+			return decodeURIComponent(path.slice(index + marker.length));
+		} catch {
+			return null;
+		}
+	};
+
+	const deleteGalleryImage = async (image: GalleryImageRecord) => {
+		try {
+			const storagePath = getStoragePathFromPublicUrl(image.image_url);
+			if (storagePath) {
+				const { error: storageError } = await supabase.storage.from("locations").remove([storagePath]);
+				if (storageError) {
+					throw storageError;
+				}
+			}
+
+			const { error: dbError } = await supabase.from("location_images").delete().eq("id", image.id);
+			if (dbError) {
+				throw dbError;
+			}
+
+			setExistingGalleryImages((prev) => prev.filter((item) => item.id !== image.id));
+		} catch (error) {
+			console.error("[Edit Location] Failed to delete gallery image:", error);
+			Alert.alert("Delete Failed", "We couldn't remove that image right now.");
+		}
 	};
 
 	const handleUpdate = async () => {
@@ -141,6 +209,12 @@ export default function EditLocationScreen() {
 				? await uploadImageAsync(panoramaImage, "panorama")
 				: existingPanoramaImage;
 
+			const newGalleryUrls = await Promise.all(
+				newGalleryImages.map((imageUri, index) =>
+					uploadImageAsync(imageUri, `gallery-${locationId}-${Date.now()}-${index}`),
+				),
+			);
+
 			await controllers.location.update(locationId, {
 				name: form.name,
 				street: form.street,
@@ -152,6 +226,17 @@ export default function EditLocationScreen() {
 				banner_image_url: nextBannerImage,
 				panorama_image_url: nextPanoramaImage,
 			});
+
+			if (newGalleryUrls.length > 0) {
+				await Promise.all(
+					newGalleryUrls.map((imageUrl) =>
+						controllers.locationImage.create({
+							location_id: locationId,
+							image_url: imageUrl,
+						}),
+					),
+				);
+			}
 
 			Alert.alert("Updated", "Location details updated successfully.");
 			router.back();
@@ -282,6 +367,89 @@ export default function EditLocationScreen() {
 							</View>
 						)}
 					</TouchableOpacity>
+
+					<Text className="mb-2 ml-1 font-semibold text-ink" fontName="PlusJakartaSans_600SemiBold">
+						Additional Gallery Images
+					</Text>
+					<TouchableOpacity
+						onPress={() => void pickGalleryImages()}
+						className="mb-3 min-h-24 items-center justify-center rounded-xl border-2 border-dashed border-hairline bg-surface-soft px-4 py-4"
+					>
+						<View className="items-center">
+							<ImageIcon size={24} color="#929292" />
+							<Text className="mt-2 text-muted" fontName="PlusJakartaSans_500Medium">
+								Tap to add more gallery images
+							</Text>
+						</View>
+					</TouchableOpacity>
+
+					{existingGalleryImages.length > 0 || newGalleryImages.length > 0 ? (
+						<View className="mb-3 gap-3">
+							{existingGalleryImages.length > 0 ? (
+								<View>
+									<Text className="mb-2 ml-1 text-sm text-muted" fontName="PlusJakartaSans_400Regular">
+										Existing images
+									</Text>
+									<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+										<View className="flex-row gap-2">
+											{existingGalleryImages.map((image) => (
+												<View key={image.id} className="relative">
+													<Image
+														source={{ uri: image.image_url }}
+														className="h-20 w-20 rounded-lg"
+														resizeMode="cover"
+													/>
+													<TouchableOpacity
+														className="absolute -right-1 -top-1 h-6 w-6 items-center justify-center rounded-full bg-error"
+														onPress={() => {
+															void deleteGalleryImage(image);
+														}}
+														activeOpacity={0.8}
+													>
+														<Text className="text-xs text-white" fontName="PlusJakartaSans_700Bold">
+															x
+														</Text>
+													</TouchableOpacity>
+												</View>
+											))}
+										</View>
+									</ScrollView>
+								</View>
+							) : null}
+
+							{newGalleryImages.length > 0 ? (
+								<View>
+									<Text className="mb-2 ml-1 text-sm text-muted" fontName="PlusJakartaSans_400Regular">
+										New images to add
+									</Text>
+									<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+										<View className="flex-row gap-2">
+											{newGalleryImages.map((imageUri) => (
+												<View key={imageUri} className="relative">
+													<Image
+														source={{ uri: imageUri }}
+														className="h-20 w-20 rounded-lg"
+														resizeMode="cover"
+													/>
+													<TouchableOpacity
+														className="absolute -right-1 -top-1 h-6 w-6 items-center justify-center rounded-full bg-error"
+														onPress={() => {
+															setNewGalleryImages((prev) => prev.filter((uri) => uri !== imageUri));
+														}}
+														activeOpacity={0.8}
+													>
+														<Text className="text-xs text-white" fontName="PlusJakartaSans_700Bold">
+															x
+														</Text>
+													</TouchableOpacity>
+												</View>
+											))}
+										</View>
+									</ScrollView>
+								</View>
+							) : null}
+						</View>
+					) : null}
 
 					<View className="flex-row gap-3 mt-2">
 						<View className="flex-1">
