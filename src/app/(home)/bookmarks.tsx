@@ -1,5 +1,4 @@
 import { LoadingSpinner } from "@components/index";
-import { Text } from "@components/Text";
 import { controllers } from "@lib/api/supabase/controller";
 import { getBookmarkedIds, removeBookmark, subscribeBookmarks } from "@lib/storage/bookmarks";
 import type { Location as LocationRecord } from "@lib/types/supabase";
@@ -7,6 +6,7 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { Heart, MapPin } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
 import { FlatList, Image, TouchableOpacity, View } from "react-native";
+import { Text } from "@/components/ui/Text";
 
 type SavedLocationCard = {
 	id: string;
@@ -96,15 +96,15 @@ export default function BookmarksScreen() {
 
 	if (isLoading) {
 		return (
-			<View className="flex-1 items-center justify-center bg-surface-soft px-8">
+			<View className="flex-1 items-center justify-center px-8 bg-surface-soft">
 				<LoadingSpinner size="large" />
 			</View>
 		);
 	}
 
 	return (
-		<View className="flex-1 bg-surface-soft px-4 pt-12">
-			<View className="mb-4 flex-row items-center gap-3">
+		<View className="flex-1 pt-12 px-4 bg-surface-soft">
+			<View className="flex-row gap-3 items-center mb-4">
 				<View className="items-center justify-center h-12 w-12 bg-primary/10 rounded-full">
 					<Heart size={24} color="#ff385c" fill="#ff385c" />
 				</View>
@@ -123,7 +123,7 @@ export default function BookmarksScreen() {
 					<View className="items-center justify-center mb-6 h-20 w-20 bg-primary/10 rounded-full">
 						<Heart size={40} color="#ff385c" />
 					</View>
-					<Text className="mb-2 text-center text-2xl text-ink" fontName="PlusJakartaSans_700Bold">
+					<Text className="mb-2 text-2xl text-center text-ink" fontName="PlusJakartaSans_700Bold">
 						No bookmarks yet
 					</Text>
 					<Text className="mb-8 text-body text-center" fontName="PlusJakartaSans_400Regular">

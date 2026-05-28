@@ -7,7 +7,7 @@ import type { Feature, LineString } from "geojson";
 import { ArrowLeft, MapPin, Navigation, Route, Star } from "lucide-react-native";
 import { type ElementRef, useEffect, useMemo, useRef, useState } from "react";
 import { NativeModules, Platform, TouchableOpacity, View } from "react-native";
-import { Text } from "@/components/Text";
+import { Text } from "@/components/ui/Text";
 import { API_KEYS } from "@/config";
 
 type Coordinate = {
@@ -459,7 +459,7 @@ export default function LocationMapScreen() {
 
 	if (Platform.OS !== "android") {
 		return (
-			<View className="flex-1 items-center justify-center bg-canvas px-6">
+			<View className="flex-1 items-center justify-center px-6 bg-canvas">
 				<Text className="text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 					This map view is available on Android only.
 				</Text>
@@ -469,7 +469,7 @@ export default function LocationMapScreen() {
 
 	if (!hasMapboxNative || !Mapbox) {
 		return (
-			<View className="flex-1 items-center justify-center bg-canvas px-6">
+			<View className="flex-1 items-center justify-center px-6 bg-canvas">
 				<Text className="text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 					Mapbox native code is not available in this build. Rebuild with a dev client.
 				</Text>
@@ -479,7 +479,7 @@ export default function LocationMapScreen() {
 
 	if (isLocationLoading) {
 		return (
-			<View className="flex-1 items-center justify-center bg-canvas px-6">
+			<View className="flex-1 items-center justify-center px-6 bg-canvas">
 				<Text className="text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 					Loading map location...
 				</Text>
@@ -489,7 +489,7 @@ export default function LocationMapScreen() {
 
 	if (!selectedData) {
 		return (
-			<View className="flex-1 items-center justify-center bg-canvas px-6">
+			<View className="flex-1 items-center justify-center px-6 bg-canvas">
 				<Text className="mb-3 text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 					{locationError ?? "Location not found."}
 				</Text>
@@ -507,7 +507,7 @@ export default function LocationMapScreen() {
 	}
 
 	return (
-		<View className="flex-1 bg-canvas pb-6">
+		<View className="flex-1 pb-6 bg-canvas">
 			<View className="absolute left-4 right-4 top-12 z-20 flex-row items-center justify-between">
 				<TouchableOpacity
 					className="items-center justify-center h-11 w-11 bg-canvas/90 rounded-full shadow-sm"
@@ -559,8 +559,8 @@ export default function LocationMapScreen() {
 							allowOverlap
 						>
 							<View className="items-center justify-center">
-								<View className="w-7 h-7 rounded-full border-2 border-white bg-sky-500 shadow-md" />
-								<View className="mt-1 h-2 w-2 rounded-full bg-sky-400/80" />
+								<View className="h-7 w-7 bg-sky-500 border-2 border-white rounded-full shadow-md" />
+								<View className="mt-1 h-2 w-2 bg-sky-400/80 rounded-full" />
 							</View>
 						</Mapbox.MarkerView>
 					) : null}
@@ -570,10 +570,10 @@ export default function LocationMapScreen() {
 						allowOverlap
 					>
 						<View className="items-center justify-center">
-							<View className="w-10 h-10 items-center justify-center rounded-full bg-primary border-2 border-white shadow-md">
+							<View className="items-center justify-center h-10 w-10 bg-primary border-2 border-white rounded-full shadow-md">
 								<MapPin size={16} color="#fff" />
 							</View>
-							<View className="w-2 h-2 mt-1 rounded-full bg-primary/70" />
+							<View className="mt-1 h-2 w-2 bg-primary/70 rounded-full" />
 						</View>
 					</Mapbox.MarkerView>
 					{customLocation ? (
@@ -582,20 +582,20 @@ export default function LocationMapScreen() {
 							allowOverlap
 						>
 							<View className="items-center justify-center">
-								<View className="w-10 h-10 items-center justify-center rounded-full bg-primary border-2 border-white shadow-md">
+								<View className="items-center justify-center h-10 w-10 bg-primary border-2 border-white rounded-full shadow-md">
 									<MapPin size={16} color="#fff" />
 								</View>
-								<View className="w-2 h-2 mt-1 rounded-full bg-primary/70" />
+								<View className="mt-1 h-2 w-2 bg-primary/70 rounded-full" />
 							</View>
 						</Mapbox.MarkerView>
 					) : null}
 				</Mapbox.MapView>
 			</View>
 
-			<View className="px-4 pb-safe pt-4 bg-canvas border-t border-hairline">
+			<View className="pb-safe pt-4 px-4 bg-canvas border-hairline border-t">
 				<View className="flex-row items-center justify-between mb-2">
 					<View className="flex-1 pr-3">
-						<Text className="text-xl text-ink" fontName="PlusJakartaSans_700Bold">
+						<Text className="text-ink text-xl" fontName="PlusJakartaSans_700Bold">
 							{selectedData.name}
 						</Text>
 						<Text className="mt-1 text-muted text-sm" fontName="PlusJakartaSans_400Regular">
@@ -610,8 +610,8 @@ export default function LocationMapScreen() {
 					</View>
 				</View>
 
-				<View className="mb-3 flex-row items-start gap-2 rounded-2xl border border-hairline bg-surface-soft px-3 py-3">
-					<View className="mt-0.5 h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+				<View className="flex-row gap-2 items-start mb-3 px-3 py-3 bg-surface-soft border border-hairline rounded-2xl">
+					<View className="items-center justify-center mt-0.5 h-8 w-8 bg-primary/10 rounded-full">
 						<Route size={16} color="#ff385c" />
 					</View>
 					<View className="flex-1">
@@ -631,16 +631,16 @@ export default function LocationMapScreen() {
 					</View>
 				</View>
 
-				<View className="mb-4 flex-row flex-wrap justify-between gap-2">
+				<View className="flex-row flex-wrap gap-2 justify-between mb-4">
 					{travelEstimates.map((mode) => (
 						<View
 							key={mode.key}
-							className="w-[48%] rounded-2xl border border-hairline bg-canvas px-3 py-3"
+							className="px-3 py-3 w-[48%] bg-canvas border border-hairline rounded-2xl"
 						>
 							<Text className="text-muted text-xs uppercase" fontName="PlusJakartaSans_600SemiBold">
 								{mode.label}
 							</Text>
-							<Text className="mt-1 text-lg text-ink" fontName="PlusJakartaSans_700Bold">
+							<Text className="mt-1 text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 								{mode.timeLabel}
 							</Text>
 							<Text className="mt-0.5 text-muted text-xs" fontName="PlusJakartaSans_400Regular">
@@ -667,7 +667,7 @@ export default function LocationMapScreen() {
 						</Text>
 					</TouchableOpacity>
 					<TouchableOpacity
-						className="flex-1 items-center justify-center rounded-xl border border-hairline bg-canvas py-3"
+						className="flex-1 items-center justify-center py-3 bg-canvas border border-hairline rounded-xl"
 						onPress={() => router.back()}
 						activeOpacity={0.8}
 					>

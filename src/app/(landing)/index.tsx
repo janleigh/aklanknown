@@ -1,11 +1,11 @@
 import { useOAuth } from "@clerk/expo";
-import { Text } from "@components/Text";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Entypo from "@expo/vector-icons/Entypo";
 import { Link, useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { useCallback } from "react";
 import { Pressable, ScrollView, View } from "react-native";
+import { Text } from "@/components/ui/Text";
 
 WebBrowser.maybeCompleteAuthSession();
 

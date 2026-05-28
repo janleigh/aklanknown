@@ -1,12 +1,12 @@
-import { Text } from "@components/Text";
 import { controllers } from "@lib/api/supabase/controller";
 import { supabase } from "@lib/api/supabase/supabase";
 import type { Location as LocationRecord } from "@lib/types/supabase";
 import { useRouter } from "expo-router";
-import { Building2, MapPin, Pencil, Plus, Trash2 } from "lucide-react-native";
+import { MapPin, Pencil, Plus, Trash2 } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { Alert, FlatList, TouchableOpacity, View } from "react-native";
 import { Card, LoadingSpinner } from "@/components/index";
+import { Text } from "@/components/ui/Text";
 
 export default function AdminLocationsScreen() {
 	const router = useRouter();
@@ -63,7 +63,7 @@ export default function AdminLocationsScreen() {
 
 	return (
 		<View className="flex-1 bg-surface-soft">
-			<View className="px-4 pb-4 pt-14 bg-canvas border-b border-hairline flex-row items-center justify-between">
+			<View className="flex-row items-center justify-between pb-4 pt-14 px-4 bg-canvas border-b border-hairline">
 				<View>
 					<Text className="text-2xl text-ink" fontName="PlusJakartaSans_700Bold">
 						Locations
@@ -73,7 +73,7 @@ export default function AdminLocationsScreen() {
 					</Text>
 				</View>
 				<TouchableOpacity
-					className="h-12 w-12 items-center justify-center rounded-full bg-primary"
+					className="items-center justify-center h-12 w-12 bg-primary rounded-full"
 					onPress={() => router.push("/admin/location/create")}
 					activeOpacity={0.8}
 				>
@@ -95,7 +95,7 @@ export default function AdminLocationsScreen() {
 						<Card className="mb-4">
 							<View className="flex-row items-start justify-between">
 								<View className="flex-1 pr-4">
-									<Text className="mb-1 text-lg text-ink" fontName="PlusJakartaSans_700Bold">
+									<Text className="mb-1 text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 										{item.name}
 									</Text>
 									<View className="flex-row items-center mb-1">
@@ -105,21 +105,21 @@ export default function AdminLocationsScreen() {
 										</Text>
 									</View>
 								</View>
-								<View className="items-end gap-2">
+								<View className="gap-2 items-end">
 									<TouchableOpacity
-										className="h-10 w-10 items-center justify-center rounded-xl bg-primary/10"
+										className="items-center justify-center h-10 w-10 bg-primary/10 rounded-xl"
 										onPress={() =>
 											router.push({
-											pathname: "/location/edit/[id]",
-											params: { id: item.id },
-										})
+												pathname: "/location/edit/[id]",
+												params: { id: item.id },
+											})
 										}
 										activeOpacity={0.75}
 									>
 										<Pencil size={16} color="#ff385c" />
 									</TouchableOpacity>
 									<TouchableOpacity
-										className="h-10 w-10 items-center justify-center rounded-xl bg-error/10"
+										className="items-center justify-center h-10 w-10 bg-error/10 rounded-xl"
 										onPress={() => {
 											Alert.alert(
 												"Delete location?",
@@ -147,10 +147,10 @@ export default function AdminLocationsScreen() {
 					)}
 					ListEmptyComponent={
 						<View className="items-center justify-center py-10">
-							<Text className="text-lg text-ink" fontName="PlusJakartaSans_600SemiBold">
+							<Text className="text-ink text-lg" fontName="PlusJakartaSans_600SemiBold">
 								No locations yet
 							</Text>
-							<Text className="text-center text-muted mt-1" fontName="PlusJakartaSans_400Regular">
+							<Text className="mt-1 text-center text-muted" fontName="PlusJakartaSans_400Regular">
 								Tap the + button to create your first location.
 							</Text>
 						</View>

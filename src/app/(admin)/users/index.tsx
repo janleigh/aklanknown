@@ -1,4 +1,3 @@
-import { Text } from "@components/Text";
 import { controllers } from "@lib/api/supabase/controller";
 import type { UserProfile } from "@lib/types/supabase";
 import { useRouter } from "expo-router";
@@ -6,6 +5,7 @@ import { ArrowLeft, Shield, UserRound } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { Image, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 import { Card, LoadingSpinner } from "@/components/index";
+import { Text } from "@/components/ui/Text";
 
 export default function AdminUsersScreen() {
 	const router = useRouter();
@@ -53,10 +53,10 @@ export default function AdminUsersScreen() {
 
 	return (
 		<View className="flex-1 bg-surface-soft">
-			<View className="px-4 pb-4 pt-14 bg-canvas border-b border-hairline flex-row items-center gap-3">
+			<View className="flex-row gap-3 items-center pb-4 pt-14 px-4 bg-canvas border-b border-hairline">
 				<TouchableOpacity
 					onPress={() => router.back()}
-					className="h-10 w-10 items-center justify-center rounded-full bg-surface-soft"
+					className="items-center justify-center h-10 w-10 bg-surface-soft rounded-full"
 					activeOpacity={0.8}
 				>
 					<ArrowLeft size={20} color="#1a1a1a" />
@@ -71,7 +71,7 @@ export default function AdminUsersScreen() {
 				</View>
 			</View>
 
-			<View className="px-4 pt-4">
+			<View className="pt-4 px-4">
 				<View className="flex-row items-center px-4 py-3 bg-canvas border border-hairline rounded-full shadow-sm">
 					<UserRound size={18} color="#929292" />
 					<TextInput
@@ -92,7 +92,7 @@ export default function AdminUsersScreen() {
 				<ScrollView className="flex-1" contentContainerStyle={{ padding: 16, paddingBottom: 32 }}>
 					{filteredUsers.length === 0 ? (
 						<View className="items-center justify-center px-8 py-16">
-							<View className="mb-4 h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+							<View className="items-center justify-center mb-4 h-14 w-14 bg-primary/10 rounded-full">
 								<Shield size={24} color="#ff385c" />
 							</View>
 							<Text
@@ -109,8 +109,8 @@ export default function AdminUsersScreen() {
 
 					{filteredUsers.map((user) => (
 						<Card key={user.id} className="mb-4">
-							<View className="flex-row items-start gap-5">
-								<View className="h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/10">
+							<View className="flex-row gap-5 items-start">
+								<View className="overflow-hidden items-center justify-center shrink-0 h-14 w-14 bg-primary/10 rounded-full">
 									{user.avatar_url ? (
 										<Image source={{ uri: user.avatar_url }} className="h-full w-full" />
 									) : (
@@ -118,32 +118,32 @@ export default function AdminUsersScreen() {
 									)}
 								</View>
 								<View className="flex-1 pt-1">
-									<View className="flex-row items-center justify-between gap-3">
+									<View className="flex-row gap-3 items-center justify-between">
 										<View className="flex-1">
 											<Text className="text-ink" fontName="PlusJakartaSans_700Bold">
 												{user.name}
 											</Text>
-											<Text className="text-sm text-muted" fontName="PlusJakartaSans_400Regular">
+											<Text className="text-muted text-sm" fontName="PlusJakartaSans_400Regular">
 												{user.email}
 											</Text>
 										</View>
-										<View className="rounded-full bg-surface-soft px-3 py-1">
-											<Text className="text-sm text-ink" fontName="PlusJakartaSans_600SemiBold">
+										<View className="px-3 py-1 bg-surface-soft rounded-full">
+											<Text className="text-ink text-sm" fontName="PlusJakartaSans_600SemiBold">
 												{user.role}
 											</Text>
 										</View>
 									</View>
 
-									<Text className="mt-3 text-sm text-muted" fontName="PlusJakartaSans_400Regular">
+									<Text className="mt-3 text-muted text-sm" fontName="PlusJakartaSans_400Regular">
 										User ID: {user.id}
 									</Text>
-									<Text className="text-sm text-muted" fontName="PlusJakartaSans_400Regular">
+									<Text className="text-muted text-sm" fontName="PlusJakartaSans_400Regular">
 										Provider IDs:{" "}
 										{user.google_id || user.facebook_id
 											? [user.google_id, user.facebook_id].filter(Boolean).join(" • ")
 											: "None linked"}
 									</Text>
-									<Text className="text-sm text-muted" fontName="PlusJakartaSans_400Regular">
+									<Text className="text-muted text-sm" fontName="PlusJakartaSans_400Regular">
 										Joined:{" "}
 										{user.created_at ? new Date(user.created_at).toLocaleDateString() : "Unknown"}
 									</Text>

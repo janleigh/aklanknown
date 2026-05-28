@@ -1,4 +1,3 @@
-import { Text } from "@components/Text";
 import { controllers } from "@lib/api/supabase/controller";
 import { supabase } from "@lib/api/supabase/supabase";
 import type { Location as LocationRecord } from "@lib/types/supabase";
@@ -10,6 +9,7 @@ import { ArrowLeft, Image as ImageIcon } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { Alert, Image, ScrollView, TouchableOpacity, View } from "react-native";
 import { Button, Card, Input, LoadingSpinner } from "@/components/index";
+import { Text } from "@/components/ui/Text";
 
 type FormState = {
 	name: string;
@@ -171,7 +171,9 @@ export default function EditLocationScreen() {
 		try {
 			const storagePath = getStoragePathFromPublicUrl(image.image_url);
 			if (storagePath) {
-				const { error: storageError } = await supabase.storage.from("locations").remove([storagePath]);
+				const { error: storageError } = await supabase.storage
+					.from("locations")
+					.remove([storagePath]);
 				if (storageError) {
 					throw storageError;
 				}
@@ -258,15 +260,15 @@ export default function EditLocationScreen() {
 
 	return (
 		<View className="flex-1 bg-surface-soft">
-			<View className="px-4 pb-4 pt-14 bg-canvas border-b border-hairline flex-row items-center">
+			<View className="flex-row items-center pb-4 pt-14 px-4 bg-canvas border-b border-hairline">
 				<TouchableOpacity
 					onPress={() => router.back()}
-					className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-surface-soft"
+					className="items-center justify-center mr-3 h-10 w-10 bg-surface-soft rounded-full"
 				>
 					<ArrowLeft size={20} color="#1a1a1a" />
 				</TouchableOpacity>
 				<View>
-					<Text className="text-xl text-ink" fontName="PlusJakartaSans_700Bold">
+					<Text className="text-ink text-xl" fontName="PlusJakartaSans_700Bold">
 						Edit Location
 					</Text>
 				</View>
@@ -274,7 +276,7 @@ export default function EditLocationScreen() {
 
 			<ScrollView className="flex-1" contentContainerStyle={{ padding: 16 }}>
 				<Card className="mb-4">
-					<Text className="mb-4 text-lg text-ink" fontName="PlusJakartaSans_700Bold">
+					<Text className="mb-4 text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 						Basic Details
 					</Text>
 					<Input
@@ -294,7 +296,7 @@ export default function EditLocationScreen() {
 				</Card>
 
 				<Card className="mb-4">
-					<Text className="mb-4 text-lg text-ink" fontName="PlusJakartaSans_700Bold">
+					<Text className="mb-4 text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 						Address *
 					</Text>
 					<Input
@@ -318,7 +320,7 @@ export default function EditLocationScreen() {
 				</Card>
 
 				<Card className="mb-4">
-					<Text className="mb-4 text-lg text-ink" fontName="PlusJakartaSans_700Bold">
+					<Text className="mb-4 text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 						Media & Map
 					</Text>
 
@@ -327,7 +329,7 @@ export default function EditLocationScreen() {
 					</Text>
 					<TouchableOpacity
 						onPress={() => void pickImage(setBannerImage)}
-						className="mb-4 h-40 items-center justify-center rounded-xl border-2 border-dashed border-hairline bg-surface-soft overflow-hidden"
+						className="overflow-hidden items-center justify-center mb-4 h-40 bg-surface-soft border-2 border-dashed border-hairline rounded-xl"
 					>
 						{bannerImage || existingBannerImage ? (
 							<Image
@@ -350,7 +352,7 @@ export default function EditLocationScreen() {
 					</Text>
 					<TouchableOpacity
 						onPress={() => void pickImage(setPanoramaImage)}
-						className="mb-4 h-40 items-center justify-center rounded-xl border-2 border-dashed border-hairline bg-surface-soft overflow-hidden"
+						className="overflow-hidden items-center justify-center mb-4 h-40 bg-surface-soft border-2 border-dashed border-hairline rounded-xl"
 					>
 						{panoramaImage || existingPanoramaImage ? (
 							<Image
@@ -373,7 +375,7 @@ export default function EditLocationScreen() {
 					</Text>
 					<TouchableOpacity
 						onPress={() => void pickGalleryImages()}
-						className="mb-3 min-h-24 items-center justify-center rounded-xl border-2 border-dashed border-hairline bg-surface-soft px-4 py-4"
+						className="items-center justify-center mb-3 px-4 py-4 min-h-24 bg-surface-soft border-2 border-dashed border-hairline rounded-xl"
 					>
 						<View className="items-center">
 							<ImageIcon size={24} color="#929292" />
@@ -384,10 +386,13 @@ export default function EditLocationScreen() {
 					</TouchableOpacity>
 
 					{existingGalleryImages.length > 0 || newGalleryImages.length > 0 ? (
-						<View className="mb-3 gap-3">
+						<View className="gap-3 mb-3">
 							{existingGalleryImages.length > 0 ? (
 								<View>
-									<Text className="mb-2 ml-1 text-sm text-muted" fontName="PlusJakartaSans_400Regular">
+									<Text
+										className="mb-2 ml-1 text-muted text-sm"
+										fontName="PlusJakartaSans_400Regular"
+									>
 										Existing images
 									</Text>
 									<ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -400,13 +405,13 @@ export default function EditLocationScreen() {
 														resizeMode="cover"
 													/>
 													<TouchableOpacity
-														className="absolute -right-1 -top-1 h-6 w-6 items-center justify-center rounded-full bg-error"
+														className="absolute items-center justify-center h-6 w-6 bg-error rounded-full -right-1 -top-1"
 														onPress={() => {
 															void deleteGalleryImage(image);
 														}}
 														activeOpacity={0.8}
 													>
-														<Text className="text-xs text-white" fontName="PlusJakartaSans_700Bold">
+														<Text className="text-white text-xs" fontName="PlusJakartaSans_700Bold">
 															x
 														</Text>
 													</TouchableOpacity>
@@ -419,7 +424,10 @@ export default function EditLocationScreen() {
 
 							{newGalleryImages.length > 0 ? (
 								<View>
-									<Text className="mb-2 ml-1 text-sm text-muted" fontName="PlusJakartaSans_400Regular">
+									<Text
+										className="mb-2 ml-1 text-muted text-sm"
+										fontName="PlusJakartaSans_400Regular"
+									>
 										New images to add
 									</Text>
 									<ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -432,13 +440,13 @@ export default function EditLocationScreen() {
 														resizeMode="cover"
 													/>
 													<TouchableOpacity
-														className="absolute -right-1 -top-1 h-6 w-6 items-center justify-center rounded-full bg-error"
+														className="absolute items-center justify-center h-6 w-6 bg-error rounded-full -right-1 -top-1"
 														onPress={() => {
 															setNewGalleryImages((prev) => prev.filter((uri) => uri !== imageUri));
 														}}
 														activeOpacity={0.8}
 													>
-														<Text className="text-xs text-white" fontName="PlusJakartaSans_700Bold">
+														<Text className="text-white text-xs" fontName="PlusJakartaSans_700Bold">
 															x
 														</Text>
 													</TouchableOpacity>

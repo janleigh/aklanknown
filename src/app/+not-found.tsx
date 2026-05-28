@@ -7,7 +7,7 @@ export default function NotFoundScreen() {
 	const router = useRouter();
 
 	return (
-		<ScrollView className="flex-1 bg-surface-soft px-4">
+		<ScrollView className="flex-1 px-4 bg-surface-soft">
 			<View className="flex-1 items-center justify-center px-4 py-12">
 				<View className="items-center justify-center mb-6 h-20 w-20 bg-error/10 rounded-full">
 					<AlertCircle size={40} color="#ef4444" />

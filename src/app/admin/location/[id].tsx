@@ -1,4 +1,3 @@
-import { Text } from "@components/Text";
 import { controllers } from "@lib/api/supabase/controller";
 import { supabase } from "@lib/api/supabase/supabase";
 import { decode } from "base64-arraybuffer";
@@ -9,6 +8,7 @@ import { ArrowLeft, Image as ImageIcon } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { Alert, Image, ScrollView, TouchableOpacity, View } from "react-native";
 import { Button, Card, Input, LoadingSpinner } from "@/components/index";
+import { Text } from "@/components/ui/Text";
 import type { Location } from "@/types";
 
 export default function EditLocationScreen() {
@@ -160,15 +160,15 @@ export default function EditLocationScreen() {
 
 	return (
 		<View className="flex-1 bg-surface-soft">
-			<View className="px-4 pb-4 pt-14 bg-canvas border-b border-hairline flex-row items-center">
+			<View className="flex-row items-center pb-4 pt-14 px-4 bg-canvas border-b border-hairline">
 				<TouchableOpacity
 					onPress={() => router.back()}
-					className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-surface-soft"
+					className="items-center justify-center mr-3 h-10 w-10 bg-surface-soft rounded-full"
 				>
 					<ArrowLeft size={20} color="#1a1a1a" />
 				</TouchableOpacity>
 				<View>
-					<Text className="text-xl text-ink" fontName="PlusJakartaSans_700Bold">
+					<Text className="text-ink text-xl" fontName="PlusJakartaSans_700Bold">
 						Edit Location
 					</Text>
 				</View>
@@ -176,7 +176,7 @@ export default function EditLocationScreen() {
 
 			<ScrollView className="flex-1" contentContainerStyle={{ padding: 16 }}>
 				<Card className="mb-4">
-					<Text className="mb-4 text-lg text-ink" fontName="PlusJakartaSans_700Bold">
+					<Text className="mb-4 text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 						Basic Details
 					</Text>
 					<Input
@@ -196,7 +196,7 @@ export default function EditLocationScreen() {
 				</Card>
 
 				<Card className="mb-4">
-					<Text className="mb-4 text-lg text-ink" fontName="PlusJakartaSans_700Bold">
+					<Text className="mb-4 text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 						Address *
 					</Text>
 					<Input
@@ -220,7 +220,7 @@ export default function EditLocationScreen() {
 				</Card>
 
 				<Card className="mb-4">
-					<Text className="mb-4 text-lg text-ink" fontName="PlusJakartaSans_700Bold">
+					<Text className="mb-4 text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 						Media & Map
 					</Text>
 
@@ -229,7 +229,7 @@ export default function EditLocationScreen() {
 					</Text>
 					<TouchableOpacity
 						onPress={() => pickImage(setBannerImage)}
-						className="mb-4 h-40 items-center justify-center rounded-xl border-2 border-dashed border-hairline bg-surface-soft overflow-hidden"
+						className="overflow-hidden items-center justify-center mb-4 h-40 bg-surface-soft border-2 border-dashed border-hairline rounded-xl"
 					>
 						{displayBanner ? (
 							<Image source={{ uri: displayBanner }} className="h-full w-full" resizeMode="cover" />
@@ -248,7 +248,7 @@ export default function EditLocationScreen() {
 					</Text>
 					<TouchableOpacity
 						onPress={() => pickImage(setPanoramaImage)}
-						className="mb-4 h-40 items-center justify-center rounded-xl border-2 border-dashed border-hairline bg-surface-soft overflow-hidden"
+						className="overflow-hidden items-center justify-center mb-4 h-40 bg-surface-soft border-2 border-dashed border-hairline rounded-xl"
 					>
 						{displayPanorama ? (
 							<Image

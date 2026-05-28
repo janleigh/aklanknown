@@ -1,4 +1,3 @@
-import { Text } from "@components/Text";
 import { controllers } from "@lib/api/supabase/controller";
 import type {
 	Location as LocationRecord,
@@ -10,6 +9,7 @@ import { ArrowLeft, BadgeAlert, CircleCheck, MapPin, Trash2, User } from "lucide
 import { useEffect, useMemo, useState } from "react";
 import { Alert, FlatList, TouchableOpacity, View } from "react-native";
 import { Card, LoadingSpinner } from "@/components/index";
+import { Text } from "@/components/ui/Text";
 
 type FlaggedReviewItem = ReviewRecord & {
 	locationName: string;
@@ -148,7 +148,7 @@ export default function AdminReviewsScreen() {
 	const emptyState = useMemo(
 		() => (
 			<View className="items-center justify-center px-8 py-16">
-				<View className="mb-4 h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+				<View className="items-center justify-center mb-4 h-14 w-14 bg-primary/10 rounded-full">
 					<BadgeAlert size={24} color="#ff385c" />
 				</View>
 				<Text className="mb-2 text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
@@ -164,10 +164,10 @@ export default function AdminReviewsScreen() {
 
 	return (
 		<View className="flex-1 bg-surface-soft">
-			<View className="px-4 pb-4 pt-14 bg-canvas border-b border-hairline flex-row items-center gap-3">
+			<View className="flex-row gap-3 items-center pb-4 pt-14 px-4 bg-canvas border-b border-hairline">
 				<TouchableOpacity
 					onPress={() => router.back()}
-					className="h-10 w-10 items-center justify-center rounded-full bg-surface-soft"
+					className="items-center justify-center h-10 w-10 bg-surface-soft rounded-full"
 					activeOpacity={0.8}
 				>
 					<ArrowLeft size={20} color="#1a1a1a" />
@@ -195,23 +195,23 @@ export default function AdminReviewsScreen() {
 					ListEmptyComponent={emptyState}
 					renderItem={({ item }) => (
 						<Card className="mb-4">
-							<View className="flex-row items-start justify-between gap-3">
+							<View className="flex-row gap-3 items-start justify-between">
 								<View className="flex-1">
-									<View className="mb-2 flex-row items-center gap-2">
-										<View className="h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+									<View className="flex-row gap-2 items-center mb-2">
+										<View className="items-center justify-center h-8 w-8 bg-primary/10 rounded-full">
 											<BadgeAlert size={14} color="#ff385c" />
 										</View>
 										<Text className="text-ink" fontName="PlusJakartaSans_700Bold">
 											{item.locationName}
 										</Text>
 									</View>
-									<View className="mb-2 flex-row items-center gap-2">
+									<View className="flex-row gap-2 items-center mb-2">
 										<User size={14} color="#929292" />
 										<Text className="text-muted text-sm" fontName="PlusJakartaSans_400Regular">
 											{item.authorName}
 										</Text>
 									</View>
-									<View className="mb-2 flex-row items-center gap-2">
+									<View className="flex-row gap-2 items-center mb-2">
 										<MapPin size={14} color="#929292" />
 										<Text className="text-muted text-sm" fontName="PlusJakartaSans_400Regular">
 											Rating: {item.rating ?? "N/A"}
@@ -223,7 +223,7 @@ export default function AdminReviewsScreen() {
 								</View>
 								<View className="gap-2">
 									<TouchableOpacity
-										className="h-10 w-10 items-center justify-center rounded-xl bg-primary/10"
+										className="items-center justify-center h-10 w-10 bg-primary/10 rounded-xl"
 										onPress={() => void handleResolve(item.id)}
 										disabled={activeReviewId === item.id}
 										activeOpacity={0.75}
@@ -231,7 +231,7 @@ export default function AdminReviewsScreen() {
 										<CircleCheck size={16} color="#ff385c" />
 									</TouchableOpacity>
 									<TouchableOpacity
-										className="h-10 w-10 items-center justify-center rounded-xl bg-error/10"
+										className="items-center justify-center h-10 w-10 bg-error/10 rounded-xl"
 										onPress={() => void handleDelete(item.id, item.locationName)}
 										disabled={activeReviewId === item.id}
 										activeOpacity={0.75}

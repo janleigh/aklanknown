@@ -1,4 +1,3 @@
-import { Text } from "@components/Text";
 import { controllers } from "@lib/api/supabase/controller";
 import { supabase } from "@lib/api/supabase/supabase";
 import type { Location as LocationRecord } from "@lib/types/supabase";
@@ -16,6 +15,7 @@ import {
 	View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Text } from "@/components/ui/Text";
 import { API_KEYS } from "@/config";
 
 type MapLocationCardData = {
@@ -220,7 +220,7 @@ export default function MapsScreen() {
 
 	if (Platform.OS !== "android") {
 		return (
-			<View className="flex-1 items-center justify-center bg-canvas px-6">
+			<View className="flex-1 items-center justify-center px-6 bg-canvas">
 				<Text className="text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 					Mapbox map preview is available on Android only.
 				</Text>
@@ -230,7 +230,7 @@ export default function MapsScreen() {
 
 	if (isLoadingLocations) {
 		return (
-			<View className="flex-1 items-center justify-center bg-canvas px-6">
+			<View className="flex-1 items-center justify-center px-6 bg-canvas">
 				<Text className="text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 					Loading locations...
 				</Text>
@@ -240,7 +240,7 @@ export default function MapsScreen() {
 
 	if (!hasMapboxNative || !Mapbox) {
 		return (
-			<View className="flex-1 items-center justify-center bg-canvas px-6">
+			<View className="flex-1 items-center justify-center px-6 bg-canvas">
 				<Text className="text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 					Mapbox native code is not available in this build. Rebuild with a dev client.
 				</Text>
@@ -250,7 +250,7 @@ export default function MapsScreen() {
 
 	if (!selectedData || locations.length === 0) {
 		return (
-			<View className="flex-1 items-center justify-center bg-canvas px-6">
+			<View className="flex-1 items-center justify-center px-6 bg-canvas">
 				<Text className="text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 					No locations available yet.
 				</Text>
@@ -288,7 +288,7 @@ export default function MapsScreen() {
 						</View>
 
 						{shouldShowSearchDropdown ? (
-							<View className="absolute left-0 right-0 top-13.5 z-30 overflow-hidden bg-canvas border border-hairline rounded-2xl shadow-lg">
+							<View className="overflow-hidden absolute left-0 right-0 top-13.5 z-30 bg-canvas border border-hairline rounded-2xl shadow-lg">
 								{searchSuggestions.map((location, index) => (
 									<TouchableOpacity
 										key={location.id}

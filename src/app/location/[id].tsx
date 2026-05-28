@@ -22,7 +22,7 @@ import {
 } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { Alert, Image, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
-import { Text } from "@/components/Text";
+import { Text } from "@/components/ui/Text";
 
 type LocationDetails = {
 	id: string;
@@ -281,6 +281,7 @@ export default function LocationDetailsScreen() {
 					rating: userRating,
 					date: new Date(submittedReview.created_at).toLocaleDateString(),
 					comment: reviewText.trim(),
+					isFlagged: false,
 				},
 				...prev,
 			]);
@@ -354,7 +355,7 @@ export default function LocationDetailsScreen() {
 
 	if (isLoadingLocation) {
 		return (
-			<View className="flex-1 items-center justify-center bg-canvas px-6">
+			<View className="flex-1 items-center justify-center px-6 bg-canvas">
 				<Text className="text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 					Loading location...
 				</Text>
@@ -364,7 +365,7 @@ export default function LocationDetailsScreen() {
 
 	if (!location) {
 		return (
-			<View className="flex-1 items-center justify-center bg-canvas px-6">
+			<View className="flex-1 items-center justify-center px-6 bg-canvas">
 				<Text className="mb-3 text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 					{loadError ?? "Location not found."}
 				</Text>
@@ -603,7 +604,7 @@ export default function LocationDetailsScreen() {
 							<Text className="leading-5 text-body" fontName="PlusJakartaSans_400Regular">
 								{review.comment}
 							</Text>
-							<View className="mt-3 flex-row justify-end">
+							<View className="flex-row justify-end mt-3">
 								<TouchableOpacity
 									className={`rounded-full px-3 py-2 ${review.isFlagged ? "bg-primary/10" : "bg-error/10"}`}
 									onPress={() => void handleReportReview(review.id)}

@@ -1,7 +1,7 @@
 import { Bell, ChevronRight, Languages, MapPin, Moon } from "lucide-react-native";
 import { useState } from "react";
 import { ScrollView, Switch, TouchableOpacity, View } from "react-native";
-import { Text } from "@/components/Text";
+import { Text } from "@/components/ui/Text";
 
 export default function SettingsScreen() {
 	const [notifications, setNotifications] = useState(true);

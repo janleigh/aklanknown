@@ -12,7 +12,7 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import { Text } from "@/components/Text";
+import { Text } from "@/components/ui/Text";
 
 type PanoramaLocation = Pick<
 	SupabaseLocation,
@@ -163,7 +163,7 @@ export default function Location360Screen() {
 
 	if (isLoading) {
 		return (
-			<View className="flex-1 items-center justify-center bg-canvas px-6">
+			<View className="flex-1 items-center justify-center px-6 bg-canvas">
 				<Text className="text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 					Loading 360 view...
 				</Text>
@@ -173,7 +173,7 @@ export default function Location360Screen() {
 
 	if (!location) {
 		return (
-			<View className="flex-1 items-center justify-center bg-canvas px-6">
+			<View className="flex-1 items-center justify-center px-6 bg-canvas">
 				<Text className="mb-3 text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 					{loadError ?? "Location not found."}
 				</Text>
@@ -192,7 +192,7 @@ export default function Location360Screen() {
 
 	if (!panoramaUrl) {
 		return (
-			<View className="flex-1 items-center justify-center bg-canvas px-6">
+			<View className="flex-1 items-center justify-center px-6 bg-canvas">
 				<Text className="mb-3 text-center text-ink text-lg" fontName="PlusJakartaSans_700Bold">
 					No 360 image available for this location yet.
 				</Text>
@@ -219,7 +219,7 @@ export default function Location360Screen() {
 				>
 					<ArrowLeft size={20} color="#222222" />
 				</TouchableOpacity>
-				<View className="flex-row items-center gap-2 rounded-full bg-canvas/85 px-3 py-2 shadow-sm">
+				<View className="flex-row gap-2 items-center px-3 py-2 bg-canvas/85 rounded-full shadow-sm">
 					<Maximize2 size={16} color="#ff385c" />
 					<Text className="font-semibold text-ink" fontName="PlusJakartaSans_600SemiBold">
 						360 View
@@ -250,8 +250,8 @@ export default function Location360Screen() {
 				))}
 			</ScrollView>
 
-			<View className="absolute bottom-8 left-4 right-4 rounded-2xl bg-canvas/90 px-4 py-3 shadow-sm">
-				<View className="flex-row items-center gap-2">
+			<View className="absolute bottom-8 left-4 right-4 px-4 py-3 bg-canvas/90 rounded-2xl shadow-sm">
+				<View className="flex-row gap-2 items-center">
 					<RotateCw size={16} color="#ff385c" />
 					<Text className="font-semibold text-ink" fontName="PlusJakartaSans_600SemiBold">
 						Swipe sideways to explore the panorama
