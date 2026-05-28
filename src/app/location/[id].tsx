@@ -21,7 +21,12 @@ import {
 	X,
 } from "lucide-react-native";
 import { useEffect, useState } from "react";
+<<<<<<< Updated upstream
 import { Alert, Image, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
+=======
+import { useUser } from "@clerk/expo";
+import { Alert, Dimensions, Image, Modal, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
+>>>>>>> Stashed changes
 import { Text } from "@/components/Text";
 
 type LocationDetails = {
@@ -83,6 +88,8 @@ export default function LocationDetailsScreen() {
 	const { id } = useLocalSearchParams();
 	const router = useRouter();
 	const { user } = useUser();
+	const { width: screenWidth } = Dimensions.get("window");
+	const isTablet = screenWidth >= 768;
 
 	const locationId = typeof id === "string" ? id : Array.isArray(id) ? id[0] : "";
 	const [location, setLocation] = useState<LocationDetails | null>(null);
@@ -94,7 +101,11 @@ export default function LocationDetailsScreen() {
 	const [reviewText, setReviewText] = useState("");
 	const [isFavorite, setIsFavorite] = useState(false);
 	const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+<<<<<<< Updated upstream
 	const [reviews, setReviews] = useState<ReviewItem[]>([]);
+=======
+	const [isImageModalVisible, setIsImageModalVisible] = useState(false);
+>>>>>>> Stashed changes
 
 	useEffect(() => {
 		let isMounted = true;
@@ -164,9 +175,14 @@ export default function LocationDetailsScreen() {
 						}
 					}),
 				);
+				
 				const reviewerNameById = new Map(
 					reviewerProfiles
+<<<<<<< Updated upstream
 						.filter((profile) => profile !== null)
+=======
+						.filter((profile): profile is NonNullable<typeof profile> => profile !== null)
+>>>>>>> Stashed changes
 						.map((profile) => [profile.id, profile.name]),
 				);
 
@@ -311,6 +327,7 @@ export default function LocationDetailsScreen() {
 		}
 	};
 
+<<<<<<< Updated upstream
 	const handleReportReview = async (reviewId: string) => {
 		try {
 			await controllers.review.update(reviewId, { is_flagged: true });
@@ -350,6 +367,16 @@ export default function LocationDetailsScreen() {
 			setIsFavorite(!nextValue);
 			Alert.alert("Bookmark Failed", "We couldn't save this bookmark right now.");
 		}
+=======
+	const nextImage = () => {
+		if (!location) return;
+		setCurrentImageIndex((prev) => (prev < location.images.length - 1 ? prev + 1 : 0));
+	};
+
+	const prevImage = () => {
+		if (!location) return;
+		setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : location.images.length - 1));
+>>>>>>> Stashed changes
 	};
 
 	if (isLoadingLocation) {
@@ -381,20 +408,19 @@ export default function LocationDetailsScreen() {
 		);
 	}
 
-	const nextImage = () => {
-		setCurrentImageIndex((prev) => (prev < location.images.length - 1 ? prev + 1 : 0));
-	};
-
-	const prevImage = () => {
-		setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : location.images.length - 1));
-	};
-
 	return (
 		<View className="flex-1 bg-canvas">
-			{/* ✅ BOTTOM NAVBAR FIX: Added pb-20 so content doesn't hide behind layout tab bar */}
 			<ScrollView showsVerticalScrollIndicator={false} className="pb-20">
 				{/* Image Carousel */}
 				<View className="relative h-72 bg-surface-soft">
+					{/* ✅ FIXED: Tap to open modal - moved to higher z-index */}
+					<TouchableOpacity
+						activeOpacity={0.9}
+						onPress={() => setIsImageModalVisible(true)}
+						className="absolute inset-0 z-10"
+						disabled={location.images.length === 0}
+					/>
+					
 					<Image
 						source={{ uri: location.images[currentImageIndex] }}
 						className="h-full w-full"
@@ -404,15 +430,21 @@ export default function LocationDetailsScreen() {
 					{location.images.length > 1 && (
 						<>
 							<TouchableOpacity
-								className="absolute left-4 top-1/2 items-center justify-center h-10 w-10 bg-canvas/80 rounded-full shadow-sm -translate-y-1/2"
-								onPress={prevImage}
+								className="absolute left-4 top-1/2 items-center justify-center h-10 w-10 bg-canvas/80 rounded-full shadow-sm -translate-y-1/2 z-20"
+								onPress={(e) => {
+									e.stopPropagation();
+									prevImage();
+								}}
 								activeOpacity={0.7}
 							>
 								<ChevronLeft size={24} color="#222222" />
 							</TouchableOpacity>
 							<TouchableOpacity
-								className="absolute right-4 top-1/2 items-center justify-center h-10 w-10 bg-canvas/80 rounded-full shadow-sm -translate-y-1/2"
-								onPress={nextImage}
+								className="absolute right-4 top-1/2 items-center justify-center h-10 w-10 bg-canvas/80 rounded-full shadow-sm -translate-y-1/2 z-20"
+								onPress={(e) => {
+									e.stopPropagation();
+									nextImage();
+								}}
 								activeOpacity={0.7}
 							>
 								<ChevronRight size={24} color="#222222" />
@@ -420,7 +452,7 @@ export default function LocationDetailsScreen() {
 						</>
 					)}
 
-					<View className="absolute left-4 right-4 top-12 flex-row justify-between">
+					<View className="absolute left-4 right-4 top-12 flex-row justify-between z-30">
 						<TouchableOpacity
 							className="items-center justify-center h-10 w-10 bg-canvas/80 rounded-full shadow-sm"
 							onPress={() => router.back()}
@@ -451,7 +483,7 @@ export default function LocationDetailsScreen() {
 					</View>
 
 					{location.images.length > 1 && (
-						<View className="absolute bottom-4 left-0 right-0 flex-row gap-2 justify-center">
+						<View className="absolute bottom-4 left-0 right-0 flex-row gap-2 justify-center z-20">
 							{location.images.map((_, index: number) => (
 								<View
 									key={index}
@@ -466,11 +498,14 @@ export default function LocationDetailsScreen() {
 
 				{/* Content */}
 				<View className="pt-6 px-5">
-					<Text className="mb-2 text-2xl text-ink" fontName="PlusJakartaSans_700Bold">
-						{location.name}
-					</Text>
+					<View className="mb-2">
+						<Text className="text-2xl text-ink" fontName="PlusJakartaSans_700Bold" numberOfLines={1}>
+							{location.name}
+						</Text>
+					</View>
+					
 					<View className="flex-row items-center justify-between mb-4">
-						<View className="flex-row gap-2 items-center">
+						<View className="flex-row gap-2 items-center flex-1">
 							<View className="flex-row items-center">
 								<Star size={16} color="#FBBF24" fill="#FBBF24" />
 								<Text
@@ -484,9 +519,9 @@ export default function LocationDetailsScreen() {
 								({location.reviews} reviews)
 							</Text>
 						</View>
-						<View className="flex-row gap-1 items-center">
+						<View className="flex-row gap-1 items-center flex-1 justify-end">
 							<MapPin size={16} color="#929292" />
-							<Text className="text-muted text-sm" fontName="PlusJakartaSans_400Regular">
+							<Text className="ml-1 text-muted text-sm text-right" numberOfLines={1} fontName="PlusJakartaSans_400Regular">
 								{location.location}
 							</Text>
 						</View>
@@ -622,6 +657,64 @@ export default function LocationDetailsScreen() {
 					))}
 				</View>
 			</ScrollView>
+<<<<<<< Updated upstream
+=======
+
+			{/* Full-Screen Image Modal */}
+			<Modal
+				visible={isImageModalVisible}
+				transparent={true}
+				animationType="fade"
+				onRequestClose={() => setIsImageModalVisible(false)}
+			>
+				<View className="flex-1 bg-black/95 items-center justify-center relative">
+					<TouchableOpacity
+						className="absolute top-12 right-4 z-20 h-10 w-10 items-center justify-center bg-white/20 rounded-full"
+						onPress={() => setIsImageModalVisible(false)}
+						activeOpacity={0.7}
+					>
+						<X size={24} color="#fff" />
+					</TouchableOpacity>
+
+					<Image
+						source={{ uri: location.images[currentImageIndex] }}
+						className={`${isTablet ? "w-[80%] h-[80%]" : "w-[95%] h-[75%]"}`}
+						resizeMode="contain"
+					/>
+
+					{location.images.length > 1 && (
+						<>
+							<TouchableOpacity
+								className="absolute left-4 top-1/2 -translate-y-1/2 h-12 w-12 items-center justify-center bg-white/20 rounded-full"
+								onPress={() => {
+									prevImage();
+								}}
+								activeOpacity={0.7}
+							>
+								<ChevronLeft size={28} color="#fff" />
+							</TouchableOpacity>
+							<TouchableOpacity
+								className="absolute right-4 top-1/2 -translate-y-1/2 h-12 w-12 items-center justify-center bg-white/20 rounded-full"
+								onPress={() => {
+									nextImage();
+								}}
+								activeOpacity={0.7}
+							>
+								<ChevronRight size={28} color="#fff" />
+							</TouchableOpacity>
+						</>
+					)}
+
+					{location.images.length > 1 && (
+						<View className="absolute bottom-8 bg-black/60 px-4 py-2 rounded-full">
+							<Text className="text-white text-sm font-medium">
+								{currentImageIndex + 1} / {location.images.length}
+							</Text>
+						</View>
+					)}
+				</View>
+			</Modal>
+>>>>>>> Stashed changes
 		</View>
 	);
 }
