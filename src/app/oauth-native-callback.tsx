@@ -6,7 +6,7 @@ import { ActivityIndicator, View } from "react-native";
 export default function OAuthNativeCallbackScreen() {
 	const clerk = useClerk();
 	const router = useRouter();
-	const searchParams = useLocalSearchParams<Record<string, string | string[] | undefined>>();
+	const searchParams = useLocalSearchParams();
 
 	useEffect(() => {
 		let isActive = true;

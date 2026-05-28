@@ -55,7 +55,7 @@ export default function LandingPage() {
 				<View className="mb-12 space-y-3">
 					<Pressable
 						onPress={() => onSelectAuth("oauth_google")}
-						className="flex-row items-center justify-center mb-2 space-x-2 h-11 w-full bg-primary hover:bg-primary-active rounded-lg shadow-sm active:scale-98"
+						className="flex-row items-center justify-center mb-3 space-x-2 h-11 w-full bg-primary hover:bg-primary-active rounded-lg shadow-sm active:scale-98"
 					>
 						<AntDesign name="google" size={20} color="white" />
 						<Text className="ml-2 text-base text-white" fontName="PlusJakartaSans_600SemiBold">
@@ -64,8 +64,9 @@ export default function LandingPage() {
 					</Pressable>
 
 					<Pressable
+						disabled
 						onPress={() => onSelectAuth("oauth_facebook")}
-						className="flex-row items-center justify-center space-x-2 h-11 w-full bg-white hover:bg-gray-100 border border-gray-200 rounded-lg active:scale-98"
+						className="flex-row items-center justify-center space-x-2 h-11 w-full bg-white hover:bg-gray-100 border border-gray-200 rounded-lg active:scale-98 opacity-50"
 					>
 						<Entypo name="facebook" size={20} color="black" />
 						<Text className="ml-2 text-base text-gray-900" fontName="PlusJakartaSans_600SemiBold">

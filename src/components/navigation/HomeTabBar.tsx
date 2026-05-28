@@ -7,7 +7,7 @@ export const HOME_TAB_SCREEN_OPTIONS = {
 		borderTopWidth: 1,
 		borderTopColor: "#e5e5e5",
 		paddingBottom: 24,
-		paddingTop: 8,
+		paddingTop: 4,
 		height: 80,
 	},
 	tabBarItemStyle: {

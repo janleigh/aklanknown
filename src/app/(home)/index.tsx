@@ -99,7 +99,7 @@ export default function HomeScreen() {
 					/>
 				</View>
 				<Text className="text-3xl text-ink mb-1" fontName="PlusJakartaSans_700Bold">
-					Hi, {user?.firstName} 👋
+					Hi, {user?.firstName || "there"} 👋
 				</Text>
 				<Text className="text-muted text-base mb-6" fontName="PlusJakartaSans_400Regular">
 					Where do you want to explore today?

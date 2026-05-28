@@ -4,7 +4,7 @@ import type { Location as SupabaseLocation } from "@lib/types/supabase";
 import type { Camera } from "@rnmapbox/maps";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import type { Feature, LineString } from "geojson";
-import { ArrowLeft, MapPin, Navigation, Route, Star } from "lucide-react-native";
+import { ArrowLeft, MapPin, Navigation, Star } from "lucide-react-native";
 import { type ElementRef, useEffect, useMemo, useRef, useState } from "react";
 import { NativeModules, Platform, TouchableOpacity, View } from "react-native";
 import { Text } from "@/components/ui/Text";
@@ -417,7 +417,7 @@ export default function LocationMapScreen() {
 		}));
 	}, [distanceForEstimates]);
 
-	const locationStatusLabel =
+	const _locationStatusLabel =
 		locationStatus === "loading"
 			? "Getting your starting point..."
 			: locationStatus === "denied"
@@ -425,7 +425,7 @@ export default function LocationMapScreen() {
 				: locationStatus === "error"
 					? "Could not read your current position right now."
 					: "Starting from your current position.";
-	const routeStatusLabel =
+	const _routeStatusLabel =
 		routeStatus === "loading"
 			? "Loading the road route..."
 			: routeStatus === "approx"
@@ -473,7 +473,7 @@ export default function LocationMapScreen() {
 		// hide route state: reset flag and attempt to recenter camera
 		setRouteShown(false);
 		try {
-			const anyRef = cameraRef.current as any;
+			const anyRef = cameraRef.current;
 			if (anyRef?.setCamera) {
 				anyRef.setCamera({ centerCoordinate: mapCenter, zoomLevel: 14, animationDuration: 400 });
 			}
@@ -516,17 +516,22 @@ export default function LocationMapScreen() {
 		return (
 			<View className="flex-1 items-center justify-center px-6 bg-canvas">
 				<View className="max-w-sm items-center rounded-3xl border border-hairline bg-surface-soft px-6 py-8">
-					<Text
-						className="mb-3 text-center text-ink text-xl"
-						fontName="PlusJakartaSans_700Bold"
-					>
+					<Text className="mb-3 text-center text-ink text-xl" fontName="PlusJakartaSans_700Bold">
 						{locationError ?? "This location cannot be shown on the map yet."}
 					</Text>
-					<Text className="mb-6 text-center text-muted text-sm" fontName="PlusJakartaSans_400Regular">
-						The location exists, but the admin has not added coordinates yet, so Mapbox cannot place it.
+					<Text
+						className="mb-6 text-center text-muted text-sm"
+						fontName="PlusJakartaSans_400Regular"
+					>
+						The location exists, but the admin has not added coordinates yet, so Mapbox cannot place
+						it.
 					</Text>
-					<Text className="mb-6 text-center text-muted text-sm" fontName="PlusJakartaSans_400Regular">
-						Ask the stupid admin to add latitude and longitude for this location before opening it on the map.
+					<Text
+						className="mb-6 text-center text-muted text-sm"
+						fontName="PlusJakartaSans_400Regular"
+					>
+						Ask the stupid admin to add latitude and longitude for this location before opening it
+						on the map.
 					</Text>
 					<TouchableOpacity
 						className="px-5 py-3 bg-primary rounded-xl"
@@ -618,7 +623,7 @@ export default function LocationMapScreen() {
 				</View>
 			</View>
 
-			<View className="absolute bottom-0 left-0 right-0 h-[36%] pt-3 pb-4 px-4 bg-white rounded-t-[32px] shadow-[0_-8px_30px_rgba(0,0,0,0.12)] overflow-hidden">
+			<View className="absolute bottom-0 left-0 right-0 h-[35%] pt-3 px-4 bg-white rounded-t-4xl shadow-[0_-8px_30px_rgba(0,0,0,0.12)] overflow-hidden">
 				<View className="items-center mb-3">
 					<View className="h-1.5 w-12 bg-surface-strong rounded-full" />
 				</View>
@@ -645,7 +650,7 @@ export default function LocationMapScreen() {
 					</View>
 				</View>
 
-				<View className="flex-row gap-2 items-center mb-3 px-3 py-2.5 bg-surface-soft border border-hairline-soft rounded-2xl">
+				{/* <View className="flex-row gap-2 items-center mb-3 px-3 py-2.5 bg-surface-soft border border-hairline-soft rounded-2xl">
 					<View className="items-center justify-center h-8 w-8 bg-primary/10 rounded-full">
 						<Route size={16} color="#ff385c" />
 					</View>
@@ -662,25 +667,28 @@ export default function LocationMapScreen() {
 							</Text>
 						) : null}
 					</View>
-				</View>
+				</View> */}
 
-				<View className="flex-row flex-nowrap gap-1.5 mb-3">
+				<View className="flex-row flex-wrap gap-2 mb-3">
 					{travelEstimates.map((mode) => (
 						<View
 							key={mode.key}
-							className="flex-1 min-w-0 px-1.5 py-1.5 bg-surface-strong/50 border border-hairline-soft rounded-2xl"
+							className="w-[48.5%] px-3 py-2.5 bg-surface-strong/50 border border-hairline-soft rounded-2xl"
 						>
 							<Text
-								className="text-muted-soft text-[7px] uppercase tracking-wider text-center"
+								className="text-muted-soft text-[9px] uppercase tracking-wider text-center"
 								fontName="PlusJakartaSans_600SemiBold"
 							>
 								{mode.label}
 							</Text>
-							<Text className="mt-0.5 text-ink text-[9px] text-center" fontName="PlusJakartaSans_700Bold">
+							<Text
+								className="mt-1 text-ink text-xs text-center"
+								fontName="PlusJakartaSans_700Bold"
+							>
 								{mode.timeLabel}
 							</Text>
 							<Text
-								className="mt-0.5 text-muted-soft text-[7px] text-center"
+								className="mt-0.5 text-muted-soft text-[9px] text-center"
 								fontName="PlusJakartaSans_400Regular"
 							>
 								{distanceForEstimates == null
@@ -703,10 +711,10 @@ export default function LocationMapScreen() {
 					</TouchableOpacity>
 					<TouchableOpacity
 						className={`flex-1 flex-row items-center justify-center gap-1.5 rounded-full py-3 shadow-sm ${
-							(!routeShown && !canFocusRoute) ? "bg-primary/50" : "bg-primary"
+							!routeShown && !canFocusRoute ? "bg-primary/50" : "bg-primary"
 						}`}
 						onPress={handleRouteToggle}
-						activeOpacity={(!routeShown && !canFocusRoute) ? 1 : 0.8}
+						activeOpacity={!routeShown && !canFocusRoute ? 1 : 0.8}
 						disabled={!routeShown && !canFocusRoute}
 					>
 						<Navigation size={16} color="#ffffff" />

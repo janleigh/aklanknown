@@ -244,7 +244,7 @@ export default function MapsScreen() {
 								activeOpacity={0.85}
 							>
 								<View
-									className={`px-3 py-1.5 rounded-lg shadow-sm border ${selectedLocation === loc.id ? "bg-primary border-primary" : "bg-canvas border-primary"}`}
+									className={`px-3 py-1.5 rounded-full shadow-sm border ${selectedLocation === loc.id ? "bg-primary border-primary" : "bg-canvas border-primary"}`}
 								>
 									<Text
 										className={`text-xs font-bold ${selectedLocation === loc.id ? "text-white" : "text-primary"}`}
@@ -281,7 +281,7 @@ export default function MapsScreen() {
 						activeOpacity={0.95}
 						onPress={() => router.push(`/location/${selectedData.id}`)}
 					>
-						<View className="h-[140px] w-full bg-surface-soft relative">
+						<View className="h-35 w-full bg-surface-soft relative">
 							{selectedData.image ? (
 								<Image
 									source={{ uri: selectedData.image }}
@@ -301,8 +301,8 @@ export default function MapsScreen() {
 									>
 										{selectedData.rating}
 									</Text>
-									<Text className="ml-1 text-white text-xs" fontName="PlusJakartaSans_600SemiBold">
-										{selectedData.reviews} reviews
+									<Text className="ml-1 mb-0.5 text-white text-xs" fontName="PlusJakartaSans_600SemiBold">
+										({selectedData.reviews}) reviews
 									</Text>
 								</View>
 							</View>
@@ -324,9 +324,9 @@ export default function MapsScreen() {
 							</Text>
 
 							<View className="flex-row justify-between items-center mt-1">
-								<View className="bg-primary px-4 py-2 rounded-lg shadow-sm">
+								<View className="bg-primary px-4 py-2 rounded-full shadow-sm">
 									<Text className="text-white font-bold text-sm" fontName="PlusJakartaSans_700Bold">
-										View details
+										View Details
 									</Text>
 								</View>
 							</View>
