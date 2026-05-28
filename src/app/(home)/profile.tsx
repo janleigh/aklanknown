@@ -58,7 +58,7 @@ export default function ProfileScreen() {
 		<ScrollView className="flex-1 bg-surface-soft">
 			{/* Header Section */}
 			<View className="bg-primary rounded-b-[40px] shadow-sm pb-8 pt-16 px-6 items-center">
-				<View className="relative shadow-md mb-2">
+				<View className="relative mb-2">
 					<View className="overflow-hidden items-center justify-center h-28 w-28 bg-surface-soft rounded-full border-4 border-canvas">
 						{user?.imageUrl ? (
 							<Image source={{ uri: user.imageUrl }} className="h-full w-full" />

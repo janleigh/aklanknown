@@ -43,6 +43,7 @@ type ReviewItem = {
 	date: string;
 	comment: string;
 	isFlagged: boolean;
+	avatarUrl?: string;
 };
 
 function buildLocationDetails(
@@ -163,20 +164,24 @@ export default function LocationDetailsScreen() {
 						}
 					}),
 				);
-				const reviewerNameById = new Map(
+				const reviewerProfileById = new Map(
 					reviewerProfiles
 						.filter((profile) => profile !== null)
-						.map((profile) => [profile.id, profile.name]),
+						.map((profile) => [profile.id, profile]),
 				);
 
-				const hydratedReviews: ReviewItem[] = (reviewResult.data ?? []).map((review) => ({
-					id: review.id,
-					userName: review.user_id ? (reviewerNameById.get(review.user_id) ?? "Guest") : "Guest",
-					rating: typeof review.rating === "number" ? review.rating : 0,
-					date: review.created_at ? new Date(review.created_at).toLocaleDateString() : "Recently",
-					comment: review.comment || "",
-					isFlagged: Boolean(review.is_flagged),
-				}));
+				const hydratedReviews: ReviewItem[] = (reviewResult.data ?? []).map((review) => {
+					const profile = review.user_id ? reviewerProfileById.get(review.user_id) : null;
+					return {
+						id: review.id,
+						userName: profile?.name ?? "Guest",
+						rating: typeof review.rating === "number" ? review.rating : 0,
+						date: review.created_at ? new Date(review.created_at).toLocaleDateString() : "Recently",
+						comment: review.comment || "",
+						isFlagged: Boolean(review.is_flagged),
+						avatarUrl: profile?.avatar_url,
+					};
+				});
 
 				if (isMounted) {
 					setLocation(
@@ -281,6 +286,7 @@ export default function LocationDetailsScreen() {
 					date: new Date(submittedReview.created_at).toLocaleDateString(),
 					comment: reviewText.trim(),
 					isFlagged: false,
+					avatarUrl: user?.imageUrl,
 				},
 				...prev,
 			]);
@@ -391,7 +397,7 @@ export default function LocationDetailsScreen() {
 
 	return (
 		<View className="flex-1 bg-canvas">
-			<ScrollView showsVerticalScrollIndicator={false} className="pb-32">
+			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
 				{/* Image Carousel */}
 				<View className="relative h-96 bg-surface-soft">
 					<Image
@@ -559,17 +565,30 @@ export default function LocationDetailsScreen() {
 					{reviews.map((review) => (
 						<View key={review.id} className="mb-6">
 							<View className="flex-row items-start justify-between mb-2">
-								<View>
-									<Text
-										className="mb-1 font-semibold text-ink"
-										fontName="PlusJakartaSans_600SemiBold"
-									>
-										{review.userName}
-									</Text>
-									<View className="flex-row gap-0.5">
-										{Array.from({ length: review.rating }).map((_, i) => (
-											<Star key={i} size={14} color="#FBBF24" fill="#FBBF24" />
-										))}
+								<View className="flex-row items-center gap-3">
+									<View className="h-10 w-10 bg-surface-strong rounded-full overflow-hidden">
+										{review.avatarUrl ? (
+											<Image source={{ uri: review.avatarUrl }} className="h-full w-full" />
+										) : (
+											<View className="h-full w-full items-center justify-center bg-primary/10">
+												<Text className="text-primary font-bold text-lg" fontName="PlusJakartaSans_700Bold">
+													{review.userName.charAt(0).toUpperCase()}
+												</Text>
+											</View>
+										)}
+									</View>
+									<View>
+										<Text
+											className="mb-1 font-semibold text-ink"
+											fontName="PlusJakartaSans_600SemiBold"
+										>
+											{review.userName}
+										</Text>
+										<View className="flex-row gap-0.5">
+											{Array.from({ length: review.rating }).map((_, i) => (
+												<Star key={i} size={14} color="#FBBF24" fill="#FBBF24" />
+											))}
+										</View>
 									</View>
 								</View>
 								<Text className="text-muted-soft text-sm" fontName="PlusJakartaSans_400Regular">
