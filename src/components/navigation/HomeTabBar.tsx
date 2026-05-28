@@ -4,16 +4,19 @@ export const HOME_TAB_SCREEN_OPTIONS = {
 	headerShown: false,
 	tabBarStyle: {
 		backgroundColor: "#ffffff",
-		borderTopColor: "#ebebeb",
 		borderTopWidth: 1,
-		height: 80,
+		borderTopColor: "#e5e5e5",
 		paddingBottom: 24,
 		paddingTop: 8,
+		height: 80,
+	},
+	tabBarItemStyle: {
+		paddingVertical: 8,
 	},
 	tabBarActiveTintColor: "#ff385c",
 	tabBarInactiveTintColor: "#929292",
 	tabBarLabelStyle: {
-		fontSize: 12,
+		fontSize: 10,
 		fontWeight: "600",
 	},
 } as const;

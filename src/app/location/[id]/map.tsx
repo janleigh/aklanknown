@@ -507,22 +507,7 @@ export default function LocationMapScreen() {
 	}
 
 	return (
-		<View className="flex-1 pb-6 bg-canvas">
-			<View className="absolute left-4 right-4 top-12 z-20 flex-row items-center justify-between">
-				<TouchableOpacity
-					className="items-center justify-center h-11 w-11 bg-canvas/90 rounded-full shadow-sm"
-					onPress={() => router.back()}
-					activeOpacity={0.7}
-				>
-					<ArrowLeft size={20} color="#222222" />
-				</TouchableOpacity>
-				<View className="px-4 py-2 bg-canvas/90 rounded-full shadow-sm">
-					<Text className="font-semibold text-ink text-sm" fontName="PlusJakartaSans_600SemiBold">
-						{selectedData.name}
-					</Text>
-				</View>
-			</View>
-
+		<View className="flex-1 bg-canvas">
 			<View className="flex-1">
 				<Mapbox.MapView style={{ flex: 1 }} styleURL={Mapbox.StyleURL.Street}>
 					<Mapbox.Camera
@@ -559,91 +544,104 @@ export default function LocationMapScreen() {
 							allowOverlap
 						>
 							<View className="items-center justify-center">
-								<View className="h-7 w-7 bg-sky-500 border-2 border-white rounded-full shadow-md" />
-								<View className="mt-1 h-2 w-2 bg-sky-400/80 rounded-full" />
+								<View className="h-8 w-8 bg-sky-500 border-2 border-white rounded-full shadow-lg items-center justify-center">
+									<View className="h-3 w-3 bg-white rounded-full" />
+								</View>
 							</View>
 						</Mapbox.MarkerView>
 					) : null}
 
-					<Mapbox.MarkerView
-						coordinate={[selectedData.longitude, selectedData.latitude]}
-						allowOverlap
-					>
-						<View className="items-center justify-center">
-							<View className="items-center justify-center h-10 w-10 bg-primary border-2 border-white rounded-full shadow-md">
-								<MapPin size={16} color="#fff" />
-							</View>
-							<View className="mt-1 h-2 w-2 bg-primary/70 rounded-full" />
-						</View>
-					</Mapbox.MarkerView>
-					{customLocation ? (
+					{selectedData ? (
 						<Mapbox.MarkerView
-							coordinate={[customLocation.longitude, customLocation.latitude]}
+							coordinate={[selectedData.longitude, selectedData.latitude]}
 							allowOverlap
 						>
-							<View className="items-center justify-center">
-								<View className="items-center justify-center h-10 w-10 bg-primary border-2 border-white rounded-full shadow-md">
-									<MapPin size={16} color="#fff" />
+							<View className="items-center justify-center pb-8">
+								<View className="items-center justify-center h-12 w-12 bg-primary border-4 border-white rounded-full shadow-xl">
+									<MapPin size={20} color="#fff" />
 								</View>
-								<View className="mt-1 h-2 w-2 bg-primary/70 rounded-full" />
+								<View className="absolute bottom-0 h-2 w-8 bg-black/20 rounded-full blur-sm" />
 							</View>
 						</Mapbox.MarkerView>
 					) : null}
 				</Mapbox.MapView>
 			</View>
 
-			<View className="pb-safe pt-4 px-4 bg-canvas border-hairline border-t">
-				<View className="flex-row items-center justify-between mb-2">
-					<View className="flex-1 pr-3">
-						<Text className="text-ink text-xl" fontName="PlusJakartaSans_700Bold">
+			<View className="absolute left-4 right-4 top-12 z-20 flex-row items-center justify-between">
+				<TouchableOpacity
+					className="items-center justify-center h-12 w-12 bg-white rounded-full shadow-lg"
+					onPress={() => router.back()}
+					activeOpacity={0.8}
+				>
+					<ArrowLeft size={22} color="#222222" />
+				</TouchableOpacity>
+				<View className="px-5 py-3 bg-white rounded-full shadow-lg">
+					<Text className="text-ink text-sm" fontName="PlusJakartaSans_700Bold">
+						{selectedData.name}
+					</Text>
+				</View>
+			</View>
+
+			<View className="absolute bottom-0 left-0 right-0 pt-6 pb-8 px-6 bg-canvas rounded-t-4xl shadow-[0_-8px_30px_rgba(0,0,0,0.12)]">
+				<View className="items-center mb-6">
+					<View className="h-1.5 w-12 bg-surface-strong rounded-full" />
+				</View>
+
+				<View className="flex-row items-center justify-between mb-5">
+					<View className="flex-1 pr-4">
+						<Text className="text-ink text-2xl leading-tight" fontName="PlusJakartaSans_700Bold">
 							{selectedData.name}
 						</Text>
-						<Text className="mt-1 text-muted text-sm" fontName="PlusJakartaSans_400Regular">
+						<Text className="mt-1.5 text-muted text-sm" fontName="PlusJakartaSans_400Regular">
 							{selectedData.location}
 						</Text>
 					</View>
-					<View className="flex-row items-center px-2 py-1 bg-primary/10 rounded-full">
-						<Star size={12} color="#FBBF24" fill="#FBBF24" />
-						<Text className="ml-1 text-ink text-sm" fontName="PlusJakartaSans_600SemiBold">
+					<View className="flex-row items-center px-3 py-2 bg-surface-strong rounded-full">
+						<Star size={16} color="#FBBF24" fill="#FBBF24" />
+						<Text className="ml-1.5 text-ink text-sm" fontName="PlusJakartaSans_700Bold">
 							{selectedData.rating}
 						</Text>
 					</View>
 				</View>
 
-				<View className="flex-row gap-2 items-start mb-3 px-3 py-3 bg-surface-soft border border-hairline rounded-2xl">
-					<View className="items-center justify-center mt-0.5 h-8 w-8 bg-primary/10 rounded-full">
-						<Route size={16} color="#ff385c" />
+				<View className="flex-row gap-3 items-center mb-5 px-4 py-3 bg-surface-soft border border-hairline-soft rounded-2xl">
+					<View className="items-center justify-center h-10 w-10 bg-primary/10 rounded-full">
+						<Route size={18} color="#ff385c" />
 					</View>
 					<View className="flex-1">
 						<Text className="text-ink text-sm" fontName="PlusJakartaSans_600SemiBold">
 							{locationStatusLabel}
 						</Text>
 						{routeStatusLabel ? (
-							<Text className="mt-0.5 text-muted text-xs" fontName="PlusJakartaSans_400Regular">
+							<Text
+								className="mt-0.5 text-muted-soft text-xs"
+								fontName="PlusJakartaSans_400Regular"
+							>
 								{routeStatusLabel}
 							</Text>
 						) : null}
-						<Text className="mt-0.5 text-muted text-xs" fontName="PlusJakartaSans_400Regular">
-							{currentPosition
-								? `Origin: ${currentPosition.latitude.toFixed(4)}, ${currentPosition.longitude.toFixed(4)}`
-								: `Destination center: ${selectedData.latitude.toFixed(4)}, ${selectedData.longitude.toFixed(4)}`}
-						</Text>
 					</View>
 				</View>
 
-				<View className="flex-row flex-wrap gap-2 justify-between mb-4">
+				<View className="flex-row flex-wrap gap-3 justify-between mb-6">
 					{travelEstimates.map((mode) => (
 						<View
 							key={mode.key}
-							className="px-3 py-3 w-[48%] bg-canvas border border-hairline rounded-2xl"
+							className="px-4 py-3 w-[48%] bg-surface-strong/50 border border-hairline-soft rounded-2xl"
 						>
-							<Text className="text-muted text-xs uppercase" fontName="PlusJakartaSans_600SemiBold">
+							<Text
+								className="text-muted-soft text-[11px] uppercase tracking-wider"
+								fontName="PlusJakartaSans_600SemiBold"
+							>
 								{mode.label}
 							</Text>
-							<Text className="mt-1 text-ink text-lg" fontName="PlusJakartaSans_700Bold">
+							<Text className="mt-1.5 text-ink text-xl" fontName="PlusJakartaSans_700Bold">
 								{mode.timeLabel}
 							</Text>
-							<Text className="mt-0.5 text-muted text-xs" fontName="PlusJakartaSans_400Regular">
+							<Text
+								className="mt-0.5 text-muted-soft text-xs"
+								fontName="PlusJakartaSans_400Regular"
+							>
 								{distanceForEstimates == null
 									? "Distance unavailable"
 									: formatDistance(distanceForEstimates)}
@@ -654,7 +652,16 @@ export default function LocationMapScreen() {
 
 				<View className="flex-row gap-3">
 					<TouchableOpacity
-						className={`flex-1 flex-row items-center justify-center gap-2 rounded-xl py-3 ${
+						className="flex-1 items-center justify-center py-4 bg-surface-strong rounded-full"
+						onPress={() => router.back()}
+						activeOpacity={0.8}
+					>
+						<Text className="text-ink text-base" fontName="PlusJakartaSans_600SemiBold">
+							Back to Details
+						</Text>
+					</TouchableOpacity>
+					<TouchableOpacity
+						className={`flex-1 flex-row items-center justify-center gap-2 rounded-full py-4 shadow-sm ${
 							canFocusRoute ? "bg-primary" : "bg-primary/50"
 						}`}
 						onPress={focusRoute}
@@ -662,17 +669,8 @@ export default function LocationMapScreen() {
 						disabled={!canFocusRoute}
 					>
 						<Navigation size={18} color="#ffffff" />
-						<Text className="font-semibold text-on-primary" fontName="PlusJakartaSans_600SemiBold">
+						<Text className="text-white text-base" fontName="PlusJakartaSans_600SemiBold">
 							Route Details
-						</Text>
-					</TouchableOpacity>
-					<TouchableOpacity
-						className="flex-1 items-center justify-center py-3 bg-canvas border border-hairline rounded-xl"
-						onPress={() => router.back()}
-						activeOpacity={0.8}
-					>
-						<Text className="font-semibold text-ink" fontName="PlusJakartaSans_600SemiBold">
-							Back to Details
 						</Text>
 					</TouchableOpacity>
 				</View>

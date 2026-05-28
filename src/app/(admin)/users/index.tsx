@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import { ArrowLeft, Shield, UserRound } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { Image, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
-import { Card, LoadingSpinner } from "@/components/index";
+import { LoadingSpinner } from "@/components/index";
 import { Text } from "@/components/ui/Text";
 
 export default function AdminUsersScreen() {
@@ -108,7 +108,10 @@ export default function AdminUsersScreen() {
 					) : null}
 
 					{filteredUsers.map((user) => (
-						<Card key={user.id} className="mb-4">
+						<View
+							key={user.id}
+							className="mb-4 bg-canvas rounded-[28px] shadow-sm p-5 overflow-hidden"
+						>
 							<View className="flex-row gap-5 items-start">
 								<View className="overflow-hidden items-center justify-center shrink-0 h-14 w-14 bg-primary/10 rounded-full">
 									{user.avatar_url ? (
@@ -149,7 +152,7 @@ export default function AdminUsersScreen() {
 									</Text>
 								</View>
 							</View>
-						</Card>
+						</View>
 					))}
 				</ScrollView>
 			)}

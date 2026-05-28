@@ -9,17 +9,7 @@ import {
 } from "@lib/storage/bookmarks";
 import type { Location as SupabaseLocation } from "@lib/types/supabase";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import {
-	ArrowLeft,
-	Camera,
-	ChevronLeft,
-	ChevronRight,
-	Heart,
-	Map as MapIcon,
-	MapPin,
-	Star,
-	X,
-} from "lucide-react-native";
+import { ArrowLeft, ChevronLeft, ChevronRight, Heart, MapPin, Star, X } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { Alert, Image, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 import { Text } from "@/components/ui/Text";
@@ -44,6 +34,7 @@ type ReviewItem = {
 	date: string;
 	comment: string;
 	isFlagged: boolean;
+	avatarUrl?: string;
 };
 
 function buildLocationDetails(
@@ -164,20 +155,24 @@ export default function LocationDetailsScreen() {
 						}
 					}),
 				);
-				const reviewerNameById = new Map(
+				const reviewerProfileById = new Map(
 					reviewerProfiles
 						.filter((profile) => profile !== null)
-						.map((profile) => [profile.id, profile.name]),
+						.map((profile) => [profile.id, profile]),
 				);
 
-				const hydratedReviews: ReviewItem[] = (reviewResult.data ?? []).map((review) => ({
-					id: review.id,
-					userName: review.user_id ? (reviewerNameById.get(review.user_id) ?? "Guest") : "Guest",
-					rating: typeof review.rating === "number" ? review.rating : 0,
-					date: review.created_at ? new Date(review.created_at).toLocaleDateString() : "Recently",
-					comment: review.comment || "",
-					isFlagged: Boolean(review.is_flagged),
-				}));
+				const hydratedReviews: ReviewItem[] = (reviewResult.data ?? []).map((review) => {
+					const profile = review.user_id ? reviewerProfileById.get(review.user_id) : null;
+					return {
+						id: review.id,
+						userName: profile?.name ?? "Guest",
+						rating: typeof review.rating === "number" ? review.rating : 0,
+						date: review.created_at ? new Date(review.created_at).toLocaleDateString() : "Recently",
+						comment: review.comment || "",
+						isFlagged: Boolean(review.is_flagged),
+						avatarUrl: profile?.avatar_url,
+					};
+				});
 
 				if (isMounted) {
 					setLocation(
@@ -282,6 +277,7 @@ export default function LocationDetailsScreen() {
 					date: new Date(submittedReview.created_at).toLocaleDateString(),
 					comment: reviewText.trim(),
 					isFlagged: false,
+					avatarUrl: user?.imageUrl,
 				},
 				...prev,
 			]);
@@ -392,10 +388,12 @@ export default function LocationDetailsScreen() {
 
 	return (
 		<View className="flex-1 bg-canvas">
-			{/* ✅ BOTTOM NAVBAR FIX: Added pb-20 so content doesn't hide behind layout tab bar */}
-			<ScrollView showsVerticalScrollIndicator={false} className="pb-20">
+			<ScrollView
+				showsVerticalScrollIndicator={false}
+				contentContainerStyle={{ paddingBottom: 120 }}
+			>
 				{/* Image Carousel */}
-				<View className="relative h-72 bg-surface-soft">
+				<View className="relative h-96 bg-surface-soft">
 					<Image
 						source={{ uri: location.images[currentImageIndex] }}
 						className="h-full w-full"
@@ -466,18 +464,18 @@ export default function LocationDetailsScreen() {
 				</View>
 
 				{/* Content */}
-				<View className="pt-6 px-5">
-					<Text className="mb-2 text-2xl text-ink" fontName="PlusJakartaSans_700Bold">
-						{location.name}
-					</Text>
-					<View className="flex-row items-center justify-between mb-4">
-						<View className="flex-row gap-2 items-center">
+				<View className="-mt-8 pt-8 px-6 bg-canvas rounded-t-4xl">
+					<View className="flex-row justify-between items-start mb-2">
+						<Text
+							className="flex-1 text-3xl text-ink leading-tight pr-2"
+							fontName="PlusJakartaSans_700Bold"
+						>
+							{location.name}
+						</Text>
+						<View className="items-end">
 							<View className="flex-row items-center">
 								<Star size={16} color="#FBBF24" fill="#FBBF24" />
-								<Text
-									className="ml-1 font-semibold text-ink"
-									fontName="PlusJakartaSans_600SemiBold"
-								>
+								<Text className="ml-1 text-ink font-bold" fontName="PlusJakartaSans_700Bold">
 									{location.rating}
 								</Text>
 							</View>
@@ -485,13 +483,18 @@ export default function LocationDetailsScreen() {
 								({location.reviews} reviews)
 							</Text>
 						</View>
-						<View className="flex-row gap-1 items-center">
-							<MapPin size={16} color="#929292" />
-							<Text className="text-muted text-sm" fontName="PlusJakartaSans_400Regular">
-								{location.location}
-							</Text>
-						</View>
 					</View>
+
+					<View className="flex-row items-center mb-6">
+						<MapPin size={16} color="#929292" />
+						<Text className="ml-1 text-muted text-sm" fontName="PlusJakartaSans_400Regular">
+							{location.location}
+						</Text>
+					</View>
+
+					<Text className="text-xl text-ink mb-3" fontName="PlusJakartaSans_700Bold">
+						Description
+					</Text>
 
 					<Text className="mb-2 leading-6 text-body" fontName="PlusJakartaSans_400Regular">
 						{isExpanded ? location.fullDescription : location.description}
@@ -504,37 +507,6 @@ export default function LocationDetailsScreen() {
 							{isExpanded ? "Read Less" : "Read More"}
 						</Text>
 					</TouchableOpacity>
-
-					{/* Action Buttons */}
-					<View className="flex-row gap-3 mb-8">
-						<TouchableOpacity
-							className="flex-1 flex-row gap-2 items-center justify-center py-3 bg-primary rounded-xl"
-							activeOpacity={0.8}
-							onPress={() => {
-								router.push(`/location/${locationId}/map`);
-							}}
-						>
-							<MapIcon size={18} color="#ffffff" />
-							<Text
-								className="font-semibold text-on-primary"
-								fontName="PlusJakartaSans_600SemiBold"
-							>
-								View on Map
-							</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							className="flex-1 flex-row gap-2 items-center justify-center py-3 bg-primary/15 rounded-xl"
-							activeOpacity={0.8}
-							onPress={() => {
-								router.push(`/location/${locationId}/360`);
-							}}
-						>
-							<Camera size={18} color="#ff385c" />
-							<Text className="font-semibold text-primary" fontName="PlusJakartaSans_600SemiBold">
-								View 360
-							</Text>
-						</TouchableOpacity>
-					</View>
 
 					<View className="mb-6 h-px bg-hairline-soft" />
 
@@ -584,17 +556,33 @@ export default function LocationDetailsScreen() {
 					{reviews.map((review) => (
 						<View key={review.id} className="mb-6">
 							<View className="flex-row items-start justify-between mb-2">
-								<View>
-									<Text
-										className="mb-1 font-semibold text-ink"
-										fontName="PlusJakartaSans_600SemiBold"
-									>
-										{review.userName}
-									</Text>
-									<View className="flex-row gap-0.5">
-										{Array.from({ length: review.rating }).map((_, i) => (
-											<Star key={i} size={14} color="#FBBF24" fill="#FBBF24" />
-										))}
+								<View className="flex-row items-center gap-3">
+									<View className="h-10 w-10 bg-surface-strong rounded-full overflow-hidden">
+										{review.avatarUrl ? (
+											<Image source={{ uri: review.avatarUrl }} className="h-full w-full" />
+										) : (
+											<View className="h-full w-full items-center justify-center bg-primary/10">
+												<Text
+													className="text-primary font-bold text-lg"
+													fontName="PlusJakartaSans_700Bold"
+												>
+													{review.userName.charAt(0).toUpperCase()}
+												</Text>
+											</View>
+										)}
+									</View>
+									<View>
+										<Text
+											className="mb-1 font-semibold text-ink"
+											fontName="PlusJakartaSans_600SemiBold"
+										>
+											{review.userName}
+										</Text>
+										<View className="flex-row gap-0.5">
+											{Array.from({ length: review.rating }).map((_, i) => (
+												<Star key={i} size={14} color="#FBBF24" fill="#FBBF24" />
+											))}
+										</View>
 									</View>
 								</View>
 								<Text className="text-muted-soft text-sm" fontName="PlusJakartaSans_400Regular">
@@ -623,6 +611,34 @@ export default function LocationDetailsScreen() {
 					))}
 				</View>
 			</ScrollView>
+
+			<View className="absolute bottom-0 left-0 right-0 px-6 pb-6 py-4 bg-canvas border-t border-hairline-soft flex-row gap-4 items-center">
+				<TouchableOpacity
+					className="flex-1 items-center justify-center py-4 bg-surface-strong rounded-full"
+					activeOpacity={0.8}
+					onPress={() => {
+						router.push(`/location/${locationId}/360`);
+					}}
+				>
+					<Text className="font-semibold text-ink text-base" fontName="PlusJakartaSans_600SemiBold">
+						View 360
+					</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					className="flex-1 flex-row gap-2 items-center justify-center py-4 bg-primary rounded-full shadow-sm"
+					activeOpacity={0.8}
+					onPress={() => {
+						router.push(`/location/${locationId}/map`);
+					}}
+				>
+					<Text
+						className="font-semibold text-white text-base"
+						fontName="PlusJakartaSans_600SemiBold"
+					>
+						View on Map
+					</Text>
+				</TouchableOpacity>
+			</View>
 		</View>
 	);
 }

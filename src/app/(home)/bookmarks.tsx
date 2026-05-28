@@ -103,18 +103,20 @@ export default function BookmarksScreen() {
 	}
 
 	return (
-		<View className="flex-1 pt-12 px-4 bg-surface-soft">
-			<View className="flex-row gap-3 items-center mb-4">
-				<View className="items-center justify-center h-12 w-12 bg-primary/10 rounded-full">
-					<Heart size={24} color="#ff385c" fill="#ff385c" />
-				</View>
-				<View className="flex-1">
-					<Text className="text-2xl text-ink" fontName="PlusJakartaSans_700Bold">
-						My Bookmarks
-					</Text>
-					<Text className="text-body" fontName="PlusJakartaSans_400Regular">
-						Save your favorite Aklan locations to visit later.
-					</Text>
+		<View className="flex-1 bg-surface-soft">
+			<View className="pt-12 px-5 bg-surface-soft pb-4">
+				<View className="flex-row gap-3 items-center mb-6">
+					{/* <View className="items-center justify-center h-12 w-12 bg-primary/10 rounded-full">
+						<Heart size={24} color="#ff385c" fill="#ff385c" />
+					</View> */}
+					<View className="flex-1">
+						<Text className="text-3xl text-ink mb-1" fontName="PlusJakartaSans_700Bold">
+							My Bookmarks
+						</Text>
+						<Text className="text-muted text-base" fontName="PlusJakartaSans_400Regular">
+							Save your favorite Aklan locations to visit later.
+						</Text>
+					</View>
 				</View>
 			</View>
 
@@ -144,34 +146,49 @@ export default function BookmarksScreen() {
 					data={savedLocations}
 					keyExtractor={(item) => item.id}
 					showsVerticalScrollIndicator={false}
-					contentContainerStyle={{ paddingBottom: 24 }}
+					contentContainerStyle={{ padding: 20, paddingBottom: 24 }}
 					renderItem={({ item }) => (
 						<TouchableOpacity
-							className="overflow-hidden mb-4 bg-canvas border border-hairline rounded-xl shadow-sm"
+							className="overflow-hidden mb-6 bg-canvas rounded-4xl shadow-sm relative h-96"
 							onPress={() => router.push(`/location/${item.id}`)}
 							activeOpacity={0.9}
 						>
-							<View className="relative h-48 bg-surface-soft">
-								<Image source={{ uri: item.image }} className="h-full w-full" resizeMode="cover" />
+							<Image
+								source={{ uri: item.image }}
+								className="absolute inset-0 h-full w-full"
+								resizeMode="cover"
+							/>
+							<View className="absolute inset-0 bg-black/20" />
+
+							<View className="absolute top-4 right-4">
 								<TouchableOpacity
-									className="absolute right-3 top-3 items-center justify-center h-8 w-8 bg-canvas/90 rounded-full"
+									className="items-center justify-center h-10 w-10 bg-canvas/80 rounded-full backdrop-blur-md"
 									onPress={(e) => {
 										e.stopPropagation();
 										void handleRemoveBookmark(item.id);
 									}}
 									activeOpacity={0.7}
 								>
-									<Heart size={16} color="#ff385c" fill="#ff385c" />
+									<Heart size={20} color="#ff385c" fill="#ff385c" />
 								</TouchableOpacity>
 							</View>
-							<View className="p-4">
-								<Text className="mb-1 text-ink text-lg" fontName="PlusJakartaSans_700Bold">
-									{item.name}
-								</Text>
-								<View className="flex-row items-center">
-									<MapPin size={14} color="#929292" />
-									<Text className="ml-1 text-muted text-sm" fontName="PlusJakartaSans_400Regular">
-										{item.location}
+
+							<View className="absolute bottom-4 left-5 right-5 flex-row items-end justify-between">
+								<View className="flex-1 mr-4">
+									<View className="flex-row items-center mb-1">
+										<MapPin size={16} color="#ffffff" />
+										<Text
+											className="ml-1 text-white text-sm"
+											fontName="PlusJakartaSans_600SemiBold"
+										>
+											{item.location}
+										</Text>
+									</View>
+									<Text
+										className="text-white text-3xl drop-shadow-md"
+										fontName="PlusJakartaSans_700Bold"
+									>
+										{item.name}
 									</Text>
 								</View>
 							</View>

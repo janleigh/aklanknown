@@ -3,18 +3,10 @@ import { supabase } from "@lib/api/supabase/supabase";
 import type { Location as LocationRecord } from "@lib/types/supabase";
 import type * as TMapbox from "@rnmapbox/maps";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { MapPin, Navigation, Search, SlidersHorizontal, Star } from "lucide-react-native";
+import { Navigation, Star } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
-import {
-	Image,
-	NativeModules,
-	Platform,
-	ScrollView,
-	TextInput,
-	TouchableOpacity,
-	View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Image, NativeModules, Platform, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "@/components/ui/Text";
 import { API_KEYS } from "@/config";
 
@@ -94,10 +86,9 @@ function buildMapLocation(
 export default function MapsScreen() {
 	const router = useRouter();
 	const params = useLocalSearchParams();
+	const insets = useSafeAreaInsets();
 	const [locations, setLocations] = useState<MapLocationCardData[]>([]);
 	const [selectedLocation, setSelectedLocation] = useState<string>("");
-	const [searchQuery, setSearchQuery] = useState("");
-	const [isSearchFocused, setIsSearchFocused] = useState(false);
 	const [isLoadingLocations, setIsLoadingLocations] = useState(true);
 	const [Mapbox, setMapbox] = useState<typeof TMapbox | null>(null);
 	const hasMapboxNative = Platform.OS === "android" && Boolean(NativeModules.RNMBXModule);
@@ -184,39 +175,10 @@ export default function MapsScreen() {
 		return locations.find((location) => location.id === selectedLocation) ?? locations[0] ?? null;
 	}, [locations, selectedLocation]);
 
-	const searchSuggestions = useMemo(() => {
-		const query = searchQuery.trim().toLowerCase();
-
-		if (!query) {
-			return locations.slice(0, 5);
-		}
-
-		return locations
-			.filter((location) => {
-				const haystack = [location.name, location.location, location.distance]
-					.join(" ")
-					.toLowerCase();
-				return haystack.includes(query);
-			})
-			.slice(0, 5);
-	}, [locations, searchQuery]);
-
-	const shouldShowSearchDropdown = isSearchFocused && searchSuggestions.length > 0;
-
 	const mapLocations = useMemo(
 		() => locations.filter((location) => location.latitude && location.longitude),
 		[locations],
 	);
-
-	const handleSearchSelection = (locationId: string) => {
-		const location = locations.find((item) => item.id === locationId);
-		if (!location) {
-			return;
-		}
-
-		setSelectedLocation(location.id);
-		setSearchQuery(location.name);
-	};
 
 	if (Platform.OS !== "android") {
 		return (
@@ -260,80 +222,6 @@ export default function MapsScreen() {
 
 	return (
 		<View className="flex-1 bg-canvas">
-			{/* Header */}
-			<View className="z-20 pb-3 pt-12 px-4 bg-canvas border-b border-hairline">
-				<Text className="mb-3 text-2xl text-ink" fontName="PlusJakartaSans_700Bold">
-					Maps
-				</Text>
-
-				{/* Search & Filter */}
-				<View className="relative flex-row gap-2 items-center mb-3">
-					<View className="flex-1">
-						<View className="flex-row items-center px-4 py-2.5 bg-surface-soft border border-hairline rounded-full">
-							<Search size={18} color="#929292" />
-							<TextInput
-								className="flex-1 ml-2 text-ink text-sm"
-								placeholder="Where to in Aklan?"
-								placeholderTextColor="#929292"
-								value={searchQuery}
-								onChangeText={setSearchQuery}
-								onFocus={() => setIsSearchFocused(true)}
-								blurOnSubmit={false}
-								onBlur={() => {
-									setTimeout(() => {
-										setIsSearchFocused(false);
-									}, 150);
-								}}
-							/>
-						</View>
-
-						{shouldShowSearchDropdown ? (
-							<View className="overflow-hidden absolute left-0 right-0 top-13.5 z-30 bg-canvas border border-hairline rounded-2xl shadow-lg">
-								{searchSuggestions.map((location, index) => (
-									<TouchableOpacity
-										key={location.id}
-										className={`px-4 py-3 ${index !== searchSuggestions.length - 1 ? "border-b border-hairline" : ""}`}
-										onPress={() => handleSearchSelection(location.id)}
-										activeOpacity={0.75}
-									>
-										<Text
-											className="font-semibold text-ink text-sm"
-											fontName="PlusJakartaSans_600SemiBold"
-										>
-											{location.name}
-										</Text>
-										<Text className="text-muted text-xs" fontName="PlusJakartaSans_400Regular">
-											{location.location}
-										</Text>
-									</TouchableOpacity>
-								))}
-							</View>
-						) : null}
-					</View>
-					<TouchableOpacity className="p-2.5 bg-primary/10 rounded-full" activeOpacity={0.7}>
-						<SlidersHorizontal size={18} color="#ff385c" />
-					</TouchableOpacity>
-				</View>
-
-				{/* Categories */}
-				<ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-1 -mx-1">
-					{["Beaches", "Parks", "Churches", "Historical", "Hotels"].map((cat) => (
-						<TouchableOpacity
-							key={cat}
-							className="mr-2 px-4 py-1.5 bg-surface-soft border border-hairline rounded-full"
-							activeOpacity={0.7}
-						>
-							<Text
-								className="font-semibold text-ink text-xs"
-								fontName="PlusJakartaSans_600SemiBold"
-							>
-								{cat}
-							</Text>
-						</TouchableOpacity>
-					))}
-				</ScrollView>
-			</View>
-
 			{/* Map Area */}
 			<View className="overflow-hidden relative flex-1 bg-[#E8F0FE]">
 				<Mapbox.MapView style={{ flex: 1 }} styleURL={Mapbox.StyleURL.Street}>
@@ -356,9 +244,14 @@ export default function MapsScreen() {
 								activeOpacity={0.85}
 							>
 								<View
-									className={`w-8 h-8 rounded-full items-center justify-center shadow-md border-2 ${selectedLocation === loc.id ? "bg-primary border-white" : "bg-canvas border-primary/30"}`}
+									className={`px-3 py-1.5 rounded-lg shadow-sm border ${selectedLocation === loc.id ? "bg-primary border-primary" : "bg-canvas border-primary"}`}
 								>
-									<MapPin size={14} color={selectedLocation === loc.id ? "#fff" : "#ff385c"} />
+									<Text
+										className={`text-xs font-bold ${selectedLocation === loc.id ? "text-white" : "text-primary"}`}
+										fontName="PlusJakartaSans_700Bold"
+									>
+										{loc.name}
+									</Text>
 								</View>
 							</TouchableOpacity>
 						</Mapbox.MarkerView>
@@ -366,7 +259,8 @@ export default function MapsScreen() {
 				</Mapbox.MapView>
 
 				<TouchableOpacity
-					className="absolute bottom-4 right-4 p-3 bg-canvas border border-hairline rounded-full shadow-lg"
+					className="absolute right-4 p-3 bg-canvas border border-hairline rounded-full shadow-lg z-10"
+					style={{ bottom: Math.max(insets.bottom, 16) + 310 }}
 					activeOpacity={0.7}
 					onPress={() => {
 						if (mapLocations[0]) {
@@ -376,13 +270,18 @@ export default function MapsScreen() {
 				>
 					<Navigation size={20} color="#ff385c" />
 				</TouchableOpacity>
-			</View>
 
-			{/* ✅ BOTTOM NAVBAR FIX: Wrapped in SafeAreaView, removed pb-safe */}
-			<SafeAreaView edges={["bottom"]} className="bg-canvas border-hairline border-t shadow-lg">
-				<View className="px-4 py-3">
-					<View className="flex-row gap-3 items-center">
-						<View className="overflow-hidden h-14 w-14 bg-surface-soft border border-hairline rounded-xl">
+				<View
+					className="absolute bottom-0 left-0 right-0 z-20 px-4"
+					style={{ paddingBottom: Math.max(insets.bottom, 16) }}
+					pointerEvents="box-none"
+				>
+					<TouchableOpacity
+						className="bg-canvas border border-hairline rounded-[28px] shadow-2xl overflow-hidden"
+						activeOpacity={0.95}
+						onPress={() => router.push(`/location/${selectedData.id}`)}
+					>
+						<View className="h-[140px] w-full bg-surface-soft relative">
 							{selectedData.image ? (
 								<Image
 									source={{ uri: selectedData.image }}
@@ -391,44 +290,50 @@ export default function MapsScreen() {
 								/>
 							) : null}
 						</View>
-						<View className="flex-1">
+
+						<View className="p-4">
+							<View className="flex-row items-center mb-2">
+								<View className="flex-row items-center bg-[#FBBF24] px-1.5 py-0.5 rounded-md">
+									<Star size={10} color="#fff" fill="#fff" />
+									<Text
+										className="ml-1 text-white font-bold text-xs"
+										fontName="PlusJakartaSans_700Bold"
+									>
+										{selectedData.rating}
+									</Text>
+									<Text className="ml-1 text-white text-xs" fontName="PlusJakartaSans_600SemiBold">
+										{selectedData.reviews} reviews
+									</Text>
+								</View>
+							</View>
+
 							<Text
-								className="mb-0.5 font-bold text-base text-ink"
+								className="font-bold text-xl text-ink mb-1"
 								fontName="PlusJakartaSans_700Bold"
+								numberOfLines={1}
 							>
 								{selectedData.name}
 							</Text>
-							<View className="flex-row gap-1 items-center mb-0.5">
-								<Star size={12} color="#FBBF24" fill="#FBBF24" />
-								<Text
-									className="font-semibold text-ink text-xs"
-									fontName="PlusJakartaSans_600SemiBold"
-								>
-									{selectedData.rating}
-								</Text>
-								<Text className="text-muted text-xs" fontName="PlusJakartaSans_400Regular">
-									({selectedData.reviews})
-								</Text>
-							</View>
-							<Text className="text-muted text-xs" fontName="PlusJakartaSans_400Regular">
+
+							<Text
+								className="text-muted text-sm mb-3"
+								fontName="PlusJakartaSans_400Regular"
+								numberOfLines={1}
+							>
 								{selectedData.location}
 							</Text>
+
+							<View className="flex-row justify-between items-center mt-1">
+								<View className="bg-primary px-4 py-2 rounded-lg shadow-sm">
+									<Text className="text-white font-bold text-sm" fontName="PlusJakartaSans_700Bold">
+										View details
+									</Text>
+								</View>
+							</View>
 						</View>
-						<TouchableOpacity
-							className="px-4 py-2 bg-primary rounded-lg"
-							onPress={() => router.push(`/location/${selectedData.id}`)}
-							activeOpacity={0.8}
-						>
-							<Text
-								className="font-semibold text-white text-xs"
-								fontName="PlusJakartaSans_600SemiBold"
-							>
-								View
-							</Text>
-						</TouchableOpacity>
-					</View>
+					</TouchableOpacity>
 				</View>
-			</SafeAreaView>
+			</View>
 		</View>
 	);
 }
