@@ -227,6 +227,8 @@ export default function MapsScreen() {
 				<Mapbox.MapView
 					style={{ flex: 1 }}
 					scaleBarEnabled={false}
+					logoEnabled={false}
+					rotateEnabled={false}
 					styleURL={Mapbox.StyleURL.Street}
 				>
 					<Mapbox.Camera
