@@ -224,7 +224,11 @@ export default function MapsScreen() {
 		<View className="flex-1 bg-canvas">
 			{/* Map Area */}
 			<View className="overflow-hidden relative flex-1 bg-[#E8F0FE]">
-				<Mapbox.MapView style={{ flex: 1 }} scaleBarEnabled={false} styleURL={Mapbox.StyleURL.Street}>
+				<Mapbox.MapView
+					style={{ flex: 1 }}
+					scaleBarEnabled={false}
+					styleURL={Mapbox.StyleURL.Street}
+				>
 					<Mapbox.Camera
 						defaultSettings={{
 							centerCoordinate: [selectedData.longitude, selectedData.latitude],
@@ -301,7 +305,10 @@ export default function MapsScreen() {
 									>
 										{selectedData.rating}
 									</Text>
-									<Text className="ml-1 mb-0.5 text-white text-xs" fontName="PlusJakartaSans_600SemiBold">
+									<Text
+										className="ml-1 mb-0.5 text-white text-xs"
+										fontName="PlusJakartaSans_600SemiBold"
+									>
 										({selectedData.reviews}) reviews
 									</Text>
 								</View>

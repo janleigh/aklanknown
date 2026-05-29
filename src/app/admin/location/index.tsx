@@ -2,7 +2,7 @@ import { controllers } from "@lib/api/supabase/controller";
 import { supabase } from "@lib/api/supabase/supabase";
 import type { Location as LocationRecord } from "@lib/types/supabase";
 import { useRouter } from "expo-router";
-import { MapPin, Pencil, Plus, Trash2 } from "lucide-react-native";
+import { ArrowLeft, MapPin, Pencil, Plus, Trash2 } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { Alert, FlatList, TouchableOpacity, View } from "react-native";
 import { LoadingSpinner } from "@/components/index";
@@ -64,6 +64,13 @@ export default function AdminLocationsScreen() {
 	return (
 		<View className="flex-1 bg-surface-soft">
 			<View className="flex-row items-center justify-between pb-4 pt-14 px-4 bg-canvas border-b border-hairline">
+				<TouchableOpacity
+					onPress={() => router.back()}
+					className="items-center justify-center h-10 w-10 bg-surface-soft rounded-full"
+					activeOpacity={0.8}
+				>
+					<ArrowLeft size={20} color="#1a1a1a" />
+				</TouchableOpacity>
 				<View>
 					<Text className="text-2xl text-ink" fontName="PlusJakartaSans_700Bold">
 						Locations

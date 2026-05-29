@@ -225,9 +225,9 @@ export default function AdminDashboardScreen() {
 			<View className="pb-6 pt-14 px-4 bg-primary">
 				<View className="flex-row items-center justify-between mb-4">
 					<View className="flex-row items-center">
-						<View className="items-center justify-center mr-3 h-11 w-11 bg-on-primary/15 rounded-2xl">
+						{/* <View className="items-center justify-center mr-3 h-11 w-11 bg-on-primary/15 rounded-2xl">
 							<Shield size={20} color="#ffffff" />
-						</View>
+						</View> */}
 						<View>
 							{/* <Text className="text-on-primary/80 text-sm" fontName="PlusJakartaSans_500Medium">
 								Admin Panel
@@ -335,7 +335,7 @@ function AdminMetric({
 	accent?: boolean;
 }) {
 	return (
-		<View className="flex-1 bg-canvas rounded-[24px] shadow-sm p-5">
+		<View className="flex-1 bg-canvas rounded-3xl shadow-sm p-5">
 			<View className="flex-row items-start justify-between">
 				<View>
 					<Text className="text-muted text-sm" fontName="PlusJakartaSans_500Medium">

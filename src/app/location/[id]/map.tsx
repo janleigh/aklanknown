@@ -624,10 +624,12 @@ export default function LocationMapScreen() {
 				</View>
 			</View>
 
-			<View className={`absolute bottom-0 left-0 right-0 pt-3 px-4 bg-white rounded-t-4xl shadow-[0_-8px_30px_rgba(0,0,0,0.12)] overflow-hidden ${isPanelExpanded ? "h-[35%]" : "pb-8"}`}>
-				<TouchableOpacity 
-					className="items-center mb-3 pt-1 pb-2" 
-					onPress={() => setIsPanelExpanded(!isPanelExpanded)} 
+			<View
+				className={`absolute bottom-0 left-0 right-0 pt-3 px-4 bg-white rounded-t-4xl shadow-[0_-8px_30px_rgba(0,0,0,0.12)] overflow-hidden ${isPanelExpanded ? "h-[35%]" : "pb-8"}`}
+			>
+				<TouchableOpacity
+					className="items-center mb-3 pt-1 pb-2"
+					onPress={() => setIsPanelExpanded(!isPanelExpanded)}
 					activeOpacity={0.7}
 				>
 					<View className="h-1.5 w-12 bg-surface-strong rounded-full" />
@@ -636,28 +638,28 @@ export default function LocationMapScreen() {
 				{isPanelExpanded && (
 					<>
 						<View className="flex-row items-start justify-between mb-3 gap-3">
-					<View className="flex-1 pr-2">
-						<Text className="text-ink text-lg leading-tight" fontName="PlusJakartaSans_700Bold">
-							{selectedData.name}
-						</Text>
-						<Text className="mt-1 text-muted text-xs" fontName="PlusJakartaSans_400Regular">
-							{selectedData.location}
-						</Text>
-					</View>
-					<View className="items-end">
-						<View className="flex-row items-center px-2.5 py-1.5 bg-surface-strong rounded-full">
-							<Star size={14} color="#FBBF24" fill="#FBBF24" />
-							<Text className="ml-1 text-ink text-xs" fontName="PlusJakartaSans_700Bold">
-								{selectedData.rating}
-							</Text>
+							<View className="flex-1 pr-2">
+								<Text className="text-ink text-lg leading-tight" fontName="PlusJakartaSans_700Bold">
+									{selectedData.name}
+								</Text>
+								<Text className="mt-1 text-muted text-xs" fontName="PlusJakartaSans_400Regular">
+									{selectedData.location}
+								</Text>
+							</View>
+							<View className="items-end">
+								<View className="flex-row items-center px-2.5 py-1.5 bg-surface-strong rounded-full">
+									<Star size={14} color="#FBBF24" fill="#FBBF24" />
+									<Text className="ml-1 text-ink text-xs" fontName="PlusJakartaSans_700Bold">
+										{selectedData.rating}
+									</Text>
+								</View>
+								<Text className="mt-1 text-muted text-[10px]" fontName="PlusJakartaSans_400Regular">
+									({selectedData.reviews} reviews)
+								</Text>
+							</View>
 						</View>
-						<Text className="mt-1 text-muted text-[10px]" fontName="PlusJakartaSans_400Regular">
-							({selectedData.reviews} reviews)
-						</Text>
-					</View>
-				</View>
 
-				{/* <View className="flex-row gap-2 items-center mb-3 px-3 py-2.5 bg-surface-soft border border-hairline-soft rounded-2xl">
+						{/* <View className="flex-row gap-2 items-center mb-3 px-3 py-2.5 bg-surface-soft border border-hairline-soft rounded-2xl">
 					<View className="items-center justify-center h-8 w-8 bg-primary/10 rounded-full">
 						<Route size={16} color="#ff385c" />
 					</View>
@@ -676,60 +678,60 @@ export default function LocationMapScreen() {
 					</View>
 				</View> */}
 
-				<View className="flex-row flex-wrap gap-2 mb-3">
-					{travelEstimates.map((mode) => (
-						<View
-							key={mode.key}
-							className="w-[48.5%] px-3 py-2.5 bg-surface-strong/50 border border-hairline-soft rounded-2xl"
-						>
-							<Text
-								className="text-muted-soft text-[9px] uppercase tracking-wider text-center"
-								fontName="PlusJakartaSans_600SemiBold"
-							>
-								{mode.label}
-							</Text>
-							<Text
-								className="mt-1 text-ink text-xs text-center"
-								fontName="PlusJakartaSans_700Bold"
-							>
-								{mode.timeLabel}
-							</Text>
-							<Text
-								className="mt-0.5 text-muted-soft text-[9px] text-center"
-								fontName="PlusJakartaSans_400Regular"
-							>
-								{distanceForEstimates == null
-									? "Distance unavailable"
-									: formatDistance(distanceForEstimates)}
-							</Text>
+						<View className="flex-row flex-wrap gap-2 mb-3">
+							{travelEstimates.map((mode) => (
+								<View
+									key={mode.key}
+									className="w-[48.5%] px-3 py-2.5 bg-surface-strong/50 border border-hairline-soft rounded-2xl"
+								>
+									<Text
+										className="text-muted-soft text-[9px] uppercase tracking-wider text-center"
+										fontName="PlusJakartaSans_600SemiBold"
+									>
+										{mode.label}
+									</Text>
+									<Text
+										className="mt-1 text-ink text-xs text-center"
+										fontName="PlusJakartaSans_700Bold"
+									>
+										{mode.timeLabel}
+									</Text>
+									<Text
+										className="mt-0.5 text-muted-soft text-[9px] text-center"
+										fontName="PlusJakartaSans_400Regular"
+									>
+										{distanceForEstimates == null
+											? "Distance unavailable"
+											: formatDistance(distanceForEstimates)}
+									</Text>
+								</View>
+							))}
 						</View>
-					))}
-				</View>
 
-				<View className="flex-row gap-2">
-					<TouchableOpacity
-						className="flex-1 items-center justify-center py-3 bg-surface-strong rounded-full"
-						onPress={() => router.back()}
-						activeOpacity={0.8}
-					>
-						<Text className="text-ink text-sm" fontName="PlusJakartaSans_600SemiBold">
-							Back to Details
-						</Text>
-					</TouchableOpacity>
-					<TouchableOpacity
-						className={`flex-1 flex-row items-center justify-center gap-1.5 rounded-full py-3 shadow-sm ${
-							!routeShown && !canFocusRoute ? "bg-primary/50" : "bg-primary"
-						}`}
-						onPress={handleRouteToggle}
-						activeOpacity={!routeShown && !canFocusRoute ? 1 : 0.8}
-						disabled={!routeShown && !canFocusRoute}
-					>
-						<Navigation size={16} color="#ffffff" />
-						<Text className="text-white text-sm" fontName="PlusJakartaSans_600SemiBold">
-							{routeShown ? "Back" : "Route Details"}
-						</Text>
-					</TouchableOpacity>
-				</View>
+						<View className="flex-row gap-2">
+							<TouchableOpacity
+								className="flex-1 items-center justify-center py-3 bg-surface-strong rounded-full"
+								onPress={() => router.back()}
+								activeOpacity={0.8}
+							>
+								<Text className="text-ink text-sm" fontName="PlusJakartaSans_600SemiBold">
+									Back to Details
+								</Text>
+							</TouchableOpacity>
+							<TouchableOpacity
+								className={`flex-1 flex-row items-center justify-center gap-1.5 rounded-full py-3 shadow-sm ${
+									!routeShown && !canFocusRoute ? "bg-primary/50" : "bg-primary"
+								}`}
+								onPress={handleRouteToggle}
+								activeOpacity={!routeShown && !canFocusRoute ? 1 : 0.8}
+								disabled={!routeShown && !canFocusRoute}
+							>
+								<Navigation size={16} color="#ffffff" />
+								<Text className="text-white text-sm" fontName="PlusJakartaSans_600SemiBold">
+									{routeShown ? "Back" : "Route Details"}
+								</Text>
+							</TouchableOpacity>
+						</View>
 					</>
 				)}
 			</View>

@@ -6,7 +6,15 @@ import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { ArrowLeft, Image as ImageIcon } from "lucide-react-native";
 import { useState } from "react";
-import { Alert, Image, ScrollView, TouchableOpacity, View } from "react-native";
+import {
+	Alert,
+	Image,
+	KeyboardAvoidingView,
+	Platform,
+	ScrollView,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import { Input } from "@/components/index";
 import { Text } from "@/components/ui/Text";
 import type { Location } from "@/types";
@@ -142,8 +150,11 @@ export default function CreateLocationScreen() {
 	};
 
 	return (
-		<View className="flex-1 bg-surface-soft">
-			<View className="flex-row items-center pb-4 pt-14 px-4 bg-canvas border-b border-hairline">
+		<KeyboardAvoidingView
+			behavior={Platform.OS === "ios" ? "padding" : "height"}
+			className="flex-1 bg-surface-soft"
+		>
+			<View className="flex-row items-center pb-4 pt-14 px-4 bg-canvas border-b border-hairline z-10 shadow-sm">
 				<TouchableOpacity
 					onPress={() => router.back()}
 					className="items-center justify-center mr-3 h-10 w-10 bg-surface-soft rounded-full"
@@ -157,132 +168,143 @@ export default function CreateLocationScreen() {
 				</View>
 			</View>
 
-			<ScrollView className="flex-1" contentContainerStyle={{ padding: 16 }}>
-				<View className="mb-4 bg-canvas rounded-[28px] shadow-sm p-5">
-					<Text className="mb-4 text-ink text-lg" fontName="PlusJakartaSans_700Bold">
+			<ScrollView
+				className="flex-1"
+				contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
+				showsVerticalScrollIndicator={false}
+			>
+				<View className="mb-6 bg-canvas rounded-3xl shadow-sm p-6 border border-hairline/50">
+					<Text className="mb-5 text-ink text-xl" fontName="PlusJakartaSans_700Bold">
 						Basic Details
 					</Text>
-					<Input
-						label="Name *"
-						placeholder="e.g. Riverside Park"
-						value={form.name}
-						onChangeText={(text) => setForm({ ...form, name: text })}
-					/>
-					<Input
-						label="Description (English)"
-						placeholder="Brief info about the location"
-						value={form.description_en}
-						onChangeText={(text) => setForm({ ...form, description_en: text })}
-						multiline
-						numberOfLines={3}
-					/>
+					<View className="gap-4">
+						<Input
+							label="Name *"
+							placeholder="e.g. Riverside Park"
+							value={form.name}
+							onChangeText={(text) => setForm({ ...form, name: text })}
+						/>
+						<Input
+							label="Description (English)"
+							placeholder="Brief info about the location"
+							value={form.description_en}
+							onChangeText={(text) => setForm({ ...form, description_en: text })}
+							multiline
+							numberOfLines={4}
+						/>
+					</View>
 				</View>
 
-				<View className="mb-4 bg-canvas rounded-[28px] shadow-sm p-5">
-					<Text className="mb-4 text-ink text-lg" fontName="PlusJakartaSans_700Bold">
+				<View className="mb-6 bg-canvas rounded-3xl shadow-sm p-6 border border-hairline/50">
+					<Text className="mb-5 text-ink text-xl" fontName="PlusJakartaSans_700Bold">
 						Address *
 					</Text>
-					<Input
-						label="Street"
-						placeholder="e.g. Station 2"
-						value={form.street}
-						onChangeText={(text) => setForm({ ...form, street: text })}
-					/>
-					<Input
-						label="Barangay"
-						placeholder="e.g. Balabag"
-						value={form.barangay}
-						onChangeText={(text) => setForm({ ...form, barangay: text })}
-					/>
-					<Input
-						label="Town"
-						placeholder="e.g. Malay"
-						value={form.town}
-						onChangeText={(text) => setForm({ ...form, town: text })}
-					/>
+					<View className="gap-4">
+						<Input
+							label="Street"
+							placeholder="e.g. Station 2"
+							value={form.street}
+							onChangeText={(text) => setForm({ ...form, street: text })}
+						/>
+						<Input
+							label="Barangay"
+							placeholder="e.g. Balabag"
+							value={form.barangay}
+							onChangeText={(text) => setForm({ ...form, barangay: text })}
+						/>
+						<Input
+							label="Town"
+							placeholder="e.g. Malay"
+							value={form.town}
+							onChangeText={(text) => setForm({ ...form, town: text })}
+						/>
+					</View>
 				</View>
 
-				<View className="mb-4 bg-canvas rounded-[28px] shadow-sm p-5">
-					<Text className="mb-4 text-ink text-lg" fontName="PlusJakartaSans_700Bold">
+				<View className="mb-6 bg-canvas rounded-3xl shadow-sm p-6 border border-hairline/50">
+					<Text className="mb-5 text-ink text-xl" fontName="PlusJakartaSans_700Bold">
 						Media & Map
 					</Text>
 
-					<Text className="mb-2 ml-1 font-semibold text-ink" fontName="PlusJakartaSans_600SemiBold">
+					<Text className="mb-3 ml-1 font-semibold text-ink" fontName="PlusJakartaSans_600SemiBold">
 						Banner Image
 					</Text>
 					<TouchableOpacity
 						onPress={() => pickImage(setBannerImage)}
-						className="overflow-hidden items-center justify-center mb-4 h-40 bg-surface-soft border-2 border-dashed border-hairline rounded-xl"
+						className="overflow-hidden items-center justify-center mb-6 h-48 bg-surface-soft border-2 border-dashed border-hairline rounded-2xl"
+						activeOpacity={0.7}
 					>
 						{bannerImage ? (
 							<Image source={{ uri: bannerImage }} className="h-full w-full" resizeMode="cover" />
 						) : (
 							<View className="items-center">
-								<ImageIcon size={28} color="#929292" />
-								<Text className="mt-2 text-muted" fontName="PlusJakartaSans_500Medium">
+								<ImageIcon size={32} color="#929292" />
+								<Text className="mt-3 text-muted text-sm" fontName="PlusJakartaSans_500Medium">
 									Tap to upload banner
 								</Text>
 							</View>
 						)}
 					</TouchableOpacity>
 
-					<Text className="mb-2 ml-1 font-semibold text-ink" fontName="PlusJakartaSans_600SemiBold">
+					<Text className="mb-3 ml-1 font-semibold text-ink" fontName="PlusJakartaSans_600SemiBold">
 						Panorama Image
 					</Text>
 					<TouchableOpacity
 						onPress={() => pickImage(setPanoramaImage)}
-						className="overflow-hidden items-center justify-center mb-4 h-40 bg-surface-soft border-2 border-dashed border-hairline rounded-xl"
+						className="overflow-hidden items-center justify-center mb-6 h-48 bg-surface-soft border-2 border-dashed border-hairline rounded-2xl"
+						activeOpacity={0.7}
 					>
 						{panoramaImage ? (
 							<Image source={{ uri: panoramaImage }} className="h-full w-full" resizeMode="cover" />
 						) : (
 							<View className="items-center">
-								<ImageIcon size={28} color="#929292" />
-								<Text className="mt-2 text-muted" fontName="PlusJakartaSans_500Medium">
+								<ImageIcon size={32} color="#929292" />
+								<Text className="mt-3 text-muted text-sm" fontName="PlusJakartaSans_500Medium">
 									Tap to upload panorama
 								</Text>
 							</View>
 						)}
 					</TouchableOpacity>
 
-					<Text className="mb-2 ml-1 font-semibold text-ink" fontName="PlusJakartaSans_600SemiBold">
+					<Text className="mb-3 ml-1 font-semibold text-ink" fontName="PlusJakartaSans_600SemiBold">
 						Additional Gallery Images
 					</Text>
 					<TouchableOpacity
 						onPress={() => void pickGalleryImages()}
-						className="items-center justify-center mb-3 px-4 py-4 min-h-24 bg-surface-soft border-2 border-dashed border-hairline rounded-xl"
+						className="items-center justify-center mb-4 px-4 py-6 bg-surface-soft border-2 border-dashed border-hairline rounded-2xl"
+						activeOpacity={0.7}
 					>
 						<View className="items-center">
-							<ImageIcon size={24} color="#929292" />
-							<Text className="mt-2 text-muted" fontName="PlusJakartaSans_500Medium">
+							<ImageIcon size={28} color="#929292" />
+							<Text className="mt-3 text-muted text-sm" fontName="PlusJakartaSans_500Medium">
 								Tap to select multiple images
 							</Text>
 						</View>
 					</TouchableOpacity>
 
 					{galleryImages.length > 0 ? (
-						<View className="mb-3">
-							<Text className="mb-2 text-muted text-sm" fontName="PlusJakartaSans_400Regular">
+						<View className="mb-6">
+							<Text className="mb-3 text-muted text-sm ml-1" fontName="PlusJakartaSans_500Medium">
 								{galleryImages.length} image(s) selected
 							</Text>
 							<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-								<View className="flex-row gap-2">
+								<View className="flex-row gap-3">
 									{galleryImages.map((imageUri) => (
 										<View key={imageUri} className="relative">
 											<Image
 												source={{ uri: imageUri }}
-												className="h-20 w-20 rounded-lg"
+												className="h-24 w-24 rounded-xl border border-hairline"
 												resizeMode="cover"
 											/>
 											<TouchableOpacity
-												className="absolute items-center justify-center h-6 w-6 bg-error rounded-full -right-1 -top-1"
+												className="absolute items-center justify-center h-7 w-7 bg-error rounded-full -right-2 -top-2 shadow-sm border border-white"
 												onPress={() => {
 													setGalleryImages((prev) => prev.filter((uri) => uri !== imageUri));
 												}}
 												activeOpacity={0.8}
 											>
 												<Text className="text-white text-xs" fontName="PlusJakartaSans_700Bold">
-													x
+													✕
 												</Text>
 											</TouchableOpacity>
 										</View>
@@ -292,7 +314,7 @@ export default function CreateLocationScreen() {
 						</View>
 					) : null}
 
-					<View className="flex-row gap-3 mt-2">
+					<View className="flex-row gap-4 mt-2">
 						<View className="flex-1">
 							<Input
 								label="Latitude"
@@ -315,16 +337,16 @@ export default function CreateLocationScreen() {
 				</View>
 
 				<TouchableOpacity
-					className={`bg-primary rounded-full py-4 items-center shadow-md mb-8 ${isLoading ? "opacity-70" : ""}`}
+					className={`bg-primary rounded-2xl py-4 items-center shadow-md mb-8 ${isLoading ? "opacity-70" : ""}`}
 					onPress={handleCreate}
 					disabled={isLoading}
 					activeOpacity={0.8}
 				>
-					<Text className="text-white text-base" fontName="PlusJakartaSans_700Bold">
-						{isLoading ? "Creating..." : "Create Location"}
+					<Text className="text-white text-lg" fontName="PlusJakartaSans_700Bold">
+						{isLoading ? "Creating Location..." : "Create Location"}
 					</Text>
 				</TouchableOpacity>
 			</ScrollView>
-		</View>
+		</KeyboardAvoidingView>
 	);
 }
