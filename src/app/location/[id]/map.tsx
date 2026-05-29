@@ -625,7 +625,7 @@ export default function LocationMapScreen() {
 			</View>
 
 			<View
-				className={`absolute bottom-0 left-0 right-0 pt-3 px-4 bg-white rounded-t-4xl shadow-[0_-8px_30px_rgba(0,0,0,0.12)] overflow-hidden ${isPanelExpanded ? "h-[35%]" : "pb-8"}`}
+				className={`absolute bottom-0 left-0 right-0 pt-3 px-4 bg-white rounded-t-4xl shadow-[0_-8px_30px_rgba(0,0,0,0.12)] overflow-hidden ${isPanelExpanded ? "h-[38%]" : "pb-6"}`}
 			>
 				<TouchableOpacity
 					className="items-center mb-3 pt-1 pb-2"
