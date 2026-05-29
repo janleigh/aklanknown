@@ -551,7 +551,13 @@ export default function LocationMapScreen() {
 	return (
 		<View className="flex-1 bg-canvas">
 			<View className="flex-1">
-				<Mapbox.MapView style={{ flex: 1 }} styleURL={Mapbox.StyleURL.Street}>
+				<Mapbox.MapView
+					style={{ flex: 1 }}
+					scaleBarEnabled={false}
+					logoEnabled={false}
+					rotateEnabled={false}
+					styleURL={Mapbox.StyleURL.Street}
+				>
 					<Mapbox.Camera
 						ref={cameraRef}
 						defaultSettings={{
