@@ -21,7 +21,6 @@ type LocationDetails = {
 	rating: number;
 	reviews: number;
 	description: string;
-	fullDescription: string;
 	images: string[];
 	latitude?: number | null;
 	longitude?: number | null;
@@ -63,7 +62,6 @@ function buildLocationDetails(
 		rating,
 		reviews,
 		description,
-		fullDescription: description,
 		images: images.length > 0 ? images : ["https://picsum.photos/seed/location/800/400"],
 		latitude: location.latitude,
 		longitude: location.longitude,
@@ -497,16 +495,20 @@ export default function LocationDetailsScreen() {
 					</Text>
 
 					<Text className="mb-2 leading-6 text-body" fontName="PlusJakartaSans_400Regular">
-						{isExpanded ? location.fullDescription : location.description}
+						{isExpanded || location.description.length <= 120
+							? location.description
+							: `${location.description.slice(0, 120)}...`}
 					</Text>
-					<TouchableOpacity onPress={() => setIsExpanded(!isExpanded)} activeOpacity={0.7}>
-						<Text
-							className="mb-6 font-semibold text-primary"
-							fontName="PlusJakartaSans_600SemiBold"
-						>
-							{isExpanded ? "Read Less" : "Read More"}
-						</Text>
-					</TouchableOpacity>
+					{location.description.length > 120 && (
+						<TouchableOpacity onPress={() => setIsExpanded(!isExpanded)} activeOpacity={0.7}>
+							<Text
+								className="mb-6 font-semibold text-primary"
+								fontName="PlusJakartaSans_600SemiBold"
+							>
+								{isExpanded ? "Show less" : "Show more"}
+							</Text>
+						</TouchableOpacity>
+					)}
 
 					<View className="mb-6 h-px bg-hairline-soft" />
 

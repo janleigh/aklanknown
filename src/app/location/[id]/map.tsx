@@ -460,6 +460,7 @@ export default function LocationMapScreen() {
 	};
 
 	const [routeShown, setRouteShown] = useState(false);
+	const [isPanelExpanded, setIsPanelExpanded] = useState(true);
 
 	const handleRouteToggle = () => {
 		if (!routeShown) {
@@ -623,12 +624,18 @@ export default function LocationMapScreen() {
 				</View>
 			</View>
 
-			<View className="absolute bottom-0 left-0 right-0 h-[35%] pt-3 px-4 bg-white rounded-t-4xl shadow-[0_-8px_30px_rgba(0,0,0,0.12)] overflow-hidden">
-				<View className="items-center mb-3">
+			<View className={`absolute bottom-0 left-0 right-0 pt-3 px-4 bg-white rounded-t-4xl shadow-[0_-8px_30px_rgba(0,0,0,0.12)] overflow-hidden ${isPanelExpanded ? "h-[35%]" : "pb-8"}`}>
+				<TouchableOpacity 
+					className="items-center mb-3 pt-1 pb-2" 
+					onPress={() => setIsPanelExpanded(!isPanelExpanded)} 
+					activeOpacity={0.7}
+				>
 					<View className="h-1.5 w-12 bg-surface-strong rounded-full" />
-				</View>
+				</TouchableOpacity>
 
-				<View className="flex-row items-start justify-between mb-3 gap-3">
+				{isPanelExpanded && (
+					<>
+						<View className="flex-row items-start justify-between mb-3 gap-3">
 					<View className="flex-1 pr-2">
 						<Text className="text-ink text-lg leading-tight" fontName="PlusJakartaSans_700Bold">
 							{selectedData.name}
@@ -723,6 +730,8 @@ export default function LocationMapScreen() {
 						</Text>
 					</TouchableOpacity>
 				</View>
+					</>
+				)}
 			</View>
 		</View>
 	);
