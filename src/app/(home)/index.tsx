@@ -1,6 +1,7 @@
 import { useUser } from "@clerk/expo";
 import { LoadingSpinner } from "@components/index";
 import { controllers } from "@lib/api/supabase/controller";
+import { supabase } from "@lib/api/supabase/supabase";
 import {
 	addBookmark,
 	getBookmarkedIds,
@@ -21,6 +22,7 @@ export default function HomeScreen() {
 	const [locations, setLocations] = useState<LocationRecord[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [bookmarkedIds, setBookmarkedIds] = useState<string[]>([]);
+	const [ratings, setRatings] = useState<Record<string, number>>({});
 
 	useFocusEffect(
 		useCallback(() => {
@@ -28,13 +30,35 @@ export default function HomeScreen() {
 			const loadLocations = async () => {
 				setIsLoading(true);
 				try {
-					const [data, bookmarked] = await Promise.all([
+					const [data, bookmarked, reviewsData] = await Promise.all([
 						controllers.location.list({ orderBy: "created_at" }),
 						getBookmarkedIds(),
+						supabase.from("reviews").select("location_id, rating"),
 					]);
+
+					const ratingsMap: Record<string, number> = {};
+					const locationRatings: Record<string, number[]> = {};
+
+					if (reviewsData.data) {
+						for (const review of reviewsData.data) {
+							if (review.location_id && typeof review.rating === "number") {
+								if (!locationRatings[review.location_id]) {
+									locationRatings[review.location_id] = [];
+								}
+								locationRatings[review.location_id].push(review.rating);
+							}
+						}
+
+						for (const [locId, locRatings] of Object.entries(locationRatings)) {
+							const avg = locRatings.reduce((sum, r) => sum + r, 0) / locRatings.length;
+							ratingsMap[locId] = Number(avg.toFixed(1));
+						}
+					}
+
 					if (isMounted) {
 						setLocations(data);
 						setBookmarkedIds(bookmarked);
+						setRatings(ratingsMap);
 					}
 				} catch (error) {
 					console.error("[Home] Error loading locations:", error);
@@ -161,7 +185,7 @@ export default function HomeScreen() {
 								<View className="flex-row items-center bg-canvas/80 px-3 py-1.5 rounded-full backdrop-blur-md">
 									<Star size={14} color="#FBBF24" fill="#FBBF24" />
 									<Text className="ml-1 text-ink text-sm" fontName="PlusJakartaSans_700Bold">
-										5.0
+										{ratings[item.id] ? ratings[item.id].toFixed(1) : "0.0"}
 									</Text>
 								</View>
 								<TouchableOpacity

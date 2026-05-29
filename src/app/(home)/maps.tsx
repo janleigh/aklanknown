@@ -224,7 +224,7 @@ export default function MapsScreen() {
 		<View className="flex-1 bg-canvas">
 			{/* Map Area */}
 			<View className="overflow-hidden relative flex-1 bg-[#E8F0FE]">
-				<Mapbox.MapView style={{ flex: 1 }} styleURL={Mapbox.StyleURL.Street}>
+				<Mapbox.MapView style={{ flex: 1 }} scaleBarEnabled={false} styleURL={Mapbox.StyleURL.Street}>
 					<Mapbox.Camera
 						defaultSettings={{
 							centerCoordinate: [selectedData.longitude, selectedData.latitude],
@@ -250,7 +250,7 @@ export default function MapsScreen() {
 										className={`text-xs font-bold ${selectedLocation === loc.id ? "text-white" : "text-primary"}`}
 										fontName="PlusJakartaSans_700Bold"
 									>
-										{loc.name}
+										{loc.name.length > 15 ? `${loc.name.slice(0, 15)}...` : loc.name}
 									</Text>
 								</View>
 							</TouchableOpacity>
